@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -49,14 +50,15 @@ import { ZonesLivraison } from './entities/ZonesLivraison';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }), 
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',       // ou ton IP ou nom de domaine
-      port: 5432,
-      username: 'postgres',    // ou ton nom d’utilisateur
-      password: 'postgres',
-      database: 'cuisine_db',
-      autoLoadEntities: true,  // auto importe les entités
+      host: process.env.DATABASE_HOST,
+      port: +process.env.DATABASE_PORT,
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_DATABASE,
+      autoLoadEntities: true, 
       entities: [                                                                                                                                                          
         Abonnements,                                                                                                                                                                     
         Accompagnements,                                                                                                                                                                 
@@ -98,7 +100,7 @@ import { ZonesLivraison } from './entities/ZonesLivraison';
         Utilisateurs,                                                                                                                                                                    
         ZonesLivraison,                                                                                                                                                             
       ],
-      synchronize: false,       // synchronise tables automatiquement (à désactiver en prod !)
+      synchronize: false,       
     }),
     AdminModule,
     ClientModule,
