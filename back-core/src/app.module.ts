@@ -54,7 +54,7 @@ import { ZonesLivraison } from './entities/ZonesLivraison';
       host: 'localhost',       // ou ton IP ou nom de domaine
       port: 5432,
       username: 'postgres',    // ou ton nom d’utilisateur
-      password: 'berthin',
+      password: 'postgres',
       database: 'cuisine_db',
       autoLoadEntities: true,  // auto importe les entités
       entities: [                                                                                                                                                          
@@ -98,7 +98,7 @@ import { ZonesLivraison } from './entities/ZonesLivraison';
         Utilisateurs,                                                                                                                                                                    
         ZonesLivraison,                                                                                                                                                             
       ],
-      synchronize: true,       // synchronise tables automatiquement (à désactiver en prod !)
+      synchronize: false,       // synchronise tables automatiquement (à désactiver en prod !)
     }),
     AdminModule,
     ClientModule,
