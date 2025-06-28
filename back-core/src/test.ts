@@ -10,9 +10,12 @@ async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
 
   const adminService = app.get(AdminService);
-  const res = await adminService.findCaca();
 
-  console.log('▶ Liste des utilisateurs :', res);
+
+
+  //test princi
+  const p1 = await adminService.getOrderStatusSummary();
+  console.log('▶ Liste des statuts de commandes :', p1);
 
   await app.close();
 }

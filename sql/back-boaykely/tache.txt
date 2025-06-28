@@ -1,0 +1,28 @@
+1-Suivi des commandes : état (reçue, en préparation, prête, en livraison, livrée)
+
+2-Historique de toutes les commandes
+
+Usage de bon de commande 
+
+Interface de production : écran en cuisine montrant les commandes en cours
+Suivi de la production : temps de préparation par plat et par cuisinier
+Alerte si temps de préparation dépassé de 50%.
+Estimation de temps de préparation par plat pour planification
+
+Attribution des livraisons
+Suivi GPS en temps réel
+Calcul d’itinéraires
+Gestion des zones de livraison : définition des secteurs par livreur/groupe de livreur
+
+Export pdf des factures par entreprise et particulier
+Tri par entreprise et particulier
+Gestion des salaires des employes
+
+Chiffre d'affaire
+Total recette: journalier/hebdomadaire/mensuel/annuel
+Total depenses:  journalier/hebdomadaire/mensuel/annuel
+Top 5 des menus les plus vendus
+Top 5 des clients: Entreprise / Particulier
+Evolution des ventes pour les abonnements par type d'abonnement
+Courbe d'evolution des ventes de l'entreprise : par menu / par temps ( mensuel  , semestriel , annuel ) 
+Courbe d'evolution des depenses de l'entreprise : par temps ( mensuel  , semestriel , annuel  )
