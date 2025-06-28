@@ -6,21 +6,21 @@ import { CommandeStatutView } from '../entities/commande-statut-view.entity';
 
 @Injectable()
 export class AdminService {
-    constructor(
-        @InjectRepository(Roles)
-        private roleRepository:Repository<Roles>,
+  constructor(
+    @InjectRepository(Roles)
+    private roleRepository: Repository<Roles>,
 
-        @InjectRepository(CommandeStatutView)
-        private readonly commandeStatutViewRepository: Repository<CommandeStatutView>,
-    ){}
+    @InjectRepository(CommandeStatutView)
+    private readonly commandeStatutViewRepository: Repository<CommandeStatutView>,
+  ) { }
 
 
-    //back - Princii
-    async getOrderStatusSummary(): Promise<CommandeStatutView[]> {
-        return this.commandeStatutViewRepository.find({
-          order: {
-            ordre: 'ASC',
-          },
-        });
-    }
+  //back - Princii
+  async getOrderStatusSummary(): Promise<CommandeStatutView[]> {
+    return this.commandeStatutViewRepository.find({
+      order: {
+        ordre: 'ASC',
+      },
+    });
+  }
 }
