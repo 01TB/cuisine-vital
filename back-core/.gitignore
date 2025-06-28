@@ -35,6 +35,9 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 
+# prompts directory
+.prompts
+
 # temp directory
 .temp
 .tmp

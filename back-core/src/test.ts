@@ -10,7 +10,6 @@ async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
 
   const adminService = app.get(AdminService);
-  const res = await adminService.findCaca();
 
   console.log('▶ Liste des utilisateurs :', res);
 

@@ -1,12 +1,22 @@
+// src/admin/admin.module.ts
+
 import { Module } from '@nestjs/common';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
-import { Roles } from '../entities/Roles';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Abonnements } from '../entities/Abonnements';
+import { Clients } from '../entities/Clients';
+import { TypesAbonnement } from '../entities/TypesAbonnement';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Roles])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Abonnements, 
+      Clients, 
+      TypesAbonnement
+    ])
+  ],
   controllers: [AdminController],
-  providers: [AdminService]
+  providers: [AdminService],
 })
 export class AdminModule {}

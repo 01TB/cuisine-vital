@@ -1,0 +1,98 @@
+Je souhaite implémenter des fonctionnalités dans le back-end de mon application.
+En utilisant :
+    - admin.controller.ts
+    - admin.service.ts
+    - admin.module.ts
+
+Permet la gestion abonnement mensuel en faisant permettant un CRUD des abonnements à partir des fichiers :  
+    - Abonnements.ts
+    - Clients.ts
+        - où type_client = "entreprise"
+    - TypesAbonnement.ts
+
+Voici la structure du dossier src : 
+
+    src
+    │   app.controller.spec.ts
+    │   app.controller.ts
+    │   app.module.ts
+    │   app.service.ts
+    │   main.ts
+    │   test.ts
+    │   
+    ├───admin
+    │       admin.controller.spec.ts
+    │       admin.controller.ts
+    │       admin.module.ts
+    │       admin.service.spec.ts
+    │       admin.service.ts
+    │       
+    ├───chef-cuisinier
+    │       chef-cuisinier.controller.spec.ts
+    │       chef-cuisinier.controller.ts
+    │       chef-cuisinier.module.ts
+    │       chef-cuisinier.service.spec.ts
+    │       chef-cuisinier.service.ts
+    │       
+    ├───client
+    │       client.controller.spec.ts
+    │       client.controller.ts
+    │       client.module.ts
+    │       client.service.spec.ts
+    │       client.service.ts
+    │       
+    ├───cuisinier
+    │       cuisinier.controller.spec.ts
+    │       cuisinier.controller.ts
+    │       cuisinier.module.ts
+    │       cuisinier.service.spec.ts
+    │       cuisinier.service.ts
+    │       
+    ├───entities
+    │       Abonnements.ts
+    │       Accompagnements.ts
+    │       AccompagnementTypeAbonnement.ts
+    │       Alertes.ts
+    │       Boissons.ts
+    │       BonsCommande.ts
+    │       Clients.ts
+    │       ClientsIndividuelsFideles.ts
+    │       CommandesEntreprises.ts
+    │       CommandesEntreprisesDetails.ts
+    │       CommandesIndividuelles.ts
+    │       CommandesIndividuellesDetails.ts
+    │       CritereFidelite.ts
+    │       entities.txt
+    │       ExemplairesIngredient.ts
+    │       FacturesEntreprises.ts
+    │       FacturesEntreprisesDetails.ts
+    │       FacturesIndividuelles.ts
+    │       FacturesIndividuellesDetails.ts
+    │       Ingredients.ts
+    │       LivraisonsEntreprises.ts
+    │       LivraisonsIndividuelles.ts
+    │       Menus.ts
+    │       MenusFavoris.ts
+    │       MenuTypeAbonnement.ts
+    │       MouvementsStock.ts
+    │       PaiementsEntreprises.ts
+    │       PaiementsIndividuels.ts
+    │       PlanningProduction.ts
+    │       Recettes.ts
+    │       Reduction.ts
+    │       Roles.ts
+    │       Salaires.ts
+    │       SelectionsHebdomadaires.ts
+    │       Sessions.ts
+    │       SpatialRefSys.ts
+    │       StatutsCommande.ts
+    │       TypesAbonnement.ts
+    │       Utilisateurs.ts
+    │       ZonesLivraison.ts
+    │
+    └───livreur
+            livreur.controller.spec.ts
+            livreur.controller.ts
+            livreur.module.ts
+            livreur.service.spec.ts
+            livreur.service.ts
