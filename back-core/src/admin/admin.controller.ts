@@ -2,7 +2,9 @@ import { Controller , Get } from '@nestjs/common';
 import { AdminService } from './admin.service';
 @Controller('admin')
 export class AdminController {
-    constructor(private readonly adminService: AdminService) {}
+    constructor(private readonly adminService: AdminService) {
+
+    }
 
 
 
@@ -14,6 +16,12 @@ export class AdminController {
     async getOrderStatusSummary() {
       return this.adminService.getOrderStatusSummary();
     }
+
+    @Get('commandes/historique')
+    async getCommandesHistory() {
+        return this.adminService.getCommandesHistory();
+    }
+
 
 
 }
