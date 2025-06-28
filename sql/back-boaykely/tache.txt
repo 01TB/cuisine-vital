@@ -3,7 +3,7 @@ http://localhost:3000/admin/commandes/statuts
 
 
 2-Historique de toutes les commandes:
-
+commandes/historique
 (Pagination : Pour éviter de retourner des milliers de commandes d'un coup.
 Filtres : Par date, par statut, par type de client, etc., en les passant comme query parameters dans l'URL.
 Recherche : Pour trouver une commande par son numéro ou le nom du client.)

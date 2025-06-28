@@ -39,9 +39,9 @@ export class AdminService {
             take: 100, // Limite le nombre de résultats pour éviter une surcharge
         });
     
-        // if (!historique || historique.length === 0) {
-        //   return []; 
-        // }
+        if (!historique || historique.length === 0) {
+          return []; 
+        }
         return historique;
       }
 

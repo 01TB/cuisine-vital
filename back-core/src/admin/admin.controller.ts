@@ -6,10 +6,6 @@ export class AdminController {
 
     }
 
-
-
-
-
     @Get('commandes/statuts')
     // Vous pouvez aussi appliquer le Guard uniquement sur cette route si nécessaire
     // @UseGuards(AdminRoleGuard) 
