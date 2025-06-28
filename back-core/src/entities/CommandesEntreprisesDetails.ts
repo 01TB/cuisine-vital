@@ -20,7 +20,7 @@ export class CommandesEntreprisesDetails {
   quantite: number;
 
   @Column("numeric", { name: "prix_unitaire", precision: 8, scale: 2 })
-  prixUnitaire: string;
+  prixUnitaire: number;
 
   @Column("text", { name: "notes", nullable: true })
   notes: string | null;
