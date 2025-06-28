@@ -1,0 +1,17 @@
+body {
+  background-color: #fffaf0;
+}
+.navbar {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.table th, .table td {
+  vertical-align: middle;
+}
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.btn-warning {
+  background-color: #f4a261;
+  border-color: #f4a261;
+}

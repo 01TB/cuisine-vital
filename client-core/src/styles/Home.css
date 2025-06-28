@@ -1,0 +1,16 @@
+.home-bg {
+  background-color: #fffaf0;
+  position: relative;
+}
+.home-bg::before {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border: 2px dashed #f4a261;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
