@@ -1,23 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module'; 
 import { CuisinierService } from './cuisinier/cuisinier.service';
+import { AdminService } from './admin/admin.service';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
 
-  const commandeService = app.get(CuisinierService);
+  const adminService = app.get(AdminService);
 
-  try {
-    // 1. Récupération de toutes les commandes
-    console.log('⏳ Récupération de toutes les commandes...');
-    const allCommandes = await commandeService.findCommandeIndividuelle();
-    console.log('✅ Commandes trouvées:', allCommandes.length);
-  } catch (error) {
-    console.error('❌ Erreur:', error);
-  } finally {
-    await app.close();
-    process.exit(0);
-  }
+
+
+  //test princi
+  const p1 = await adminService.getOrderStatusSummary();
+  console.log('▶ Liste des statuts de commandes :', p1);
+
+  await app.close();
 }
 
 bootstrap();
