@@ -1,19 +1,23 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { AdminService } from './admin/admin.service';
+import { AppModule } from './app.module'; 
+import { CuisinierService } from './cuisinier/cuisinier.service';
 
 async function bootstrap() {
-  // pour tester les fonctions des services en lignes de commandes
-  // NB: ne pas utiliser les controllers ici
-  // pour compiler et executer: npx ts-node [le nom du fichier].ts
-
   const app = await NestFactory.createApplicationContext(AppModule);
 
-  const adminService = app.get(AdminService);
-  const res = await adminService.findCaca();
+  const commandeService = app.get(CuisinierService);
 
-  console.log('▶ Liste des utilisateurs :', res);
-
-  await app.close();
+  try {
+    // 1. Récupération de toutes les commandes
+    console.log('⏳ Récupération de toutes les commandes...');
+    const allCommandes = await commandeService.findCommandeIndividuelle();
+    console.log('✅ Commandes trouvées:', allCommandes.length);
+  } catch (error) {
+    console.error('❌ Erreur:', error);
+  } finally {
+    await app.close();
+    process.exit(0);
+  }
 }
+
 bootstrap();
