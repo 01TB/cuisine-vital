@@ -1,8 +1,10 @@
+/* App.css */
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  padding-top: 80px; /* Décalage global pour éviter que le contenu soit masqué sous la barre fixe */
 }
 
 .logo {
@@ -11,9 +13,11 @@
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -39,4 +43,51 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Styles modernisés pour la barre de navigation (utilisation de .navbar-modern) */
+.navbar-modern {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9));
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.navbar-modern .nav-link {
+  color: #2d3748;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.navbar-modern .nav-link:hover {
+  color: #f97316;
+  transform: translateY(-2px);
+}
+
+.navbar-modern .navbar-brand {
+  font-weight: 700;
+  color: #f97316 !important;
+}
+
+.navbar-modern .navbar-toggler {
+  border: none;
+}
+
+.navbar-modern .navbar-toggler:focus {
+  box-shadow: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #root {
+    padding-top: 60px; /* Réduction du décalage sur mobile */
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }

@@ -1,4 +1,5 @@
 import { Container, Row, Col, Button } from 'react-bootstrap';
+import '../styles/Profil.css';
 
 function Profil() {
   const user = {

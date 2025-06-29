@@ -1,51 +1,38 @@
-import { Container, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import '../styles/Home.css';
 import { motion } from 'framer-motion';
 
 function Home() {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-    >
-      <Container className="text-center py-5" style={{ minHeight: '90vh', background: 'linear-gradient(145deg, #fefefe, #e6e6e6)', borderRadius: '2rem', boxShadow: '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff' }}>
-        <h1 className="display-3 fw-bold mb-3" style={{ color: '#f4a261', textShadow: '1px 1px 2px rgba(0,0,0,0.1)' }}>
-          Bienvenue chez <span style={{ color: '#264653' }}>Foodie</span>
-        </h1>
-        <h4 className="text-muted mb-4">Profitez d'une expérience culinaire raffinée</h4>
-        <p className="lead text-secondary mb-5">Savourez nos plats faits maison, préparés avec soin pour égayer vos journées.</p>
-
-        <motion.div
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1 }}
-          className="position-relative mb-4"
-        >
-          <img
-            src="/assets/salmon-salad.jpg"
-            alt="Plat du jour"
-            className="img-fluid rounded-circle shadow"
-            style={{ maxWidth: '400px', border: '10px solid white' }}
-          />
-          <span className="badge bg-warning text-dark position-absolute top-0 end-0 m-3 fs-6 px-3 py-2 shadow">
-            ⭐ Plat du Jour
-          </span>
-        </motion.div>
-
-        <div className="d-flex justify-content-center gap-3 mb-3">
-          <Button variant="warning" as={Link} to="/menus" className="px-4 py-2 shadow-sm rounded-pill">
-            Voir les Menus
-          </Button>
-          <Button variant="outline-warning" as={Link} to="/commandes" className="px-4 py-2 shadow-sm rounded-pill">
-            Commander
-          </Button>
+    <div className="home-bg">
+      <header className="header">
+        <div className="logo">Sotro Be</div>
+        <nav>
+          <Link to="/accueil" className="nav-link">Accueil</Link>
+          <Link to="/menus" className="nav-link">Menus</Link>
+          <Link to="/commandes" className="nav-link">Commandes</Link>
+        </nav>
+        <div className="user">Mon Compte</div>
+      </header>
+      <div className="text-center">
+        <h1 className="display-4 fw-bold text-dark">Bienvenue chez <span style={{ color: '#f4a261' }}>Sotro Be</span></h1>
+        <h2 className="text-muted mb-4">et Profitez de la Nourriture</h2>
+        <p className="lead text-muted mb-4">Découvrez une expérience culinaire unique avec nos plats délicieux.</p>
+        <div className="position-relative mb-4">
+          <img src="/assets/salmon-salad.jpg" alt="Plat du jour" className="img-fluid rounded-circle" style={{ maxWidth: '400px' }} />
+          <span className="badge bg-warning text-dark position-absolute top-0 end-0 m-2">Meilleur Plat</span>
         </div>
-
-        <p className="text-muted mt-4">Heures d'ouverture : <strong>11:00 - 22:00</strong></p>
-      </Container>
-    </motion.div>
+        <div className="food-items">
+          {['Entrées', 'Plats', 'Desserts', 'Boissons'].map((category) => (
+            <div key={category} className="food-circle">{category}</div>
+          ))}
+        </div>
+        <Button variant="warning" as={Link} to="/menus" className="me-2">Voir les Menus</Button>
+        <Button variant="outline-warning" as={Link} to="/commandes">Commander</Button>
+        <p className="text-muted mt-3">Ouvert : 11:00 - 22:00</p>
+      </div>
+    </div>
   );
 }
 
