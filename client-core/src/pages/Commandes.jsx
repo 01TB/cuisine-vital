@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Container, Row, Col, Form, Button, Table } from 'react-bootstrap';
+import '../styles/Commandes.css';
 
 function Commandes() {
   const [commande, setCommande] = useState({ menuId: '', quantite: 1, dateLivraison: '' });

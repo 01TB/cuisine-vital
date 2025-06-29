@@ -13,18 +13,20 @@ import './styles/App.css';
 function App() {
   return (
     <Router>
-      <ClientNavbar />
-      <div style={{ marginTop: '70px', minHeight: 'calc(100vh - 70px)' }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/profil" element={<Profil />} />
-          <Route path="/menus" element={<Menus />} />
-          <Route path="/commandes" element={<Commandes />} />
-          <Route path="/commandes-entreprise" element={<CommandesEntreprise />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+      <div className="min-h-screen bg-gray-50">
+        <ClientNavbar />
+        <div className="mt-16 min-h-[calc(100vh-4rem)]">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/profil" element={<Profil />} />
+            <Route path="/menus" element={<Menus />} />
+            <Route path="/commandes" element={<Commandes />} />
+            <Route path="/commandes-entreprise" element={<CommandesEntreprise />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
-      <Footer />
     </Router>
   );
 }
