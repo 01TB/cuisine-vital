@@ -1,19 +1,20 @@
 import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import 'animate.css';
 
 function ClientNavbar() {
   const location = useLocation();
   const [userType, setUserType] = useState('individual');
 
   return (
-    <Navbar bg="light" expand="lg" fixed="top" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+    <Navbar expand="lg" fixed="top" className="bg-white shadow-sm py-3 animate__animated animate__fadeInDown">
       <Container>
-        <Navbar.Brand as={Link} to="/" style={{ color: '#f4a261' }}>
+        <Navbar.Brand as={Link} to="/" className="text-warning fw-bold fs-4">
           <span role="img" aria-label="Foodie">🍴</span> Foodie
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Toggle aria-controls="navbar-nav" />
+        <Navbar.Collapse id="navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/" active={location.pathname === '/'}>Accueil</Nav.Link>
             <Nav.Link as={Link} to="/menus" active={location.pathname === '/menus'}>Menus</Nav.Link>
@@ -24,12 +25,12 @@ function ClientNavbar() {
               </Nav.Link>
             )}
           </Nav>
-          <Nav>
-            <Button variant="outline-success" onClick={() => setUserType(userType === 'individual' ? 'company' : 'individual')}>
-              Changer pour {userType === 'individual' ? 'Entreprise' : 'Particulier'}
+          <Nav className="gap-2">
+            <Button variant="outline-warning" className="rounded-pill px-3" onClick={() => setUserType(userType === 'individual' ? 'company' : 'individual')}>
+              {userType === 'individual' ? '👨‍💼 Entreprise' : '🙋‍♂️ Particulier'}
             </Button>
-            <Button variant="outline-primary" as={Link} to="/profil">Profil</Button>
-            <Button variant="outline-danger" as={Link} to="/logout">Déconnexion</Button>
+            <Button variant="outline-secondary" className="rounded-pill px-3" as={Link} to="/profil">Profil</Button>
+            <Button variant="danger" className="rounded-pill px-3" as={Link} to="/logout">Déconnexion</Button>
           </Nav>
         </Navbar.Collapse>
       </Container>

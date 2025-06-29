@@ -1,0 +1,354 @@
+/* --- Variables de Couleurs & Styles de Base --- */
+:root {
+  --mayo-yellow: #FDF8E4; /* Jaune mayo très clair */
+  --pistachio-green: #E1EACD; /* Vert pistache doux */
+  --dark-text: #343a40;
+  --primary-brand: #f0ad4e; /* Un jaune plus fort pour les CTA primaires */
+  --soft-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --soft-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--mayo-yellow);
+  color: var(--dark-text);
+  overflow-x: hidden; /* Empêche le défilement horizontal */
+  min-height: 100vh;
+}
+
+/* --- Animations --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* --- Navbar Personnalisée --- */
+.navbar-custom {
+  background-color: rgba(253, 248, 228, 0.8); /* Fond mayo avec transparence */
+  backdrop-filter: blur(10px); /* Effet de flou "verre dépoli" */
+  padding: 1rem 2rem;
+  box-shadow: var(--soft-shadow);
+}
+
+.navbar-brand-custom {
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+
+.nav-link-custom {
+  font-weight: 600;
+  margin: 0 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link-custom:hover {
+  color: var(--primary-brand) !important;
+}
+
+.profile-icon {
+  font-size: 2rem;
+  color: var(--dark-text);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.profile-icon:hover {
+  transform: scale(1.1);
+  color: var(--primary-brand);
+}
+
+/* --- Section Héros --- */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+  position: relative; /* Déjà présent, mais crucial */
+  z-index: 1; /* S'assurer que le contenu est au-dessus de l'overlay */
+}
+
+/* C'est ici qu'on ajoute l'overlay ! */
+.hero-section::before {
+    content: ''; /* Obligatoire pour qu'un pseudo-élément s'affiche */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--mayo-yellow); /* Ou la couleur de votre choix */
+    opacity: 0.6; /* <<< C'EST ICI QUE VOUS CHANGEZ L'OPACITÉ ! */
+    z-index: -1; /* Place l'overlay entre le fond parallax et le contenu */
+}
+
+.hero-text {
+  /* Assurez-vous que le z-index du texte est bien au-dessus */
+  position: relative;
+  z-index: 2; 
+}
+
+.hero-text {
+  /* Assure que le texte est au-dessus de l'image parallax */
+  position: relative;
+  z-index: 2;
+}
+
+.hero-text h1 {
+  font-size: clamp(2.5rem, 5vw, 4.5rem); /* Taille de police responsive */
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.hero-text .brand-name {
+  color: var(--primary-brand);
+  display: block; /* Pour mettre le nom de la marque sur une nouvelle ligne */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.hero-text p {
+  font-size: 1.2rem;
+  margin: 1.5rem 0;
+  max-width: 500px;
+  opacity: 0; /* Sera animé */
+  animation-delay: 0.2s; /* Délai pour l'animation */
+}
+
+.cta-buttons {
+  margin-top: 2rem;
+  opacity: 0; /* Sera animé */
+  animation-delay: 0.4s; /* Délai pour l'animation */
+}
+
+/* --- Boutons Personnalisés (Style Soft UI) --- */
+.btn-custom {
+  padding: 12px 30px;
+  border-radius: 50px; /* Bords très arrondis */
+  font-weight: 600;
+  border: none;
+  box-shadow: var(--soft-shadow);
+  transition: all 0.3s ease;
+  margin: 5px;
+}
+
+.btn-custom:hover {
+  background-color: black;
+  transform: translateY(-3px);
+  box-shadow: var(--soft-shadow-hover);
+}
+
+.btn-menu {
+  background-color: white;
+  color: var(--dark-text);
+  border: 2px solid var(--pistachio-green);
+}
+
+.btn-start {
+  background-color: var(--pistachio-green);
+  color: var(--dark-text);
+}
+
+.interactive-image {
+  max-width: 90%;
+  border-radius: 30px;
+  transition: transform 0.1s linear;
+  z-index: 3; /* Pour être au-dessus du fond parallax */
+}
+
+/* --- Styles pour le mobile --- */
+@media (max-width: 768px) {
+  .hero-section {
+    text-align: center;
+  }
+
+  .hero-text p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .hero-image-wrapper {
+    margin-top: 3rem;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* --- Style for the floating pills --- */
+.floating-pill {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white */
+  backdrop-filter: blur(5px); /* Frosted glass effect */
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--dark-text);
+  box-shadow: var(--soft-shadow);
+  z-index: 10;
+  
+  /* The base animation */
+  animation: float 6s ease-in-out infinite;
+
+  /* Crucial for smooth mouse repulsion effect */
+  transition: transform 0.2s ease-out; 
+}
+
+/* We need to make the image wrapper a positioning container */
+.hero-image-wrapper {
+  position: relative; /* This is VERY important */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.parallax-hero {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.3s ease-out;
+}
+
+.backdrop-blur {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); 
+}
+
+.menu-carousel-section {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-card {
+  width: 320px;
+  height: 420px;
+  border-radius: 30px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+}
+
+.menu-image-wrapper {
+  height: 60%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.menu-image-placeholder {
+  width: 100%;
+  height: 100%;
+  color: #555;
+  font-size: 1rem;
+  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-content {
+  height: 40%;
+  position: relative;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.menu-title {
+  font-weight: bold;
+  color: black;
+  margin-bottom: 0;
+  z-index: 1;
+  position: relative;
+}
+
+.menu-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(92, 92, 92, 0.7), transparent);
+  color: white;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  z-index: 2;
+}
+
+.menu-card:hover .menu-overlay {
+  opacity: 1;
+}
+
+.menu-bottom-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  margin-bottom: 0.2rem;
+}
+
+.menu-description {
+  max-width: 190px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.95rem;
+}
+
+.menu-buttons {
+  display: flex;
+  gap: 0.7rem;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.icon-button:hover {
+  transform: scale(1.2);
+  color: #f0ad4e;
+}
+
+
+
