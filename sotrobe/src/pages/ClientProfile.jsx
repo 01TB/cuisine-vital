@@ -59,7 +59,7 @@ const UserProfile = () => {
   };
 
   return (
-    <Container className="py-5">
+    <Container fluid className="p-5" style={{ width:'100vw', overflowX:'hidden', minHeight:'100vh', backgroundColor: '#FDF8E499' }}>
       <Row className="mb-4">
         <Col md={3} className="text-center">
           {userImage ? (

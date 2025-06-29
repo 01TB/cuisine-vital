@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Modal, Tab, Nav, Button, Row, Col, Image, ListGroup } from 'react-bootstrap';
+import { Tab, Nav, Button, Row, Col, Image, ListGroup } from 'react-bootstrap';
+import '../styles/CommandePopup.css'
 
 const CommandePopup = ({ show, onClose, selectedMenus }) => {
   const [activeTab, setActiveTab] = useState('boissons');
@@ -17,7 +18,7 @@ const CommandePopup = ({ show, onClose, selectedMenus }) => {
   ];
 
   const handleRemoveMenu = (id) => {
-    // Notify parent if needed
+    // à implémenter si nécessaire
   };
 
   const handleAddExtra = (type, item) => {
@@ -39,34 +40,60 @@ const CommandePopup = ({ show, onClose, selectedMenus }) => {
   };
 
   const extraList = activeTab === 'boissons' ? boissons : accompagnements;
-
   if (!show) return null;
 
   return (
     <>
-      {/* Overlay */}
       <div
         className="position-fixed top-0 start-0 w-100 h-100"
         style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1050 }}
         onClick={onClose}
       ></div>
 
-      {/* Popup */}
-      <div className="position-fixed bottom-0 start-0 w-100" style={{ height: '90vh', backgroundColor: 'white', borderTopLeftRadius: '2.5rem', borderTopRightRadius: '2.5rem', zIndex: 1055, overflowY: 'auto' }}>
+      <div
+        className="position-fixed bottom-0 start-0 w-100 fade-in-up"
+        style={{
+          height: '90vh',
+          backgroundColor: 'rgb(255, 255, 255, 0.8',
+          borderTopLeftRadius: '2rem',
+          borderTopRightRadius: '2rem',
+          zIndex: 1055,
+          overflowY: 'auto',
+          boxShadow: '0 -5px 15px rgba(0,0,0,0.1)',
+          backdropFilter: 'blur(10px)' 
+
+        }}
+      >
         <div className="p-4">
           <Row>
             <Col md={4}>
-              <h5 className="fw-bold mb-3">Vos Plats</h5>
+              <h5 className="fw-bold mb-3">🧾 Vos Plats</h5>
               <ListGroup variant="flush">
                 {selectedMenus.map((menu) => (
-                  <ListGroup.Item key={menu.id} className="d-flex align-items-center justify-content-between border-0">
-                    <Image src={menu.image} rounded style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: '1.2rem' }} />
+                  <ListGroup.Item
+                    key={menu.id}
+                    className="d-flex align-items-center justify-content-between border-0 p-2 bg-light rounded-4 mb-2"
+                  >
+                    <Image
+                      src={menu.image}
+                      rounded
+                      className='rounded-5'
+                      style={{
+                        width: 55,
+                        height: 55,
+                        objectFit: 'cover',
+                      }}
+                    />
                     <div className="ms-2 flex-grow-1">
                       <strong>{menu.title}</strong>
-                      <div className="text-muted">Ar 15,000</div>
+                      <div className="text-muted small">Ar 15 000</div>
                     </div>
-                    <Button variant="outline-danger" size="sm" className="rounded-pill" onClick={() => handleRemoveMenu(menu.id)}>
-                      <i className="bi bi-x"></i>
+                    <Button
+                      size="sm"
+                      className="deleteBtn rounded-circle"
+                      onClick={() => handleRemoveMenu(menu.id)}
+                    >
+                      <i className="bi bi-x-lg"></i>
                     </Button>
                   </ListGroup.Item>
                 ))}
@@ -75,36 +102,58 @@ const CommandePopup = ({ show, onClose, selectedMenus }) => {
 
             <Col md={8}>
               <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
-                <Nav variant="tabs" className="mb-3 rounded-pill overflow-hidden">
+                <Nav className="mb-4 gap-2">
                   <Nav.Item>
-                    <Nav.Link eventKey="boissons" className="rounded-pill">Boissons</Nav.Link>
+                    <Nav.Link
+                      eventKey="boissons"
+                      className={`commande-tab ${activeTab === 'boissons' ? 'active-tab' : ''}`}
+                    >
+                      🥤 Boissons
+                    </Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="accompagnements" className="rounded-pill">Accompagnements</Nav.Link>
+                    <Nav.Link
+                      eventKey="accompagnements"
+                      className={`commande-tab ${activeTab === 'accompagnements' ? 'active-tab' : ''}`}
+                    >
+                      🍚 Accompagnements
+                    </Nav.Link>
                   </Nav.Item>
                 </Nav>
 
-                <Tab.Content>
+                <Tab.Content className='p-5' style={{ backgroundColor: 'rgb(255, 255, 255, 0.6)', transform:'translateY(-25px)', borderRadius:'30px', borderTopLeftRadius:'0px' }}>
                   <Tab.Pane eventKey={activeTab}>
                     {previewImage && (
-                      <div className="text-center mb-3">
-                        <Image src={previewImage} rounded style={{ height: 200, objectFit: 'cover', borderRadius: '1.5rem' }} />
+                      <div className="text-center mb-4">
+                        <Image
+                          src={previewImage}
+                          rounded
+                          style={{ height: 180, objectFit: 'cover', borderRadius: '1.5rem' }}
+                        />
                       </div>
                     )}
 
                     <Row>
                       {extraList.map((item) => (
-                        <Col md={4} key={item.id} className="mb-3">
-                          <div className="border rounded-4 p-3 text-center h-100 d-flex flex-column justify-content-between">
-                            <Image src={item.image} style={{ height: 100, objectFit: 'cover', borderRadius: '1.2rem' }} />
+                        <Col md={4} key={item.id} className="mb-4">
+                          <div className="border rounded-4 p-3 text-center h-100 shadow-sm bg-light d-flex flex-column justify-content-between transition-all hover-scale">
+                            <Image
+                              src={item.image}
+                              style={{
+                                height: 100,
+                                objectFit: 'cover',
+                                borderRadius: '1rem'
+                              }}
+                            />
                             <div className="mt-2 fw-bold">{item.name}</div>
+                            <div className="text-muted small mb-2">Ar {item.price.toLocaleString()}</div>
                             <Button
-                              variant="outline-success"
+                              variant="outline-primary"
                               size="sm"
                               className="rounded-pill"
                               onClick={() => handleAddExtra(activeTab, item)}
                             >
-                              Ajouter
+                              + Ajouter
                             </Button>
                           </div>
                         </Col>
@@ -117,9 +166,13 @@ const CommandePopup = ({ show, onClose, selectedMenus }) => {
           </Row>
 
           <div className="d-flex justify-content-end mt-4">
-            <Button onClick={handleConfirm} className="rounded-pill px-4" style={{ backgroundColor: '#2C5530', border: 'none' }}>
+            <Button
+              onClick={handleConfirm}
+              className="rounded-pill px-4 py-2 fw-bold"
+              style={{ backgroundColor: '#4CAF50', border: 'none' }}
+            >
               <i className="bi bi-check-circle me-2"></i>
-              Effectuer la commande
+              Valider la commande
             </Button>
           </div>
         </div>

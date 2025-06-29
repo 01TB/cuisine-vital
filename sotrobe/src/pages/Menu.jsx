@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import CommandePopup from '../components/CommandePopup';
 import menu1 from '../assets/ravitoto-sy-henakisoa.png';
+import menu2 from '../assets/salade.png';
 import menu3 from '../assets/poulet-sy-voanjo.jpg';
 import '../styles/Menu.css';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
@@ -16,6 +17,7 @@ const allMenus = [
     id: 2,
     title: 'Romazava Royal',
     description: 'Bouillon aux brèdes, viande tendre et épices locales.',
+    image: menu2,
   },
   {
     id: 3,
@@ -33,6 +35,7 @@ const allMenus = [
     id: 5,
     title: 'Romazava Royal',
     description: 'Bouillon aux brèdes, viande tendre et épices locales.',
+    image: menu2,
   },
   {
     id: 6,
@@ -50,6 +53,7 @@ const allMenus = [
     id: 8,
     title: 'Romazava Royal',
     description: 'Bouillon aux brèdes, viande tendre et épices locales.',
+    image: menu2,
   },
   {
     id: 9,
@@ -71,11 +75,9 @@ const Menu = () => {
     }, 500);
   }, []);
 
-  const handleSelect = (menuId) => {
+  const handleSelect = (menu) => {
     setSelectedMenus((prev) =>
-      prev.includes(menuId)
-        ? prev.filter((id) => id !== menuId)
-        : [...prev, menuId]
+        [...prev, menu]
     );
   };
 
@@ -107,12 +109,18 @@ const Menu = () => {
         {filteredMenus.map(menu => (
           <Col key={menu.id} xs={12} sm={6} md={4} lg={3}>
             <div className="menu-grid-card-square position-relative">
-              <Form.Check
+            <div className="menu-grid-checkbox-wrapper">
+              <input
                 type="checkbox"
-                className="menu-grid-checkbox"
+                id={`check-${menu.id}`}
+                className="menu-grid-checkbox visually-hidden"
                 checked={selectedMenus.includes(menu.id)}
-                onChange={() => handleSelect(menu.id)}
+                onChange={() => handleSelect(menu)}
               />
+              <label htmlFor={`check-${menu.id}`} className={`menu-grid-checkbox-icon ${selectedMenus.includes(menu.id) ? 'selected' : ''}`}>
+                <i className="bi bi-check-circle-fill"></i>
+              </label>
+            </div>
               {menu.image ? (
                 <img
                   src={menu.image}
