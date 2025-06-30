@@ -29,15 +29,15 @@ export class AdminService {
 
     const client = await this.clientsRepository.findOneBy({ id: clientId });
     if (!client) {
-      throw new NotFoundException(`Client with ID ${clientId} not found.`);
+      throw new NotFoundException(`Client avec l'ID ${clientId} non trouvé.`);
     }
     if (client.typeClient !== 'entreprise') {
-      throw new BadRequestException(`Client with ID ${clientId} is not of type "entreprise".`);
+      throw new BadRequestException(`Client avec l'ID ${clientId} n'est pas de type "entreprise".`);
     }
 
     const typeAbonnement = await this.typesAbonnementRepository.findOneBy({ id: typeAbonnementId });
     if (!typeAbonnement) {
-      throw new NotFoundException(`Subscription type with ID ${typeAbonnementId} not found.`);
+      throw new NotFoundException(`Type Abonnement avec ID ${typeAbonnementId} non trouvé.`);
     }
 
     const newAbonnement = this.abonnementsRepository.create({

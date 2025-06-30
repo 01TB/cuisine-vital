@@ -1,0 +1,151 @@
+Je souhaite implémenter des fonctionnalités dans le back-end de mon application.
+En utilisant :
+    - admin.controller.ts
+    - admin.service.ts
+    - admin.module.ts
+Fais aussi usage de dto si nécessaire, comme pour :
+    - create-abonnement.dto.ts
+    - update-abonnement.dto.ts
+
+Permet la gestion de commandes entreprise en permettant un CRUD des commandes entreprise à partir des fichiers :  
+    - CommandesEntreprises.ts
+    - Abonnements.ts
+    - StatutsCommande.ts
+    - Clients.ts
+        - où type_client = "entreprise"
+    - TypesAbonnement.ts
+
+J'ai aussi des fonctions Postgres si nécessaire (elles sont déjà dans la base) : 
+    -- Trigger pour générer automatiquement les numéros de commande
+    CREATE OR REPLACE FUNCTION generer_numero_commande_auto()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        IF NEW.numero_commande IS NULL OR NEW.numero_commande = '' THEN
+            NEW.numero_commande := generer_numero_commande(
+                CASE 
+                    WHEN TG_TABLE_NAME = 'commandes_individuelles' THEN 'INDIVIDUELLE'
+                    WHEN TG_TABLE_NAME = 'commandes_entreprises' THEN 'ENTREPRISE'
+                    ELSE 'COMMANDE'
+                END
+            );
+        END IF;
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE TRIGGER trigger_numero_commande_ent
+    BEFORE INSERT ON commandes_entreprises
+    FOR EACH ROW
+    EXECUTE FUNCTION generer_numero_commande_auto();
+
+    -- Fonction pour générer un numéro de commande unique
+    CREATE OR REPLACE FUNCTION generer_numero_commande(p_type VARCHAR)
+    RETURNS VARCHAR(20) AS $$
+    DECLARE
+        numero VARCHAR(20);
+        prefix VARCHAR(5);
+        sequence_num INTEGER;
+    BEGIN
+        prefix := CASE 
+            WHEN p_type = 'INDIVIDUELLE' THEN 'IND'
+            WHEN p_type = 'ENTREPRISE' THEN 'ENT'
+            ELSE 'CMD'
+        END;
+        
+        sequence_num := EXTRACT(EPOCH FROM NOW())::INTEGER % 1000000;
+        numero := prefix || TO_CHAR(CURRENT_DATE, 'YYYYMMDD') || LPAD(sequence_num::TEXT, 6, '0');
+        
+        RETURN numero;
+    END;
+    $$ LANGUAGE plpgsql;
+
+Voici la structure du dossier src : 
+
+    src
+    │   app.controller.spec.ts
+    │   app.controller.ts
+    │   app.module.ts
+    │   app.service.ts
+    │   main.ts
+    │   test.ts
+    │
+    ├───admin
+    │   │   admin.controller.spec.ts
+    │   │   admin.controller.ts
+    │   │   admin.module.ts
+    │   │   admin.service.spec.ts
+    │   │   admin.service.ts
+    │   │
+    │   └───dto
+    │           create-abonnement.dto.ts
+    │           update-abonnement.dto.ts
+    │
+    ├───chef-cuisinier
+    │       chef-cuisinier.controller.spec.ts
+    │       chef-cuisinier.controller.ts
+    │       chef-cuisinier.module.ts
+    │       chef-cuisinier.service.spec.ts
+    │       chef-cuisinier.service.ts
+    │
+    ├───client
+    │       client.controller.spec.ts
+    │       client.controller.ts
+    │       client.module.ts
+    │       client.service.spec.ts
+    │       client.service.ts
+    │
+    ├───cuisinier
+    │       cuisinier.controller.spec.ts
+    │       cuisinier.controller.ts
+    │       cuisinier.module.ts
+    │       cuisinier.service.spec.ts
+    │       cuisinier.service.ts
+    │
+    ├───entities
+    │       Abonnements.ts
+    │       Accompagnements.ts
+    │       AccompagnementTypeAbonnement.ts
+    │       Alertes.ts
+    │       Boissons.ts
+    │       BonsCommande.ts
+    │       Clients.ts
+    │       ClientsIndividuelsFideles.ts
+    │       CommandesEntreprises.ts
+    │       CommandesEntreprisesDetails.ts
+    │       CommandesIndividuelles.ts
+    │       CommandesIndividuellesDetails.ts
+    │       CritereFidelite.ts
+    │       entities.txt
+    │       ExemplairesIngredient.ts
+    │       FacturesEntreprises.ts
+    │       FacturesEntreprisesDetails.ts
+    │       FacturesIndividuelles.ts
+    │       FacturesIndividuellesDetails.ts
+    │       Ingredients.ts
+    │       LivraisonsEntreprises.ts
+    │       LivraisonsIndividuelles.ts
+    │       Menus.ts
+    │       MenusFavoris.ts
+    │       MenuTypeAbonnement.ts
+    │       MouvementsStock.ts
+    │       PaiementsEntreprises.ts
+    │       PaiementsIndividuels.ts
+    │       PlanningProduction.ts
+    │       Recettes.ts
+    │       Reduction.ts
+    │       Roles.ts
+    │       Salaires.ts
+    │       SelectionsHebdomadaires.ts
+    │       Sessions.ts
+    │       SpatialRefSys.ts
+    │       StatutsCommande.ts
+    │       TypesAbonnement.ts
+    │       Utilisateurs.ts
+    │       ZonesLivraison.ts
+    │
+    └───livreur
+            livreur.controller.spec.ts
+            livreur.controller.ts
+            livreur.module.ts
+            livreur.service.spec.ts
+            livreur.service.ts
