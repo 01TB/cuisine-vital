@@ -21,6 +21,8 @@ import { LivraisonsEntreprises } from "./LivraisonsEntreprises";
   unique: true,
 })
 @Index("idx_commandes_ent_statut", ["statutId"], {})
+// Ajoutez un index pour le livreur pour optimiser les recherches
+@Index("idx_commandes_ent_livreur", ["livreurId"], {}) 
 @Entity("commandes_entreprises", { schema: "public" })
 export class CommandesEntreprises {
   @Column("uuid", {
@@ -45,6 +47,11 @@ export class CommandesEntreprises {
 
   @Column("integer", { name: "statut_id" })
   statutId: number;
+
+  // --- AJOUT DE LA COLONNE MANQUANTE ---
+  @Column("uuid", { name: "livreur_id", nullable: true })
+  livreurId: string | null;
+  // ------------------------------------
 
   @Column("timestamp without time zone", {
     name: "date_commande",
