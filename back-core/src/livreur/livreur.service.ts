@@ -4,8 +4,7 @@ import { CommandesEntreprises } from '../entities/CommandesEntreprises';
 import { CommandesIndividuelles } from '../entities/CommandesIndividuelles';
 import { In, Repository } from 'typeorm';
 
-// C'est une bonne pratique de définir une interface ou une classe (DTO)
-// pour la structure de la réponse.
+// L'interface DTO est réutilisable pour toutes les listes de commandes
 export interface CommandeLivreurDto {
   id: string;
   type: 'individuelle' | 'entreprise';
@@ -15,11 +14,11 @@ export interface CommandeLivreurDto {
   montantTotal: string;
   client: {
     id: string;
-    nom: string; // Supposons que l'entité Client a une propriété 'nom'
+    nom: string;
   };
   statut: {
     id: number;
-    libelle: string; // Supposons que l'entité StatutCommande a 'libelle'
+    libelle: string;
   };
 }
 
@@ -33,80 +32,92 @@ export class LivreurService {
   ) {}
 
   /**
-   * Récupère toutes les commandes (individuelles et entreprises) assignées à un livreur
-   * et qui sont prêtes à être livrées ou en cours de livraison.
+   * Récupère les commandes assignées à un livreur qui sont prêtes à être livrées.
    * @param livreurId L'ID de l'utilisateur livreur
    */
   async getCommandesALivrer(livreurId: string): Promise<CommandeLivreurDto[]> {
-    // --- IMPORTANT ---
-    // Définissez ici les ID des statuts qui signifient "à livrer".
-    // Vous devez trouver ces IDs dans votre table `statuts_commande`.
-    // Par exemple: 2 = "Prête à être livrée", 3 = "En cours de livraison"
-    const STATUTS_A_LIVRER = [2, 3];
+    // ▼▼▼ IMPORTANT ▼▼▼
+    // Définissez ici les IDs des statuts qui signifient "à livrer".
+    // Par exemple: 2 = "Prête à être livrée"
+    const STATUTS_A_LIVRER = [2]; 
+    return this.findCommandesByStatuts(livreurId, STATUTS_A_LIVRER);
+  }
+
+  /**
+   * NOUVELLE FONCTION
+   * Récupère les commandes assignées à un livreur qui sont actuellement en cours de livraison.
+   * @param livreurId L'ID de l'utilisateur livreur
+   */
+  async getCommandesEnCours(livreurId: string): Promise<CommandeLivreurDto[]> {
+    // ▼▼▼ IMPORTANT ▼▼▼
+    // Définissez ici l'ID du statut qui signifie "en cours de livraison".
+    // Par exemple: 3 = "En cours de livraison"
+    const STATUTS_EN_COURS = [3];
+    return this.findCommandesByStatuts(livreurId, STATUTS_EN_COURS);
+  }
+
+
+  /**
+   * MÉTHODE PRIVÉE REFACTORISÉE
+   * Moteur de recherche pour trouver les commandes (individuelles et entreprises) d'un livreur
+   * en fonction d'une liste de statuts.
+   * @param livreurId L'ID du livreur
+   * @param statutIds Un tableau d'IDs de statuts à rechercher
+   */
+  private async findCommandesByStatuts(livreurId: string, statutIds: number[]): Promise<CommandeLivreurDto[]> {
+    if (!statutIds || statutIds.length === 0) {
+        return [];
+    }
 
     const [commandesIndividuelles, commandesEntreprises] = await Promise.all([
-      // Récupérer les commandes individuelles
       this.commandesIndRepo.find({
         where: {
           livreurId: livreurId,
-          statutId: In(STATUTS_A_LIVRER),
-          deletedAt: null, // S'assurer de ne pas prendre les commandes supprimées
+          statutId: In(statutIds),
+          deletedAt: null,
         },
-        // 'relations' permet de charger les entités liées (client, statut) en une seule requête.
         relations: ['client', 'statut'], 
       }),
-      // Récupérer les commandes d'entreprise
       this.commandesEntRepo.find({
         where: {
           livreurId: livreurId,
-          statutId: In(STATUTS_A_LIVRER),
+          statutId: In(statutIds),
           deletedAt: null,
         },
         relations: ['client', 'statut'],
       }),
     ]);
     
-    // On formate les commandes individuelles pour avoir une réponse standard
-    const commandesIndividuellesDto: CommandeLivreurDto[] = commandesIndividuelles.map((cmd) => ({
-        id: cmd.id,
-        type: 'individuelle',
-        numeroCommande: cmd.numeroCommande,
-        dateLivraison: cmd.dateLivraison,
-        adresseLivraison: cmd.adresseLivraison,
-        montantTotal: cmd.montantTotal,
-        client: {
-            id: (cmd.client as any).id,
-            nom: (cmd.client as any).nom, // Adaptez avec le vrai nom du champ
-        },
-        statut: {
-            id: (cmd.statut as any).id,
-            libelle: (cmd.statut as any).libelle, // Adaptez avec le vrai nom du champ
-        }
-    }));
-    
-    // On fait de même pour les commandes d'entreprise
-    const commandesEntreprisesDto: CommandeLivreurDto[] = commandesEntreprises.map((cmd) => ({
-        id: cmd.id,
-        type: 'entreprise',
-        numeroCommande: cmd.numeroCommande,
-        dateLivraison: cmd.dateLivraison,
-        adresseLivraison: cmd.adresseLivraison,
-        montantTotal: cmd.montantTotal,
-        client: {
-            id: (cmd.client as any).id,
-            nom: (cmd.client as any).nom, // Adaptez avec le vrai nom du champ
-        },
-        statut: {
-            id: (cmd.statut as any).id,
-            libelle: (cmd.statut as any).libelle, // Adaptez avec le vrai nom du champ
-        }
-    }));
+    const commandesIndividuellesDto: CommandeLivreurDto[] = commandesIndividuelles.map((cmd) => this.formatToDto(cmd, 'individuelle'));
+    const commandesEntreprisesDto: CommandeLivreurDto[] = commandesEntreprises.map((cmd) => this.formatToDto(cmd, 'entreprise'));
 
-    // On combine les deux listes et on les trie par date de livraison
     const toutesLesCommandes = [...commandesIndividuellesDto, ...commandesEntreprisesDto];
 
     return toutesLesCommandes.sort((a, b) => 
         new Date(a.dateLivraison).getTime() - new Date(b.dateLivraison).getTime()
     );
+  }
+
+  /**
+   * MÉTHODE PRIVÉE D'AIDE
+   * Formate une entité de commande en DTO standard.
+   */
+  private formatToDto(commande: CommandesIndividuelles | CommandesEntreprises, type: 'individuelle' | 'entreprise'): CommandeLivreurDto {
+    return {
+        id: commande.id,
+        type: type,
+        numeroCommande: commande.numeroCommande,
+        dateLivraison: commande.dateLivraison,
+        adresseLivraison: commande.adresseLivraison,
+        montantTotal: commande.montantTotal,
+        client: {
+            id: (commande.client as any).id,
+            nom: (commande.client as any).nom, // Adaptez avec le vrai nom du champ
+        },
+        statut: {
+            id: (commande.statut as any).id,
+            libelle: (commande.statut as any).libelle, // Adaptez avec le vrai nom du champ
+        }
+    }
   }
 }
