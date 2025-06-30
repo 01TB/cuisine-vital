@@ -7,26 +7,30 @@ import { CommandesEntreprises } from '../entities/CommandesEntreprises';
 import { CommandeType } from './enums/commande-type.enum';
 import { CommandeHistoriqueView } from '../entities/commande-historique.view.entity';
 import { Menus } from '../entities/Menus';
+import { Recettes } from '../entities/Recettes';
 
 
 @Injectable()
 export class CuisinierService {
     constructor(
         @InjectRepository(CommandeStatutView)
-        private readonly commandeStatutViewRepository: Repository<CommandeStatutView>,
+        private  commandeStatutViewRepository: Repository<CommandeStatutView>,
 
         @InjectRepository(CommandesIndividuelles)
-        private readonly commandesIndividuellesRepository: Repository<CommandesIndividuelles>,
+        private  commandesIndividuellesRepository: Repository<CommandesIndividuelles>,
 
         @InjectRepository(CommandesEntreprises)
-        private readonly commandesEntreprisesRepository: Repository<CommandesEntreprises>,
+        private  commandesEntreprisesRepository: Repository<CommandesEntreprises>,
 
         @InjectRepository(CommandeHistoriqueView)
-        private readonly historiqueRepository: Repository<CommandeHistoriqueView>,
+        private  historiqueRepository: Repository<CommandeHistoriqueView>,
 
 
         @InjectRepository(Menus)
-        private readonly menuRepository: Repository<Menus>,
+        private  menuRepository: Repository<Menus>,
+
+        @InjectRepository(Recettes)
+        private recettesRepository: Repository<Recettes>,
     ) { }
 
 
@@ -75,7 +79,22 @@ export class CuisinierService {
     }
 
 
+    async findAllRecettes(): Promise<Recettes[]> {
+        return this.recettesRepository.find({
+            relations: ['ingredient', 'menu'],
+        });
+    }
 
-    
 
+    async updateMenu(id: number, updateData: Partial<Menus>): Promise<Menus> {
+        const menuToUpdate = await this.menuRepository.findOneBy({ id });
+
+        if (!menuToUpdate) {
+            throw new NotFoundException(`Le menu avec l'ID "${id}" n'a pas été trouvé.`);
+        }
+        
+        const updatedMenu = Object.assign(menuToUpdate, updateData);
+
+        return this.menuRepository.save(updatedMenu);
+    }
 }

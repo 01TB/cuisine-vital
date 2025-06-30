@@ -1,6 +1,7 @@
-import { BadRequestException, Body, Controller, Get, Param, ParseUUIDPipe, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, ParseUUIDPipe, Post, Query } from '@nestjs/common';
 import { CuisinierService } from './cuisinier.service';
 import { CommandeType } from './enums/commande-type.enum';
+import { Menus } from '../entities/Menus';
 
 @Controller('cuisinier')
 export class CuisinierController {
@@ -37,6 +38,20 @@ export class CuisinierController {
     @Get('commandes/historique')
     getHistoriqueComplet() {
         return this.commandeService.findHistoriqueComplet();
+    }
+
+
+    @Get('recettes')
+    findAllRecettes() {
+        return this.commandeService.findAllRecettes();
+    }
+
+    @Post('menus/:id')
+    updateMenu(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() body: Partial<Menus>, 
+    ) {
+        return this.commandeService.updateMenu(id, body);
     }
 
 }

@@ -9,11 +9,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class LivreurService {
     constructor(
         @InjectRepository(CommandesIndividuelles)
-        private readonly commandesIndividuellesRepo: Repository<CommandesIndividuelles>,
-
+        private  commandesIndividuellesRepo: Repository<CommandesIndividuelles>,
 
         @InjectRepository(CommandesEntreprises)
-        private readonly commandesEntreprisesRepo: Repository<CommandesEntreprises>,
+        private  commandesEntreprisesRepo: Repository<CommandesEntreprises>,
     ) {}
 
 
