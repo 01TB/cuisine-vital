@@ -4,6 +4,7 @@ import { Roles } from '../entities/Roles';
 import { Repository } from 'typeorm';
 import { CommandeStatutView } from '../entities/commande-statut-view.entity';
 import { HistoriqueCommandesView } from '../entities/historique-commandes-view.entity';
+import { BonsCommande } from '../entities/BonsCommande';
 
 @Injectable()
 export class AdminService {
@@ -15,7 +16,11 @@ export class AdminService {
         private readonly commandeStatutViewRepository: Repository<CommandeStatutView>,
 
         @InjectRepository(HistoriqueCommandesView) 
-        private readonly historiqueCommandesViewRepository: Repository<HistoriqueCommandesView>
+        private readonly historiqueCommandesViewRepository: Repository<HistoriqueCommandesView>,
+
+        @InjectRepository(BonsCommande)
+        private readonly BonsCommandeRepository : Repository<BonsCommande>,
+
     ){}
 
 
@@ -43,6 +48,10 @@ export class AdminService {
           return []; 
         }
         return historique;
-      }
+    }
+
+    async getBonsCommandes() {
+      return this.BonsCommandeRepository.find();
+    }
 
 }

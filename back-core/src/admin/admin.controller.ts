@@ -19,5 +19,10 @@ export class AdminController {
     }
 
 
+    @Get('commandes/bonsCommandes')
+    async getBonsCommandes() {
+        return this.adminService.getBonsCommandes();
+    }
+    
 
 }

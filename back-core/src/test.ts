@@ -16,7 +16,8 @@ async function bootstrap() {
   //test princi
   // const p1 = await adminService.getOrderStatusSummary();
   // console.log('▶ Liste des statuts de commandes :', p1);
-  const p2 = await adminService.getCommandesHistory();
+  
+  const p2 = await adminService.getBonsCommandes();
   console.log('▶ Historique des commandes :', p2);
 
   await app.close();

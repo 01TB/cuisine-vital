@@ -8,13 +8,12 @@ commandes/historique
 Filtres : Par date, par statut, par type de client, etc., en les passant comme query parameters dans l'URL.
 Recherche : Pour trouver une commande par son numéro ou le nom du client.)
 
+3-Usage de bon de commande :
 
-3-Usage de bon de commande 
-
-Interface de production : écran en cuisine montrant les commandes en cours
-Suivi de la production : temps de préparation par plat et par cuisinier
-Alerte si temps de préparation dépassé de 50%.
-Estimation de temps de préparation par plat pour planification
+4-Interface de production : écran en cuisine montrant les commandes en cours
+5-Suivi de la production : temps de préparation par plat et par cuisinier
+6-Alerte si temps de préparation dépassé de 50%.
+7-Estimation de temps de préparation par plat pour planification
 
 Attribution des livraisons
 Suivi GPS en temps réel
