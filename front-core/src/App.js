@@ -9,10 +9,11 @@ import Menu from './pages/Menu';
 import Livraisons from './pages/Livraisons';
 import Facturation from './pages/Facturation';
 import KitchenManagement from './pages/KitchenManagement';
-import Ingredients from './pages/Ingredients'; // ← Décommentez cette ligne
+import Ingredients from './pages/Ingredients';
 import Statistics from './pages/Statistics';
 import Settings from './pages/Settings';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Overview from './components/Overview';
 
 function App() {
   return (
@@ -20,19 +21,32 @@ function App() {
       <AdminNavbar />
       <div style={{ marginTop: '70px' }}>
         <Routes>
+          {/* Redirection racine */}
           <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
-          <Route path="/admin/dashboard" element={<Dashboard />} />
+
+          {/* Route principale avec layout Dashboard */}
+          <Route path="/admin/dashboard" element={<Dashboard />}>
+            {/* Sous-routes rendues dans <Outlet /> de Dashboard */}
+            <Route path="overview" element={<Overview />}>
+              <Route path="commandes" element={<Commandes />} />
+              <Route path="gestion-menu" element={<Menu />} />
+              <Route path="gestion-menu/plats" element={<Menu />} />
+              <Route path="gestion-menu/categories" element={<Menu />} />
+              <Route path="gestion-menu/nouveau-plat" element={<Menu />} />
+              <Route path="gestion-menu/promotions" element={<Menu />} />
+              <Route path="gestion-cuisine" element={<KitchenManagement />} />
+              <Route path="ingredients" element={<Ingredients />} />
+              <Route path="statistiques" element={<Statistics />} />
+              <Route path="parametres" element={<Settings />} />
+            </Route>
+          </Route>
+
+          {/* Autres routes à plat */}
           <Route path="/admin/abonnements" element={<Abonnements />} />
-          <Route path="/admin/commandes" element={<Commandes />} />
           <Route path="/admin/clients" element={<Clients />} />
           <Route path="/admin/stocks" element={<Stocks />} />
-          <Route path="/admin/menu" element={<Menu />} />
           <Route path="/admin/livraisons" element={<Livraisons />} />
           <Route path="/admin/facturation" element={<Facturation />} />
-          <Route path="/admin/kitchen" element={<KitchenManagement />} />
-          <Route path="/admin/ingredients" element={<Ingredients />} />
-          <Route path="/admin/statistics" element={<Statistics />} />
-          <Route path="/admin/settings" element={<Settings />} />
         </Routes>
       </div>
     </Router>
