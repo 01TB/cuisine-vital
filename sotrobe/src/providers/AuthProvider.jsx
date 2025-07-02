@@ -5,17 +5,24 @@ import { AuthContext } from '../context/AuthContext';
 
 export function AuthProvider({ children })
 {
+    const [isAuthentified, setIsAuthentified] = useState(false);
     const [user, setUser] = useState(null);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            api.get('/users/me')
-            .then(res => setUser(res.data))
+            api.get('/client/auth')
+            .then((res) => { 
+                setUser(res.data) 
+                setIsAuthentified(true);
+            })
             .catch(() => {
                 localStorage.removeItem('token');
                 setUser(null);
+                setIsAuthentified(false);
             });
+        } else {
+
         }
     }, []);
 
@@ -25,8 +32,10 @@ export function AuthProvider({ children })
             const { access_token, user } = response.data;
             localStorage.setItem('token', access_token);
             setUser(user);
+            setIsAuthentified(true);
         } catch (error) {
             console.error("Erreur de login", error);
+            setIsAuthentified(false);
             throw error;
         }
     }
@@ -35,10 +44,11 @@ export function AuthProvider({ children })
     {
         localStorage.removeItem('token');
         setUser(null);
+        setIsAuthentified(false);
     }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, isAuthentified }}>
       {children}
     </AuthContext.Provider>
   );
