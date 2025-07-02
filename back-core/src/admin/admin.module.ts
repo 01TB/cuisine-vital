@@ -8,12 +8,11 @@ import { HistoriqueCommandesView } from '../entities/historique-commandes-view.e
 import { BonsCommande } from '../entities/BonsCommande';
 import { PaiementsIndividuels } from '../entities/PaiementsIndividuels';
 import { PaiementsEntreprises } from '../entities/PaiementsEntreprises';
-
-
-
+import { Salaires } from '../entities/Salaires';
+import { Ingredients } from '../entities/Ingredients';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Roles, CommandeStatutView, HistoriqueCommandesView, BonsCommande, PaiementsIndividuels, PaiementsEntreprises])],
+  imports: [TypeOrmModule.forFeature([Roles, CommandeStatutView, HistoriqueCommandesView, BonsCommande, PaiementsIndividuels, PaiementsEntreprises, Salaires, Ingredients])],
   controllers: [AdminController],
   providers: [AdminService]
 })

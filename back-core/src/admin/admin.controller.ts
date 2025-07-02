@@ -39,5 +39,19 @@ export class AdminController {
         return this.adminService.getTopMenu(dateDebut,dateFin);
     }
     
+    @Get('stats/total-depense')
+    async getTotalDepenses(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
+        return this.adminService.getTotalDepenses(dateDebut,dateFin);
+    }
+
+    @Get('stats/top/clients/individuel')
+    async getTopClientsIndividuels(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
+        return this.adminService.getTopClientsIndividuels(dateDebut,dateFin);
+    }
+
+    @Get('stats/top/clients/entreprise')
+    async getTopClientsEntreprises(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
+        return this.adminService.getTopClientsEntreprises(dateDebut,dateFin);
+    }
 
 }

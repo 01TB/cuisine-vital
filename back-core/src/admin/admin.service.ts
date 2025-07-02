@@ -7,6 +7,8 @@ import { HistoriqueCommandesView } from '../entities/historique-commandes-view.e
 import { BonsCommande } from '../entities/BonsCommande';
 import { PaiementsEntreprises } from '../entities/PaiementsEntreprises';
 import { PaiementsIndividuels } from '../entities/PaiementsIndividuels';
+import { Salaires } from '../entities/Salaires';
+import { Ingredients } from '../entities/Ingredients';
 
 @Injectable()
 export class AdminService {
@@ -28,6 +30,12 @@ export class AdminService {
 
         @InjectRepository(PaiementsIndividuels)
         private readonly paiementIndividuelsRepository : Repository<PaiementsIndividuels>,
+
+        @InjectRepository(Salaires)
+        private readonly salaireRepository: Repository<Salaires>,
+
+        @InjectRepository(Ingredients)
+        private readonly ingredientRepository: Repository<Ingredients>,
 
     ){}
 
@@ -102,4 +110,50 @@ export class AdminService {
     
       return topMenu;
     }
+
+    async getTotalDepenses(dateDebut: Date, dateFin: Date) {
+        const totalSalaires = await this.salaireRepository
+          .createQueryBuilder('salaire')
+          .select('SUM(salaire.montant)', 'total_salaires')
+          .where('salaire.date_paiement BETWEEN :dateDebut AND :dateFin', { dateDebut, dateFin })
+          .getRawOne();
+      
+        const totalCoutsIngredients = await this.ingredientRepository
+          .createQueryBuilder('ingredient')
+          .select('SUM(ingredient.cout)', 'total_couts_ingredients')
+          .where('ingredient.date_achat BETWEEN :dateDebut AND :dateFin', { dateDebut, dateFin })
+          .getRawOne();
+      
+        return {
+          total_depenses: (totalSalaires.total_salaires || 0) + (totalCoutsIngredients.total_couts_ingredients || 0),
+        };
+      }
+      
+      async getTopClientsIndividuels(dateDebut: Date, dateFin: Date) {
+        const topClients = await this.paiementIndividuelsRepository
+          .createQueryBuilder('paiement')
+          .select('paiement.id_client', 'id_client')
+          .addSelect('SUM(paiement.montant)', 'total_depenses')
+          .where('paiement.date_paiement BETWEEN :dateDebut AND :dateFin', { dateDebut, dateFin })
+          .groupBy('paiement.id_client')
+          .orderBy('total_depenses', 'DESC')
+          .limit(5)
+          .getRawMany();
+      
+        return topClients;
+      }
+      
+      async getTopClientsEntreprises(dateDebut: Date, dateFin: Date) {
+        const topClients = await this.paiementEntreprisesRepository
+          .createQueryBuilder('paiement')
+          .select('paiement.id_client', 'id_client')
+          .addSelect('SUM(paiement.montant)', 'total_depenses')
+          .where('paiement.date_paiement BETWEEN :dateDebut AND :dateFin', { dateDebut, dateFin })
+          .groupBy('paiement.id_client')
+          .orderBy('total_depenses', 'DESC')
+          .limit(5)
+          .getRawMany();
+      
+        return topClients;
+      }
 }
