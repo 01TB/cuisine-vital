@@ -23,6 +23,7 @@ function AdminNavbar() {
             <Nav.Link as={Link} to="/admin/ingredients" className="text-dark">Ingrédients</Nav.Link>
             <Nav.Link as={Link} to="/admin/statistics" className="text-dark">Statistiques & Analyses</Nav.Link>
             <Nav.Link as={Link} to="/admin/settings" className="text-dark">Paramètres</Nav.Link>
+            <Nav.Link as={Link} to="/admin/gestionTrajet" className="text-dark">Gestion trajet</Nav.Link>
           </Nav>
 
           {/* Barre de recherche et actions */}
