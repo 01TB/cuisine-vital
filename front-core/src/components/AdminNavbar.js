@@ -15,31 +15,10 @@ function AdminNavbar() {
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          {/* Navigation principale */}
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/admin/commandes" className="text-dark">Commandes</Nav.Link>
-            <Nav.Link as={Link} to="/admin/menu" className="text-dark">Gestion du menu</Nav.Link>
-            <Nav.Link as={Link} to="/admin/kitchen" className="text-dark">Gestion de la cuisine</Nav.Link>
-            <Nav.Link as={Link} to="/admin/ingredients" className="text-dark">Ingrédients</Nav.Link>
-            <Nav.Link as={Link} to="/admin/statistics" className="text-dark">Statistiques & Analyses</Nav.Link>
-            <Nav.Link as={Link} to="/admin/settings" className="text-dark">Paramètres</Nav.Link>
-          </Nav>
 
-          {/* Barre de recherche et actions */}
-          <div className="d-flex align-items-center">
-            {/* Barre de recherche */}
-            <div className="position-relative me-3">
-              <input
-                type="text"
-                className="form-control pe-5"
-                placeholder="Rechercher..."
-                style={{ width: '250px' }}
-              />
-              <FiSearch 
-                className="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" 
-                size={18}
-              />
-            </div>
+          {/*Actions */}
+          <div className="d-flex align-items-center ms-auto">
+
 
             {/* Notifications */}
             <button className="btn btn-light btn-sm me-2 position-relative">
@@ -54,7 +33,7 @@ function AdminNavbar() {
               <Dropdown.Toggle variant="light" id="dropdown-basic" className="btn-sm d-flex align-items-center">
                 <img 
                   src="/api/placeholder/32/32" 
-                  alt="Profile" 
+                  alt="" 
                   className="rounded-circle me-2"
                   style={{ width: '32px', height: '32px' }}
                 />
