@@ -1,4 +1,4 @@
-import { Controller , Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { AdminService } from './admin.service';
 @Controller('admin')
 export class AdminController {
@@ -22,6 +22,21 @@ export class AdminController {
     @Get('commandes/bonsCommandes')
     async getBonsCommandes() {
         return this.adminService.getBonsCommandes();
+    }
+
+    @Get('stats/chiffres-affaire')
+    async getChiffreAffaires(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
+        return this.adminService.getChiffreAffaires(dateDebut,dateFin);
+    }
+
+    @Get('commandes/en-cours/nb')
+    async getNombreCommandeEnCours(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
+        return this.adminService.getNombreCommandeEnCours(dateDebut,dateFin);
+    }
+    
+    @Get('stats/top/menus')
+    async getTopMenu(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
+        return this.adminService.getTopMenu(dateDebut,dateFin);
     }
     
 
