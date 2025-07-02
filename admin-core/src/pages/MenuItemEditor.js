@@ -343,41 +343,7 @@ Voir plus..."
                 View Full Nutritional Details <i className="fas fa-chevron-down ms-1"></i>
               </button>
             </div>
-
-            {/* Allergens */}
-            <div className="bg-white rounded-3 shadow-sm p-4">
-              <h6 className="fw-bold mb-3">Allergens</h6>
-              <p className="text-muted small mb-3">Important allergy warnings for customers.</p>
-              
-              <div className="d-flex flex-wrap gap-2 mb-3">
-                <span className="badge bg-light text-dark border">Fish</span>
-                <span className="badge bg-light text-dark border">Soy</span>
-                <span className="badge bg-light text-dark border">Sesame</span>
-                <span className="badge bg-light text-dark border">Egg</span>
-              </div>
-              
-              <button className="btn btn-link btn-sm text-primary p-0">
-                <i className="fas fa-plus me-1"></i>
-                Add/Edit Allergens
-              </button>
-            </div>
           </div>
-        </div>
-
-        {/* Footer with Visily branding */}
-        <div className="p-3 text-center border-top">
-          <small className="text-muted d-flex align-items-center justify-content-center">
-            Made with 
-            <svg className="mx-2" width="60" height="20" viewBox="0 0 60 20" fill="none">
-              <path d="M8 4L12 16H10L9 13H5L4 16H2L6 4H8ZM7 7L5.5 11H8.5L7 7Z" fill="#6366f1"/>
-              <path d="M14 4V16H12V4H14Z" fill="#6366f1"/>
-              <path d="M18 8C18 6.9 18.9 6 20 6C21.1 6 22 6.9 22 8V12C22 13.1 21.1 14 20 14C18.9 14 18 13.1 18 12V8ZM20 8V12H20V8Z" fill="#6366f1"/>
-              <path d="M26 6C27.1 6 28 6.9 28 8V12C28 13.1 27.1 14 26 14C24.9 14 24 13.1 24 12V8C24 6.9 24.9 6 26 6ZM26 8V12H26V8Z" fill="#6366f1"/>
-              <path d="M32 6V14H30V6H32Z" fill="#6366f1"/>
-              <path d="M36 14L40 6H42L37 16H35L32 8V16H30V6H32L36 14Z" fill="#6366f1"/>
-            </svg>
-            Visily
-          </small>
         </div>
       </div>
     </div>
