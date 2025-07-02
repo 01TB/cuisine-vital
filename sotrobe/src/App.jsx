@@ -4,6 +4,7 @@ import MainApp from './pages/MainApp';
 import './App.css';
 import ClientProfile from './pages/ClientProfile';
 import Menu from './pages/Menu';
+import Login from './components/Login';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
               <Route path='menus' element={<Menu/>}></Route>
               <Route path='profile' element={<ClientProfile/>}></Route>
           </Route>
+          <Route path='/login' element={<Login/>}></Route>
         </Routes>
       </Router>
     </div>
