@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ShoppingCart, BarChart3, Menu, ChefHat, Bell, Search, Package, Settings, ChevronRight, ChevronDown } from 'lucide-react';
+import Navbar from './Nav';
 // Correction du chemin CSS - choisissez le bon selon votre structure :
 // Si Dashboard.js est dans src/pages/ et custom.css dans src/styles/ :
 import '../styles/custom.css';
@@ -7,49 +8,6 @@ import '../styles/custom.css';
 // import './styles/custom.css';
 // OU si custom.css est dans public/styles/ :
 // import '../../public/styles/custom.css';
-
-// Composant Navbar (maintenant utilisé)
-const Navbar = () => (
-  <nav className="navbar">
-    <div className="navbar-left">
-      <div className="logo-container">
-        <span className="logo-icon">✕</span>
-        <span className="logo-text">Cuisine Vital'</span>
-      </div>
-      <div className="nav-links">
-        <a href="#commandes" className="nav-link">Commandes</a>
-        <a href="#menu" className="nav-link">Gestion du menu</a>
-        <a href="#cuisine" className="nav-link">Gestion de la cuisine</a>
-        <a href="#ingredients" className="nav-link">Ingrédients</a>
-        <a href="#stats" className="nav-link">Statistiques & Analyses</a>
-        <a href="#settings" className="nav-link">Paramètres</a>
-      </div>
-    </div>
-    <div className="navbar-right">
-      <div className="search-container">
-        <Search size={16} className="search-icon" />
-        <input 
-          type="text" 
-          placeholder="Rechercher..." 
-          className="search-input" 
-        />
-      </div>
-      <div className="notification-container">
-        <Bell className="notification-icon" size={20} />
-      </div>
-      <div className="messages-container">
-        <Package className="messages-icon" size={20} />
-      </div>
-      <div className="user-profile">
-        <img 
-          src="https://via.placeholder.com/32x32/4f46e5/ffffff?text=TB" 
-          alt="Utilisateur" 
-          className="user-avatar" 
-        />
-      </div>
-    </div>
-  </nav>
-);
 
 // Composant Sidebar
 const Sidebar = ({ currentPage, onNavigate }) => {
@@ -263,6 +221,7 @@ const KitchenWorkflow = () => {
 // Composant Dashboard principal
 const Dashboard = () => (
   <div className="dashboard">
+    <Navbar />
     <div className="dashboard-header">
       <h1 className="dashboard-title">Bonjour, Admin!</h1>
       <p className="dashboard-subtitle">Votre journal d'opération pour Cuisine Vital'</p>
