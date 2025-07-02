@@ -46,6 +46,8 @@ import { StatutsCommande } from './entities/StatutsCommande';
 import { TypesAbonnement } from './entities/TypesAbonnement';
 import { Utilisateurs } from './entities/Utilisateurs';
 import { ZonesLivraison } from './entities/ZonesLivraison';
+import { CommandesModule } from './commandes/commandes.module';
+
 
 @Module({
   imports: [
@@ -54,7 +56,7 @@ import { ZonesLivraison } from './entities/ZonesLivraison';
       host: 'localhost',       // ou ton IP ou nom de domaine
       port: 5432,
       username: 'postgres',    // ou ton nom d’utilisateur
-      password: 'postgres',
+      password: 'Fanomezantsoa02',
       database: 'cuisine_db',
       autoLoadEntities: true,  // auto importe les entités
       entities: [                                                                                                                                                          
@@ -105,6 +107,7 @@ import { ZonesLivraison } from './entities/ZonesLivraison';
     ChefCuisinierModule,
     CuisinierModule,
     LivreurModule,
+    CommandesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
