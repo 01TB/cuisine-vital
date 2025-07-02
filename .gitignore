@@ -1,3 +1,5 @@
 /front-core/node_modules
 /front-core/node_modules/.cache
 back-core/.env
+/back-core/node_modules
+back-core/package-lock.json
