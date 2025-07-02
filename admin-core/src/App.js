@@ -12,7 +12,8 @@ import KitchenManagement from './pages/KitchenManagement';
 import Ingredients from './pages/Ingredients'; // ← Décommentez cette ligne
 import Statistics from './pages/Statistics';
 import Settings from './pages/Settings';
-import GestionTrajet from './pages/GestionTrajet'; // ← Décommentez cette ligne
+import GestionTrajet from './pages/GestionTrajet';
+import MenuItemEditor from './pages/MenuItemEditor'; // ← Décommentez cette ligne
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           <Route path="/admin/statistics" element={<Statistics />} />
           <Route path="/admin/settings" element={<Settings />} />
           <Route path="/admin/gestionTrajet" element={<GestionTrajet />} />
+           <Route path="/admin/menu" element={<MenuItemEditor/>} />
         </Routes>
       </div>
     </Router>
