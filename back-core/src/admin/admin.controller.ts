@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Post, Query } from '@nestjs/common';
 import { AdminService } from './admin.service';
 @Controller('admin')
 export class AdminController {
@@ -52,6 +52,35 @@ export class AdminController {
     @Get('stats/top/clients/entreprise')
     async getTopClientsEntreprises(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
         return this.adminService.getTopClientsEntreprises(dateDebut,dateFin);
+    }
+
+    @Get('factures/individuelles')
+    async getFacturesIndividuelles(@Query('dateDebut') dateDebut?: Date  //  Avec les details
+                                , @Query('dateFin') dateFin?: Date
+                                , @Query('clientId') clientId?: string) {
+        return this.adminService.getFacturesIndividuelles(dateDebut,dateFin,clientId);  
+    }
+
+    @Get('factures/entreprises')
+    async getFacturesEntreprises(@Query('dateDebut') dateDebut?: Date    //  Avec les details
+                                , @Query('dateFin') dateFin?: Date
+                                , @Query('clientId') clientId?: string) {
+        return this.adminService.getFacturesEntreprises(dateDebut,dateFin,clientId);
+    }
+
+    @Get('commandes')
+    async getCommande(@Query('commandeId') commandeId: string) {
+        return this.adminService.getCommandeDetails(commandeId);
+    }
+
+    @Post('menu/validate')
+    async validateMenu(@Query('menuId') menuId: number) {
+        return this.adminService.validateMenu(menuId);
+    }
+
+    @Get('stock/mouvement')
+    async getMouvementStock(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
+        return this.adminService.getMouvementStock(dateDebut,dateFin);
     }
 
 }

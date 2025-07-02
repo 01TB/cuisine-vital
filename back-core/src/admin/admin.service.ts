@@ -9,6 +9,10 @@ import { PaiementsEntreprises } from '../entities/PaiementsEntreprises';
 import { PaiementsIndividuels } from '../entities/PaiementsIndividuels';
 import { Salaires } from '../entities/Salaires';
 import { Ingredients } from '../entities/Ingredients';
+import { FacturesIndividuelles } from '../entities/FacturesIndividuelles';
+import { FacturesEntreprises } from '../entities/FacturesEntreprises';
+import { Menus } from '../entities/Menus';
+import { MouvementsStock } from '../entities/MouvementsStock';
 
 @Injectable()
 export class AdminService {
@@ -36,6 +40,18 @@ export class AdminService {
 
         @InjectRepository(Ingredients)
         private readonly ingredientRepository: Repository<Ingredients>,
+
+        @InjectRepository(FacturesIndividuelles)
+        private readonly factureIndividuelleRepository: Repository<FacturesIndividuelles>,
+
+        @InjectRepository(FacturesEntreprises)
+        private readonly factureEntrepriseRepository: Repository<FacturesEntreprises>,
+
+        @InjectRepository(Menus)
+        private readonly menuRepository: Repository<Menus>,
+
+        @InjectRepository(MouvementsStock)
+        private readonly mouvementStockRepository: Repository<MouvementsStock>,
 
     ){}
 
@@ -156,4 +172,69 @@ export class AdminService {
       
         return topClients;
       }
+
+      async getFacturesIndividuelles(dateDebut?: Date, dateFin?: Date, clientId?: string) {
+        const query = this.factureIndividuelleRepository.createQueryBuilder('facture')
+            .leftJoinAndSelect('facture.details', 'details')
+            .leftJoinAndSelect('details.menu', 'menu')
+            .leftJoinAndSelect('details.boisson', 'boisson')
+            .leftJoinAndSelect('details.accompagnement', 'accompagnement');
+    
+        if (dateDebut) {
+            query.andWhere('facture.date_facture >= :dateDebut', { dateDebut });
+        }
+        if (dateFin) {
+            query.andWhere('facture.date_facture <= :dateFin', { dateFin });
+        }
+        if (clientId) {
+            query.andWhere('facture.id_client = :clientId', { clientId });
+        }
+    
+        return query.getMany();
+    }
+    
+    async getFacturesEntreprises(dateDebut?: Date, dateFin?: Date, clientId?: string) {
+        const query = this.factureEntrepriseRepository.createQueryBuilder('facture')
+            .leftJoinAndSelect('facture.details', 'details')
+            .leftJoinAndSelect('details.menu', 'menu')
+            .leftJoinAndSelect('details.boisson', 'boisson')
+            .leftJoinAndSelect('details.accompagnement', 'accompagnement');
+    
+        if (dateDebut) {
+            query.andWhere('facture.date_facture >= :dateDebut', { dateDebut });
+        }
+        if (dateFin) {
+            query.andWhere('facture.date_facture <= :dateFin', { dateFin });
+        }
+        if (clientId) {
+            query.andWhere('facture.id_client = :clientId', { clientId });
+        }
+    
+        return query.getMany();
+    }
+    
+    async getCommandeDetails(commandeId: string) {
+        const commande = await this.historiqueCommandesViewRepository.findOne({ where: { commande_id: commandeId } });
+        if (!commande) {
+            return null;
+        }
+        return commande;
+    }
+    
+    async validateMenu(menuId: number) {
+        const menu = await this.menuRepository.findOne({ where: { id: menuId } });
+        if (!menu) {
+            return null;
+        }
+        // menu.valide = true;
+        return this.menuRepository.save(menu);
+    }
+    
+    async getMouvementStock(dateDebut: Date, dateFin: Date) {
+        const query = this.mouvementStockRepository.createQueryBuilder('mouvement')
+            .leftJoinAndSelect('mouvement.ingredient', 'ingredient')
+            .where('mouvement.date_mouvement BETWEEN :dateDebut AND :dateFin', { dateDebut, dateFin });
+    
+        return query.getMany();
+    }
 }
