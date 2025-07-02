@@ -1,3 +1,4 @@
+//src/App.js
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AdminNavbar from './components/AdminNavbar';
 import Dashboard from './pages/Dashboard';
@@ -14,6 +15,7 @@ import Statistics from './pages/Statistics';
 import Settings from './pages/Settings';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Overview from './components/Overview';
+import HistoriqueCommandes from './pages/historique_commandes';
 
 function App() {
   return (
@@ -27,7 +29,8 @@ function App() {
           {/* Route principale avec layout Dashboard */}
           <Route path="/admin/dashboard" element={<Dashboard />}>
             {/* Sous-routes rendues dans <Outlet /> de Dashboard */}
-            <Route path="overview" element={<Overview />}>
+            <Route path="overview" element={<Overview />}/>
+            
               <Route path="commandes" element={<Commandes />} />
               <Route path="gestion-menu" element={<Menu />} />
               <Route path="gestion-menu/plats" element={<Menu />} />
@@ -37,8 +40,8 @@ function App() {
               <Route path="gestion-cuisine" element={<KitchenManagement />} />
               <Route path="ingredients" element={<Ingredients />} />
               <Route path="statistiques" element={<Statistics />} />
+              <Route path="historique" element={<HistoriqueCommandes />} />
               <Route path="parametres" element={<Settings />} />
-            </Route>
           </Route>
 
           {/* Autres routes à plat */}

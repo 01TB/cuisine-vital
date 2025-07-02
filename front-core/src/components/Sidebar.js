@@ -1,3 +1,4 @@
+import '../styles/custom.css';
 import { NavLink } from 'react-router-dom';
 import {
   ShoppingCart,
@@ -126,6 +127,18 @@ const Sidebar = () => {
         >
           <Settings size={18} className="mr-2" />
           Paramètres
+        </NavLink>
+
+        <NavLink
+          to="/admin/dashboard/historique"
+          className={({ isActive }) =>
+            `flex items-center px-3 py-2 rounded hover:bg-indigo-100 text-sm font-medium ${
+              isActive ? 'bg-indigo-200 text-indigo-800 font-semibold' : 'text-gray-700'
+            }`
+          }
+        >
+          <ShoppingCart size={18} className="mr-2" />
+          Historique des commandes
         </NavLink>
       </nav>
 
