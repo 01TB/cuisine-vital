@@ -28,7 +28,7 @@ function App() {
           <Route path="/admin/commandes" element={<Commandes />} />
           <Route path="/admin/clients" element={<Clients />} />
           <Route path="/admin/stocks" element={<Stocks />} />
-          <Route path="/admin/menu" element={<Menu />} />
+          <Route path="/admin/menus" element={<Menu />} />
           <Route path="/admin/livraisons" element={<Livraisons />} />
           <Route path="/admin/facturation" element={<Facturation />} />
           <Route path="/admin/kitchen" element={<KitchenManagement />} />

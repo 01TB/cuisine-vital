@@ -168,7 +168,7 @@ const GestionTrajet = () => (
                 <a className="nav-link" href="#">Gestion du menu</a>
                 <ul className="nav flex-column ms-3 mt-2">
                   <li className="nav-item">
-                    <a className="nav-link py-1 small" href="/menu">Plats</a>
+                    <a className="nav-link py-1 small" href="menu">Plats</a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link py-1 small" href="#">Catégories</a>
