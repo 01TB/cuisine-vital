@@ -38,6 +38,9 @@ export class Clients {
   @Column("character varying", { name: "email", unique: true, length: 255 })
   email: string;
 
+  @Column("character varying", { name: "mot_de_passe", unique: true, length: 255 })
+  motDePasse: string;
+
   @Column("character varying", {
     name: "telephone",
     nullable: true,

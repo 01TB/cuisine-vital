@@ -38,7 +38,7 @@ export class CommandesIndividuelles {
   numeroCommande: string;
 
   @Column("uuid", { name: "client_id" })
-  clientId: string;
+  clientId: number;
 
   @Column("integer", { name: "statut_id" })
   statutId: number;
@@ -57,10 +57,10 @@ export class CommandesIndividuelles {
   adresseLivraison: string;
 
   @Column("numeric", { name: "montant_total", precision: 10, scale: 2 })
-  montantTotal: string;
+  montantTotal: number;
 
   @Column("uuid", { name: "livreur_id", nullable: true })
-  livreurId: string | null;
+  livreurId: number | null;
 
   @Column("timestamp without time zone", {
     name: "created_at",
