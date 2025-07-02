@@ -47,6 +47,9 @@ import { StatutsCommande } from './entities/StatutsCommande';
 import { TypesAbonnement } from './entities/TypesAbonnement';
 import { Utilisateurs } from './entities/Utilisateurs';
 import { ZonesLivraison } from './entities/ZonesLivraison';
+import { OsrmService } from './osrm/osrm.service';
+import { OsrmController } from './osrm/osrm.controller';
+import { OsrmModule } from './osrm/osrm.module';
 
 @Module({
   imports: [
@@ -107,8 +110,9 @@ import { ZonesLivraison } from './entities/ZonesLivraison';
     ChefCuisinierModule,
     CuisinierModule,
     LivreurModule,
+    OsrmModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, OsrmController],
+  providers: [AppService, OsrmService],
 })
 export class AppModule {}

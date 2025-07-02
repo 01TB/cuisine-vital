@@ -1,0 +1,50 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.controls {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  align-items: center;
+}
+
+.controls select, .controls button {
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: none;
+}
+
+.controls button {
+  background-color: #61dafb;
+  cursor: pointer;
+}
+
+.controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #ff4d4d;
+  margin-top: 10px;
+}
+
+.results {
+  margin: 20px;
+  text-align: left;
+  display: inline-block;
+}
+
+.results ol {
+  padding-left: 20px;
+}
