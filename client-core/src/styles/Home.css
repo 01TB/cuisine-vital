@@ -1,0 +1,324 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.home-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8f9fa 0%, #fff5e1 50%, #ffe8cc 100%);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Hide Header (Menu Bar) */
+.header {
+  display: none;
+}
+
+/* Content Layout */
+.content {
+  display: flex;
+  min-height: calc(100vh - 80px);
+  padding: 60px 40px;
+  gap: 60px;
+  align-items: center;
+}
+
+/* Typography */
+h1.display-4 {
+  font-size: 4.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #2d3748;
+  margin-bottom: 20px;
+  font-family: 'Georgia', serif;
+}
+
+h1.display-4 span {
+  color: #2d3748;
+}
+
+h2.text-muted {
+  font-size: 18px;
+  color: #64748b;
+  margin-bottom: 40px;
+  font-weight: 400;
+}
+
+p.lead {
+  font-size: 16px;
+  color: #64748b;
+  margin-bottom: 40px;
+  max-width: 100%;
+}
+
+/* Badge repositioning */
+.position-relative {
+  margin-bottom: 20px;
+}
+
+.badge.bg-warning {
+  background-color: #f4a261 !important;
+  color: white;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  position: static;
+  transform: none;
+}
+
+/* Food category circles */
+.food-items {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.food-circle {
+  width: 80px;
+  height: 80px;
+  border: 3px solid white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2d3748;
+  background-color: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  position: relative;
+  background-image: url('/assets/food-placeholder.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.food-circle:hover {
+  transform: scale(1.1);
+}
+
+.food-circle::after {
+  content: '+';
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
+  width: 24px;
+  height: 24px;
+  background: #2d3748;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Buttons */
+.btn-warning {
+  background-color: #2d3748;
+  border: none;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  margin-right: 20px;
+}
+
+.btn-warning:hover {
+  background-color: #1a202c;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(45, 55, 72, 0.3);
+}
+
+.btn-outline-warning {
+  border: 2px solid #64748b;
+  color: #64748b;
+  background: transparent;
+  padding: 13px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-warning:hover {
+  border-color: #2d3748;
+  color: #2d3748;
+  background-color: transparent;
+  transform: translateY(-2px);
+}
+
+/* Opening hours */
+.text-muted.mt-3 {
+  font-size: 14px;
+  color: #64748b;
+  margin-top: 20px;
+}
+
+/* Image Section Styling */
+.image-section {
+  position: relative;
+}
+
+.img-fluid.rounded-circle {
+  max-width: 400px;
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border: none;
+}
+
+/* Hide additional images, keep only the first one */
+.img-fluid.rounded-circle:nth-child(2),
+.img-fluid.rounded-circle:nth-child(3) {
+  display: none;
+}
+
+/* Product card overlay */
+.image-section::after {
+  content: 'Baguette\A⭐⭐⭐⭐⭐ (2.5K review)\A$25';
+  white-space: pre-line;
+  position: absolute;
+  top: 20px;
+  right: -50px;
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  min-width: 200px;
+  z-index: 20;
+  font-weight: 600;
+  color: #2d3748;
+  line-height: 1.5;
+}
+
+.image-section::before {
+  content: '+';
+  position: absolute;
+  top: 120px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  background: #f4a261;
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: bold;
+  z-index: 25;
+}
+
+/* Decorative background elements */
+.home-bg::before,
+.home-bg::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.home-bg::before {
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(45deg, rgba(255, 107, 107, 0.3), rgba(254, 202, 87, 0.3));
+  top: 15%;
+  right: 10%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.home-bg::after {
+  width: 150px;
+  height: 150px;
+  background: linear-gradient(45deg, rgba(72, 202, 228, 0.3), rgba(2, 48, 71, 0.3));
+  bottom: 20%;
+  left: 15%;
+  animation: float 4s ease-in-out infinite reverse;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(10deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .content {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  
+  h1.display-4 {
+    font-size: 3.5rem;
+  }
+  
+  .img-fluid.rounded-circle {
+    max-width: 300px;
+    height: 300px;
+  }
+  
+  .image-section::after {
+    position: static;
+    margin-top: 20px;
+    right: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 15px 20px;
+  }
+  
+  h1.display-4 {
+    font-size: 2.8rem;
+  }
+  
+  .food-items {
+    justify-content: center;
+  }
+  
+  .btn-warning,
+  .btn-outline-warning {
+    display: block;
+    width: 200px;
+    margin: 10px auto;
+  }
+}
+
+@media (max-width: 576px) {
+  h1.display-4 {
+    font-size: 2.2rem;
+  }
+  
+  .img-fluid.rounded-circle {
+    max-width: 250px;
+    height: 250px;
+  }
+  
+  .food-circle {
+    width: 60px;
+    height: 60px;
+    font-size: 10px;
+  }
+}
+
+/* Hide Footer (already present) */
+footer {
+  display: none;
+}
