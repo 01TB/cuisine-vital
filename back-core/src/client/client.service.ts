@@ -37,19 +37,54 @@ export class ClientService {
         private jwtService: JwtService,
     ) {}
 
-    async validateClient(email: string, motDePasse: string)
-    {
-        const res = await this.clientRepository.createQueryBuilder('clients')
-        .where('clients.email = :email and clients.deleted_at is NULL', {email})
-        .getRawOne();
 
-        if(res !== undefined && res.motDepasse == motDePasse)
-        {
-            return res;
-        }
-
-        return null;
+    async getClientById(clientId: string) {
+        return await this.clientRepository
+      .createQueryBuilder('clients')
+      .leftJoinAndSelect('clients.role', 'role')
+      .where('clients.id = :clientId AND clients.deleted_at IS NULL', { clientId })
+      .getOne();
     }
+
+    async generateNewToken(email: string) {
+    const client = await this.clientRepository
+        .createQueryBuilder('clients')
+        .leftJoinAndSelect('clients.role', 'role')
+        .where('clients.email = :email AND clients.deleted_at IS NULL', { email })
+        .getOne();
+
+    if (!client) {
+        throw new Error('Client non trouvé');
+    }
+
+    const payload = { 
+        email: client.email, 
+        sub: client.id 
+    };
+
+    return {
+        access_token: this.jwtService.sign(payload),
+        user: {
+        id: client.id,
+        email: client.email,
+        nom: client.nom,
+        prenom: client.prenom
+        },
+    };
+    }
+
+  async validateClient(email: string, password: string) {
+    const res = await this.clientRepository.createQueryBuilder('clients')
+      .leftJoinAndSelect('clients.role', 'role')
+      .where('clients.email = :email AND clients.deleted_at IS NULL', { email })
+      .getOne();
+
+    if (res && res.motDePasse === password) { // Still comparing with motDePasse from DB
+      return res;
+    }
+
+    return null;
+  }
 
     async login(email: string, motDePasse: string)
     {
@@ -58,15 +93,14 @@ export class ClientService {
         {
             throw new Error('Erreur lors de la connexion!');
         }
-        const payload = { email: client.email, sub: client.id, role: client.role.nom };
+        const payload = { email: client.email, sub: client.id };
         return {
             access_token: this.jwtService.sign(payload),
             user: {
                 id: client.id,
                 email: client.email,
                 nom: client.nom,
-                prenom: client.prenom,
-                role: client.role.nom,
+                prenom: client.prenom
             },
         };
     }
