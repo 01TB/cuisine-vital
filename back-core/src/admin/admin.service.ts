@@ -13,6 +13,13 @@ import { FacturesIndividuelles } from '../entities/FacturesIndividuelles';
 import { FacturesEntreprises } from '../entities/FacturesEntreprises';
 import { Menus } from '../entities/Menus';
 import { MouvementsStock } from '../entities/MouvementsStock';
+import { Utilisateurs } from '../entities/Utilisateurs';
+import { CreateMenuDto } from './dto/create-menu.dto';
+import { UpdateMenuDto } from './dto/update-menu.dto';
+import { CreateIngredientDto } from './dto/create-ingredient.dto';
+import { UpdateIngredientDto } from './dto/update-ingredient.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AdminService {
@@ -52,6 +59,9 @@ export class AdminService {
 
         @InjectRepository(MouvementsStock)
         private readonly mouvementStockRepository: Repository<MouvementsStock>,
+
+        @InjectRepository(Utilisateurs)
+        private readonly utilisateurRepository: Repository<Utilisateurs>,
 
     ){}
 
@@ -236,5 +246,71 @@ export class AdminService {
             .where('mouvement.date_mouvement BETWEEN :dateDebut AND :dateFin', { dateDebut, dateFin });
     
         return query.getMany();
+    }
+
+    // CRUD Menus
+    createMenu(createMenuDto: CreateMenuDto) {
+        const newMenu = this.menuRepository.create(createMenuDto);
+        return this.menuRepository.save(newMenu);
+    }
+
+    findAllMenus() {
+        return this.menuRepository.find();
+    }
+
+    findOneMenu(id: number) {
+        return this.menuRepository.findOne({ where: { id: id } });
+    }
+
+    updateMenu(id: number, updateMenuDto: UpdateMenuDto) {
+        return this.menuRepository.update(id, updateMenuDto);
+    }
+
+    removeMenu(id: number) {
+        return this.menuRepository.delete(id);
+    }
+
+    // CRUD Ingredients
+    createIngredient(createIngredientDto: CreateIngredientDto) {
+        const newIngredient = this.ingredientRepository.create(createIngredientDto);
+        return this.ingredientRepository.save(newIngredient);
+    }
+
+    findAllIngredients() {
+        return this.ingredientRepository.find();
+    }
+
+    findOneIngredient(id: number) {
+        return this.ingredientRepository.findOne({ where: { id: id } });
+    }
+
+    updateIngredient(id: number, updateIngredientDto: UpdateIngredientDto) {
+        return this.ingredientRepository.update(id, updateIngredientDto);
+    }
+
+    removeIngredient(id: number) {
+        return this.ingredientRepository.delete(id);
+    }
+
+    // CRUD Utilisateurs
+    createUser(createUserDto: CreateUserDto) {
+        const newUser = this.utilisateurRepository.create(createUserDto);
+        return this.utilisateurRepository.save(newUser);
+    }
+
+    findAllUsers() {
+        return this.utilisateurRepository.find({ relations: ['role'] });
+    }
+
+    findOneUser(id: string) {
+        return this.utilisateurRepository.findOne({ where: { id: id }, relations: ['role'] });
+    }
+
+    updateUser(id: number, updateUserDto: UpdateUserDto) {
+        return this.utilisateurRepository.update(id, updateUserDto);
+    }
+
+    removeUser(id: number) {
+        return this.utilisateurRepository.delete(id);
     }
 }
