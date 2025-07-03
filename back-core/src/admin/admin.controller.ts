@@ -45,7 +45,7 @@ export class AdminController {
     async getTopMenu(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
         return this.adminService.getTopMenu(dateDebut,dateFin);
     }
-    
+    // la colonne salaire.montant tsy m'existe
     @Get('stats/total-depense')
     async getTotalDepenses(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
         return this.adminService.getTotalDepenses(dateDebut,dateFin);

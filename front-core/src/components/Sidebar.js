@@ -17,8 +17,8 @@ const Sidebar = () => {
         <NavLink
           to="/admin/dashboard/overview"
           className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded hover:bg-indigo-100 text-sm font-medium ${
-              isActive ? 'bg-indigo-200 text-indigo-800 font-semibold' : 'text-gray-700'
+            `flex items-center px-3 py-2 rounded hover:bg-gray-200 text-sm font-medium transition-colors duration-150 ${
+              isActive ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700'
             }`
           }
         >
@@ -29,8 +29,8 @@ const Sidebar = () => {
         <NavLink
           to="/admin/dashboard/gestion-menu"
           className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded hover:bg-indigo-100 text-sm font-medium ${
-              isActive ? 'bg-indigo-200 text-indigo-800 font-semibold' : 'text-gray-700'
+            `flex items-center px-3 py-2 rounded hover:bg-gray-200 text-sm font-medium transition-colors duration-150 ${
+              isActive ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700'
             }`
           }
         >
@@ -42,8 +42,8 @@ const Sidebar = () => {
           <NavLink
             to="/admin/dashboard/gestion-menu/plats"
             className={({ isActive }) =>
-              `block px-3 py-1.5 rounded hover:bg-indigo-50 text-sm ${
-                isActive ? 'bg-indigo-100 text-indigo-800 font-medium' : 'text-gray-600'
+              `block px-3 py-1.5 rounded hover:bg-gray-100 text-sm transition-colors duration-150 ${
+                isActive ? 'bg-gray-200 text-indigo-700 font-medium' : 'text-gray-600'
               }`
             }
           >
@@ -52,8 +52,8 @@ const Sidebar = () => {
           <NavLink
             to="/admin/dashboard/gestion-menu/categories"
             className={({ isActive }) =>
-              `block px-3 py-1.5 rounded hover:bg-indigo-50 text-sm ${
-                isActive ? 'bg-indigo-100 text-indigo-800 font-medium' : 'text-gray-600'
+              `block px-3 py-1.5 rounded hover:bg-gray-100 text-sm transition-colors duration-150 ${
+                isActive ? 'bg-gray-200 text-indigo-700 font-medium' : 'text-gray-600'
               }`
             }
           >
@@ -62,8 +62,8 @@ const Sidebar = () => {
           <NavLink
             to="/admin/dashboard/gestion-menu/nouveau-plat"
             className={({ isActive }) =>
-              `block px-3 py-1.5 rounded hover:bg-indigo-50 text-sm ${
-                isActive ? 'bg-indigo-100 text-indigo-800 font-medium' : 'text-gray-600'
+              `block px-3 py-1.5 rounded hover:bg-gray-100 text-sm transition-colors duration-150 ${
+                isActive ? 'bg-gray-200 text-indigo-700 font-medium' : 'text-gray-600'
               }`
             }
           >
@@ -72,8 +72,8 @@ const Sidebar = () => {
           <NavLink
             to="/admin/dashboard/gestion-menu/promotions"
             className={({ isActive }) =>
-              `block px-3 py-1.5 rounded hover:bg-indigo-50 text-sm ${
-                isActive ? 'bg-indigo-100 text-indigo-800 font-medium' : 'text-gray-600'
+              `block px-3 py-1.5 rounded hover:bg-gray-100 text-sm transition-colors duration-150 ${
+                isActive ? 'bg-gray-200 text-indigo-700 font-medium' : 'text-gray-600'
               }`
             }
           >
@@ -84,8 +84,8 @@ const Sidebar = () => {
         <NavLink
           to="/admin/dashboard/gestion-cuisine"
           className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded hover:bg-indigo-100 text-sm font-medium ${
-              isActive ? 'bg-indigo-200 text-indigo-800 font-semibold' : 'text-gray-700'
+            `flex items-center px-3 py-2 rounded hover:bg-gray-200 text-sm font-medium transition-colors duration-150 ${
+              isActive ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700'
             }`
           }
         >
@@ -96,8 +96,8 @@ const Sidebar = () => {
         <NavLink
           to="/admin/dashboard/ingredients"
           className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded hover:bg-indigo-100 text-sm font-medium ${
-              isActive ? 'bg-indigo-200 text-indigo-800 font-semibold' : 'text-gray-700'
+            `flex items-center px-3 py-2 rounded hover:bg-gray-200 text-sm font-medium transition-colors duration-150 ${
+              isActive ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700'
             }`
           }
         >
@@ -108,8 +108,8 @@ const Sidebar = () => {
         <NavLink
           to="/admin/dashboard/statistiques"
           className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded hover:bg-indigo-100 text-sm font-medium ${
-              isActive ? 'bg-indigo-200 text-indigo-800 font-semibold' : 'text-gray-700'
+            `flex items-center px-3 py-2 rounded hover:bg-gray-200 text-sm font-medium transition-colors duration-150 ${
+              isActive ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700'
             }`
           }
         >
@@ -120,8 +120,8 @@ const Sidebar = () => {
         <NavLink
           to="/admin/dashboard/parametres"
           className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded hover:bg-indigo-100 text-sm font-medium ${
-              isActive ? 'bg-indigo-200 text-indigo-800 font-semibold' : 'text-gray-700'
+            `flex items-center px-3 py-2 rounded hover:bg-gray-200 text-sm font-medium transition-colors duration-150 ${
+              isActive ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700'
             }`
           }
         >
@@ -132,8 +132,8 @@ const Sidebar = () => {
         <NavLink
           to="/admin/dashboard/historique"
           className={({ isActive }) =>
-            `flex items-center px-3 py-2 rounded hover:bg-indigo-100 text-sm font-medium ${
-              isActive ? 'bg-indigo-200 text-indigo-800 font-semibold' : 'text-gray-700'
+            `flex items-center px-3 py-2 rounded hover:bg-gray-200 text-sm font-medium transition-colors duration-150 ${
+              isActive ? 'bg-indigo-100 text-indigo-700 font-semibold' : 'text-gray-700'
             }`
           }
         >
