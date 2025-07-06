@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcryptjs';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
 import { CommandesIndividuelles } from '../entities/CommandesIndividuelles';
 import { CommandesEntreprises } from '../entities/CommandesEntreprises';
 import { StatutsCommande } from '../entities/StatutsCommande';
@@ -34,120 +34,96 @@ export class ClientService {
         private boissonsRepo: Repository<Boissons>,
         @InjectRepository(StatutsCommande)
         private statutRepo: Repository<StatutsCommande>,
-        private jwtService: JwtService
+    ) {}
 
-    ) {
+    async saveClient(clientData: Partial<Clients>): Promise<Clients> { 
+        const existingClient = await this.clientRepository.findOne({ where: { email: clientData.email } });
+        if (existingClient) {
+            throw new BadRequestException('Cet email est déjà utilisé.');
+        }
+
+        if (clientData.motDePasse) {
+            const hashedPassword = await bcrypt.hash(clientData.motDePasse, 10); 
+            clientData.motDePasse = hashedPassword;
+        } else {
+            throw new BadRequestException('Le mot de passe est obligatoire.');
+        }
+
+        const client = this.clientRepository.create(clientData);
+
+        return await this.clientRepository.save(client);
     }
 
     async getClientById(clientId: string) {
         return await this.clientRepository
       .createQueryBuilder('clients')
-      .leftJoinAndSelect('clients.role', 'role')
       .where('clients.id = :clientId AND clients.deleted_at IS NULL', { clientId })
       .getOne();
     }
 
-    async generateNewToken(email: string) {
-    const client = await this.clientRepository
-        .createQueryBuilder('clients')
-        .leftJoinAndSelect('clients.role', 'role')
-        .where('clients.email = :email AND clients.deleted_at IS NULL', { email })
-        .getOne();
-
-    if (!client) {
-        throw new Error('Client non trouvé');
-    }
-
-    const payload = { 
-        email: client.email, 
-        sub: client.id 
-    };
-    return {
-        access_token: this.jwtService.sign(payload),
-        user: {
-        id: client.id,
-        email: client.email,
-        nom: client.nom,
-        prenom: client.prenom
-        },
-    };
-    }
-
-  async validateClient(email: string, password: string) {
-    const res = await this.clientRepository.createQueryBuilder('clients')
-      .where('clients.email = :email AND clients.deleted_at IS NULL', { email })
-      .getOne();
-
-    if (res && res.motDePasse == password) { 
-      return res;
-    }
-
-    return null;
-  }
-
-    async login(email: string, motDePasse: string)
-    {
-        const client = await this.validateClient(email, motDePasse);
-        if(client == null)
-        {
-            throw new Error('Erreur lors de la connexion!');
+    async creerCommandeClient(createCommande: CreateCommande) {
+        const client = await this.clientRepository.findOne({ where: { id: createCommande.clientId } });
+        if (!client) {
+            throw new BadRequestException('Client non trouvé.');
         }
-        const payload = { email: client.email, sub: client.id };
-        let token = null;
-        try {
-            token = this.jwtService.sign(payload);
-        }catch (error) {
-            console.log(error);
+
+        let cmdRepo: Repository<any>;
+        let cmdDetailsRepo: Repository<any>;
+        let commandeEntity: any; 
+        if (client.typeClient === 'PARTICULIER') {
+            cmdRepo = this.cmdInvRepo;
+            cmdDetailsRepo = this.cmdInvDetailsRepo;
+            commandeEntity = this.cmdInvRepo.create(createCommande);
+        } else if (client.typeClient === 'ENTREPRISE') {
+            cmdRepo = this.cmdEntrRepo;
+            cmdDetailsRepo = this.cmdEntrDetailsRepo;
+            commandeEntity = this.cmdEntrRepo.create(createCommande);
+        } else {
+            throw new BadRequestException('Type de client inconnu.');
         }
-        return {
-            access_token: token,
-            user: {
-                id: client.id,
-                email: client.email,
-                nom: client.nom,
-                prenom: client.prenom
-            },
-        };
-    }
 
-    async creerCommandeClient(
-    clientIndividuel: boolean,
-    createCommande: CreateCommande
-    ) {
-        const cmdRepo: Repository<any> = clientIndividuel
-            ? this.cmdInvRepo
-            : this.cmdEntrRepo;
+        commandeEntity.client = client; // Associate the client entity
 
-        const cmdDetailsRepo: Repository<any> = clientIndividuel
-            ? this.cmdInvDetailsRepo
-            : this.cmdEntrDetailsRepo;
-
-        const { details, ...commandeData } = createCommande;
-
-        const commande = cmdRepo.create(commandeData);
-        const savedCommande = await cmdRepo.save(commande);
-
+        let montantTotal = 0;
         const cmdDetailsRes = [];
 
-        for (const d of details) {
-
-            const menu = await this.menuRepo.findOne({ where: { id: d.menuId } })
-            const boisson = await this.boissonsRepo.findOne({ where: { id: d.boissonId } })
-            const acc = await this.accRepo.findOne({ where: { id: d.accompagnementId } })
-
-            const { menuId, accompagnementId, boissonId, ...detailsData } = d;
-
-            const createDetails = {
-                ...detailsData,
-                menu, 
-                boisson, 
-                accompagnement: acc,
-                commande: savedCommande
+        for (const d of createCommande.details) {
+            let item: any;
+            if (d.menuId) {
+                item = await this.menuRepo.findOne({ where: { id: d.menuId } });
+            } else if (d.accompagnementId) {
+                item = await this.accRepo.findOne({ where: { id: d.accompagnementId } });
+            } else if (d.boissonId) {
+                item = await this.boissonsRepo.findOne({ where: { id: d.boissonId } });
             }
 
+            if (!item) {
+                throw new BadRequestException('Article de commande non trouvé.');
+            }
+
+            const detailPrice = parseFloat(item.prixCarte || item.prixUnitaire || item.prix) * d.quantite;
+            montantTotal += detailPrice;
+
+            const createDetails = {
+                quantite: d.quantite,
+                prixUnitaire: parseFloat(item.prixCarte || item.prixUnitaire || item.prix),
+                notes: d.notes,
+                commande: commandeEntity,
+                menu: d.menuId ? item : null,
+                accompagnement: d.accompagnementId ? item : null,
+                boisson: d.boissonId ? item : null,
+            };
+
             const detail = cmdDetailsRepo.create(createDetails);
-            const savedDetail = await cmdDetailsRepo.save(detail);
-            cmdDetailsRes.push(savedDetail);
+            cmdDetailsRes.push(detail);
+        }
+
+        commandeEntity.montantTotal = montantTotal;
+        const savedCommande = await cmdRepo.save(commandeEntity);
+
+        for (const detail of cmdDetailsRes) {
+            detail.commande = savedCommande; // Ensure correct association
+            await cmdDetailsRepo.save(detail);
         }
 
         return { commande: savedCommande, details: cmdDetailsRes };
@@ -208,8 +184,18 @@ export class ClientService {
         };
     }
 
-    async getAllMenu()
+    async getAllMenus()
     {
         return this.menuRepo.find();
+    }
+
+    async getAllAccompagnements()
+    {
+        return this.accRepo.find();
+    }
+
+    async getAllBoissons()
+    {
+        return this.boissonsRepo.find();
     }
 }

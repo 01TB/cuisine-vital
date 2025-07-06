@@ -39,7 +39,7 @@ async function bootstrap() {
   };
 
   try {
-    const res = await clientService.creerCommandeClient(false, fakeCommande);
+    const res = await clientService.creerCommandeClient(fakeCommande);
     console.log('Commande créée avec succès :');
     console.dir(res, { depth: null });
   } catch (e) {

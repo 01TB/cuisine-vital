@@ -1,11 +1,9 @@
 import { IsNotEmpty } from "class-validator";
 
 class CommandeDetails {
-    @IsNotEmpty()
-    menuId: number;
-
-    @IsNotEmpty()
-    accompagnementId: number;
+    menuId?: number;
+    accompagnementId?: number;
+    boissonId?: number;
 
     @IsNotEmpty()
     quantite: number;
@@ -13,9 +11,7 @@ class CommandeDetails {
     @IsNotEmpty()
     prixUnitaire: number;
 
-    boissonId: number;
-
-    notes: string
+    notes?: string;
 }
 
 export class CreateCommande {
@@ -31,9 +27,9 @@ export class CreateCommande {
     statutId: number;
 
     @IsNotEmpty()
-    dateCommande;
+    dateCommande: string;
 
-    dateLivraison;
+    dateLivraison: string;
     
     @IsNotEmpty()
     adresseLivraison: string;

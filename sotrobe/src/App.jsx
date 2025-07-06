@@ -9,28 +9,11 @@ import { AuthProvider } from './providers/AuthProvider';
 import { useEffect } from 'react';
 import api from './const/api';
 import publicApi from './const/publicApi';
+import SignUp from './components/SignUp';
 
 function App() {
 
-  useEffect(() => {
-    async function testFetch() {
-      const res = await publicApi.post('/client/login', {
-      email: 'faniry@gmail.com',
-      motDePasse: '456'
-    });
-    
-      const token = res.data.access_token;
-      localStorage.setItem('token', token);
-      console.log(localStorage.getItem('token'));
-
-      // Ensuite, fais une requête GET protégée
-      const res2 = await api.get('/client/auth');
-      console.log('Réponse :', res2.data);
-      }
-
-      testFetch();
-
-  }, []);
+  
 
   return (
     <div className="App">
@@ -44,6 +27,7 @@ function App() {
                 <Route path='profile' element={<ClientProfile/>}></Route>
             </Route>
             <Route path='/login' element={<Login/>}></Route>
+            <Route path='/signup' element={<SignUp/>}></Route>
           </Routes>
         </AuthProvider>
       </Router>

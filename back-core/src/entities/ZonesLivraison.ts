@@ -5,7 +5,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Clients } from "./Clients";
 import { Utilisateurs } from "./Utilisateurs";
 
 @Index("zones_livraison_pkey", ["id"], { unique: true })
@@ -33,9 +32,6 @@ export class ZonesLivraison {
 
   @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
-
-  @OneToMany(() => Clients, (clients) => clients.zoneLivraison, { lazy: true })
-  clients: Promise<Clients[]>;
 
   @OneToMany(() => Utilisateurs, (utilisateurs) => utilisateurs.zoneLivraison, {
     lazy: true,

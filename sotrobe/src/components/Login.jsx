@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCube } from "@fortawesome/free-solid-svg-icons";
 import publicApi from '../const/publicApi';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; 
 
 const Login = () => {
   const [loginData, setLoginData] = useState(null);
@@ -32,7 +32,7 @@ const Login = () => {
       await login(formData.email, formData.motDePasse);
       navigate('/home'); 
     } catch (error) {
-      alert(error);
+      alert(error); 
     }
   };
 
@@ -71,7 +71,7 @@ const Login = () => {
           </label>
           <input
             type="password"
-            name="motDePasse"
+            name="motDePasse" 
             className="form-control rounded-pill bg-light"
             placeholder="Mot de passe"
             value={formData.motDePasse}
@@ -82,11 +82,21 @@ const Login = () => {
 
         <button
           type="submit"
-          className="btn w-100 rounded-pill fw-semibold"
+          className="btn w-100 rounded-pill fw-semibold mb-3" 
           style={{ backgroundColor:'#f0ad4e', color:'white' }}
         >
           Se connecter
         </button>
+
+        <div className="text-center">
+          <p className="mb-0 text-muted">
+            Pas encore de compte ?{" "}
+            <Link to="/signup" className="fw-semibold" style={{ color: '#f0ad4e' }}> 
+              S'inscrire ici
+            </Link>
+          </p>
+        </div>
+
       </form>
     </div>
   );

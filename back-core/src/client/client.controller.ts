@@ -1,8 +1,6 @@
 import { 
   Controller, 
-  Post, 
   Get, 
-  Body, 
   HttpException, 
   HttpStatus, 
   UseGuards 
@@ -10,31 +8,22 @@ import {
 import { ClientService } from './client.service';
 import { JwtAuthGuard } from '../guards/jwt-auth';
 import { CurrentUser } from '../decorators/current-user.decorator';
-import { LoginClient } from './dto/login-client.dto';
-
+import { Clients } from '../entities/Clients';
+import { Post } from '@nestjs/common';
+import { Body } from '@nestjs/common';
+import { CreateCommande } from './dto/create-commande.dto';
 
 @Controller('client')
 export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 
-  @Post('login')
-  async login(@Body() loginDto: LoginClient) {
-    try {
-      const result = await this.clientService.login(loginDto.email, loginDto.motDePasse);
-      return result; 
-    } catch (error) {
-      throw new HttpException(
-        error.message || 'Erreur lors de la connexion',
-        HttpStatus.UNAUTHORIZED
-      );
-    }
-  }
-
   @UseGuards(JwtAuthGuard)
   @Get('auth')
   async authenticateClient(@CurrentUser() user: any) {
+    console.log('[ClientController] Authenticating client. User from token:', user);
     try {
       const client = await this.clientService.getClientById(user.userId);
+      console.log('[ClientController] Client found by ID:', client);
       
       if (!client) {
         throw new HttpException(
@@ -50,6 +39,7 @@ export class ClientController {
         prenom: client.prenom
       };
     } catch (error) {
+      console.error('[ClientController] Error during authentication:', error);
       throw new HttpException(
         error.message || 'Token invalide',
         HttpStatus.UNAUTHORIZED
@@ -57,16 +47,75 @@ export class ClientController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('refresh')
-  async refreshToken(@CurrentUser() user: any) {
+  @Post('register')
+  async registerClient(@Body() clientData: Clients): Promise<Clients> {
+    console.log('[ClientController] Registering new client. Data:', clientData);
     try {
-      const result = await this.clientService.generateNewToken(user.email);
-      return result;
+
+      const newClient = await this.clientService.saveClient(clientData);
+      console.log('[ClientController] Client registered successfully:', newClient.id);
+      const { motDePasse, ...result } = newClient;
+      return result as Clients; 
+    } catch (error) {
+      console.error('[ClientController] Error during client registration:', error);
+      throw new HttpException(
+        error.message || "Erreur lors de l'inscription du client.",
+        HttpStatus.BAD_REQUEST 
+      );
+    }
+  }
+
+  @Post('create-order')
+  @UseGuards(JwtAuthGuard)
+  async createOrder(@CurrentUser() user: any, @Body() createCommande: CreateCommande) {
+    try {
+      createCommande.clientId = user.userId; 
+      const result = await this.clientService.creerCommandeClient(createCommande);
+      return { message: 'Commande créée avec succès', commande: result.commande, details: result.details };
     } catch (error) {
       throw new HttpException(
-        'Erreur lors du rafraîchissement du token',
-        HttpStatus.UNAUTHORIZED
+        error.message || 'Erreur lors de la création de la commande.',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Get('menus')
+  async getAllMenus() {
+    try {
+      const menus = await this.clientService.getAllMenus();
+      return menus;
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Erreur lors de la récupération des menus.',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Get('accompagnements')
+  async getAllAccompagnements() {
+    try {
+      const accompagnements = await this.clientService.getAllAccompagnements();
+      console.log(accompagnements);
+      return accompagnements;
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Erreur lors de la récupération des accompagnements.',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Get('boissons')
+  async getAllBoissons() {
+    try {
+      const boissons = await this.clientService.getAllBoissons();
+      return boissons;
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Erreur lors de la récupération des boissons.',
+        HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
   }

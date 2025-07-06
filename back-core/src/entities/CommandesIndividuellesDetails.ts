@@ -54,7 +54,7 @@ export class CommandesIndividuellesDetails {
   @ManyToOne(() => Menus, (menus) => menus.commandesIndividuellesDetails, {
     lazy: true,
   })
-  @JoinColumn([{ name: "menu_id", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "menu_id", referencedColumnName: "id"  }])
   menu: Promise<Menus>;
 
   constructor(init?: Partial<CommandesIndividuellesDetails>) {

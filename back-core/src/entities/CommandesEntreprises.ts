@@ -60,7 +60,7 @@ export class CommandesEntreprises {
   adresseLivraison: string;
 
   @Column("numeric", { name: "montant_total", precision: 10, scale: 2 })
-  montantTotal: string;
+  montantTotal: number;
 
   @Column("timestamp without time zone", {
     name: "created_at",

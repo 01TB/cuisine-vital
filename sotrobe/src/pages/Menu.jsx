@@ -1,67 +1,8 @@
 import { useEffect, useState } from 'react';
 import CommandePopup from '../components/CommandePopup';
-import menu1 from '../assets/ravitoto-sy-henakisoa.png';
-import menu2 from '../assets/salade.png';
-import menu3 from '../assets/poulet-sy-voanjo.jpg';
 import '../styles/Menu.css';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-
-const allMenus = [
-  {
-    id: 1,
-    title: 'Ravitoto sy Henakisoa',
-    description: 'Feuilles de manioc pilées avec viande de porc fondante.',
-    image: menu1,
-  },
-  {
-    id: 2,
-    title: 'Romazava Royal',
-    description: 'Bouillon aux brèdes, viande tendre et épices locales.',
-    image: menu2,
-  },
-  {
-    id: 3,
-    title: 'Akoho sy Voanio',
-    description: 'Poulet au lait de coco et épices douces.',
-    image: menu3,
-  },
-    {
-    id: 4,
-    title: 'Ravitoto sy Henakisoa',
-    description: 'Feuilles de manioc pilées avec viande de porc fondante.',
-    image: menu1,
-  },
-  {
-    id: 5,
-    title: 'Romazava Royal',
-    description: 'Bouillon aux brèdes, viande tendre et épices locales.',
-    image: menu2,
-  },
-  {
-    id: 6,
-    title: 'Akoho sy Voanio',
-    description: 'Poulet au lait de coco et épices douces.',
-    image: menu3,
-  },
-    {
-    id: 7,
-    title: 'Ravitoto sy Henakisoa',
-    description: 'Feuilles de manioc pilées avec viande de porc fondante.',
-    image: menu1,
-  },
-  {
-    id: 8,
-    title: 'Romazava Royal',
-    description: 'Bouillon aux brèdes, viande tendre et épices locales.',
-    image: menu2,
-  },
-  {
-    id: 9,
-    title: 'Akoho sy Voanio',
-    description: 'Poulet au lait de coco et épices douces.',
-    image: menu3,
-  },
-];
+import publicApi from '../const/publicApi';
 
 const Menu = () => {
     const [showPopup, setShowPopup] = useState(false);
@@ -70,29 +11,45 @@ const Menu = () => {
     const [search, setSearch] = useState('');
 
   useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const response = await publicApi.get('/client/menus');
+        setMenus(response.data);
+      } catch (error) {
+        console.error('Error fetching menus:', error);
+      }
+    };
 
-    async function fetchMenu() {
-        const response = await api.get('/menu');
-    }
-
-    setTimeout(() => {
-      setMenus(allMenus);
-    }, 500);
+    fetchMenus();
   }, []);
 
   const handleSelect = (menu) => {
+    setSelectedMenus((prev) => {
+      const existingMenu = prev.find((item) => item.id === menu.id);
+      if (existingMenu) {
+        // If menu is already selected, remove it (checkbox behavior)
+        return prev.filter((item) => item.id !== menu.id);
+      } else {
+        // Add new menu with quantity 1
+        return [...prev, { ...menu, quantity: 1 }];
+      }
+    });
+  };
+
+  const handleMenuQuantityChange = (menuId, quantity) => {
     setSelectedMenus((prev) =>
-        [...prev, menu]
+      prev.map((menu) =>
+        menu.id === menuId ? { ...menu, quantity: Math.max(1, quantity) } : menu
+      )
     );
   };
 
   const filteredMenus = menus.filter(menu =>
-    menu.title.toLowerCase().includes(search.toLowerCase()) ||
+    menu.nom.toLowerCase().includes(search.toLowerCase()) ||
     menu.description.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleOrder = () => {
-    const selectedItems = menus.filter(menu => selectedMenus.includes(menu.id));
     setShowPopup(true);
   };
 
@@ -119,24 +76,24 @@ const Menu = () => {
                 type="checkbox"
                 id={`check-${menu.id}`}
                 className="menu-grid-checkbox visually-hidden"
-                checked={selectedMenus.includes(menu.id)}
+                checked={selectedMenus.some(item => item.id === menu.id)}
                 onChange={() => handleSelect(menu)}
               />
-              <label htmlFor={`check-${menu.id}`} className={`menu-grid-checkbox-icon ${selectedMenus.includes(menu.id) ? 'selected' : ''}`}>
+              <label htmlFor={`check-${menu.id}`} className={`menu-grid-checkbox-icon ${selectedMenus.some(item => item.id === menu.id) ? 'selected' : ''}`}>
                 <i className="bi bi-check-circle-fill"></i>
               </label>
             </div>
-              {menu.image ? (
+              {menu.photoUrl ? (
                 <img
-                  src={menu.image}
-                  alt={menu.title}
+                  src={menu.photoUrl}
+                  alt={menu.nom}
                   className="menu-grid-image-square"
                 />
               ) : (
                 <div className="menu-grid-image-placeholder">Image non disponible</div>
               )}
               <div className="menu-grid-overlay-always d-flex flex-column justify-content-end p-3">
-                <h5 className="text-white fw-bold mb-1">{menu.title}</h5>
+                <h5 className="text-white fw-bold mb-1">{menu.nom}</h5>
                 <p className="text-white small mb-0">{menu.description}</p>
               </div>
             </div>
@@ -152,7 +109,7 @@ const Menu = () => {
             onClick={handleOrder}
           >
             <i className="bi bi-box2 me-2"></i>
-            Commander ({selectedMenus.length})
+            Commander ({selectedMenus.reduce((sum, menu) => sum + menu.quantity, 0)})
           </Button>
         </div>
       )}
@@ -161,6 +118,7 @@ const Menu = () => {
             show={showPopup}
             onClose={() => setShowPopup(false)}
             selectedMenus={selectedMenus}
+            onMenuQuantityChange={handleMenuQuantityChange}
         />
         )}
     </Container>

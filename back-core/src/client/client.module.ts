@@ -10,14 +10,10 @@ import { CommandesEntreprisesDetails } from '../entities/CommandesEntreprisesDet
 import { CommandesIndividuelles } from '../entities/CommandesIndividuelles';
 import { CommandesIndividuellesDetails } from '../entities/CommandesIndividuellesDetails';
 import { Menus } from '../entities/Menus';
-import { ConfigModule } from '@nestjs/config';
 import { StatutsCommande } from '../entities/StatutsCommande';
-import { PassportModule } from '@nestjs/passport';
-import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
-    AuthModule,
     TypeOrmModule.forFeature([
       Clients,
       CommandesIndividuelles,

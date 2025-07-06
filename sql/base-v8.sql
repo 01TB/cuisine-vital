@@ -273,7 +273,7 @@ CREATE TABLE commandes_entreprises (
 CREATE TABLE commandes_individuelles_details (
     id SERIAL PRIMARY KEY,
     commande_id UUID NOT NULL REFERENCES commandes_individuelles(id) ON DELETE CASCADE,
-    menu_id INTEGER NOT NULL REFERENCES menus(id),
+    menu_id INTEGER REFERENCES menus(id),
     accompagnement_id INTEGER DEFAULT NULL REFERENCES accompagnements(id),
     quantite INTEGER NOT NULL,
     prix_unitaire DECIMAL(8,2) NOT NULL,
@@ -496,6 +496,11 @@ CREATE TABLE alertes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
+
+
+alter table clients alter column mot_de_passe set type text;
+alter table clients drop column zone_livraison_id;
+alter table accompagnements rename column prix_uniatire to prix_unitaire;
 
 -- =============================================
 -- SYSTÈME DE GESTION DE LIVRAISON DE REPAS
