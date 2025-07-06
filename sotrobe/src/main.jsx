@@ -6,9 +6,10 @@ import App from './App.jsx' // Notez l'extension .jsx
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css' // Votre CSS personnalisé
+import { AuthProvider } from './providers/AuthProvider.jsx';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+      <App />
   </React.StrictMode>,
 )

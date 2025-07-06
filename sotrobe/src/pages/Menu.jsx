@@ -70,6 +70,11 @@ const Menu = () => {
     const [search, setSearch] = useState('');
 
   useEffect(() => {
+
+    async function fetchMenu() {
+        const response = await api.get('/menu');
+    }
+
     setTimeout(() => {
       setMenus(allMenus);
     }, 500);

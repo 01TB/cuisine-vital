@@ -94,6 +94,7 @@ CREATE TABLE clients (
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100), -- NULL pour entreprises
     email VARCHAR(255) UNIQUE NOT NULL,
+    mot_de_passe VARCHAR(50),
     telephone VARCHAR(20),
     adresse TEXT NOT NULL,
     zone_livraison_id INTEGER NOT NULL REFERENCES zones_livraison(id),

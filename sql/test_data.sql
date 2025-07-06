@@ -16,9 +16,9 @@ VALUES
 
 -- =============== CLIENTS ===============
 -- Particulier
-INSERT INTO clients (id, nom, prenom, email, telephone, adresse, zone_livraison_id, type_client)
+INSERT INTO clients (id, nom, prenom, email, mot_de_passe,telephone, adresse, zone_livraison_id, type_client)
 VALUES 
-  (uuid_generate_v4(), 'Leclerc', 'Sophie', 'sophie.leclerc@example.com', '0612349876', '12 rue des Lilas', 1, 'PARTICULIER');
+  (uuid_generate_v4(), 'faniry', 'faniry', 'faniry@gmail.com', '123', '0612349876', '12 rue des Lilas', 1, 'PARTICULIER');
 
 -- Entreprise
 INSERT INTO clients (id, nom, prenom, email, telephone, adresse, zone_livraison_id, type_client)

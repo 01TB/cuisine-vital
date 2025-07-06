@@ -5,13 +5,13 @@ import { AuthProvider } from '../providers/AuthProvider';
 
 const MainApp = () => {
     return (
-        <AuthProvider>
+        <>
             <main className='pt-5'>
                 <CursorFollower/>
                 <AppNavbar />
                 <Outlet/>
             </main>
-        </AuthProvider>            
+        </>            
     );
 };
 

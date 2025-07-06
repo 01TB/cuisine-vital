@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCube } from "@fortawesome/free-solid-svg-icons";
+import publicApi from '../const/publicApi';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [loginData, setLoginData] = useState(null);
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", motDePasse: "" });
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSuccess = () => {
   };
@@ -21,8 +26,14 @@ const Login = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await login(formData.email, formData.motDePasse);
+      navigate('/home'); 
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
@@ -60,10 +71,10 @@ const Login = () => {
           </label>
           <input
             type="password"
-            name="password"
+            name="motDePasse"
             className="form-control rounded-pill bg-light"
             placeholder="Mot de passe"
-            value={formData.password}
+            value={formData.motDePasse}
             onChange={handleChange}
             required
           />
