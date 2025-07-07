@@ -110,16 +110,24 @@ export class AdminService {
       };
     }
     
-    async getNombreCommandeEnCours(dateDebut: Date, dateFin: Date) {
-      const nombreCommandeEnCours = await this.historiqueCommandesViewRepository
+    async getNombreCommandeEnCours(dateDebut: string, dateFin: string) {
+      // Statuts considérés comme "en cours"
+      const statutsEnCours = ['RECUE', 'EN_PREPARATION', 'PRETE'];
+      const query = this.historiqueCommandesViewRepository
         .createQueryBuilder('commande')
-        .select('COUNT(commande.id_commande)', 'nombre_commande_en_cours')
-        .where('commande.statut_commande = :statut', { statut: 'en cours' })
-        .andWhere('commande.date_commande BETWEEN :dateDebut AND :dateFin', { dateDebut, dateFin })
-        .getRawOne();
-    
+        .select('COUNT(commande.commande_id)', 'nombre_commande_en_cours')
+        .where('commande.statut_nom IN (:...statuts)', { statuts: statutsEnCours });
+
+      if (dateDebut) {
+        query.andWhere('commande.date_commande >= :dateDebut', { dateDebut });
+      }
+      if (dateFin) {
+        query.andWhere('commande.date_commande <= :dateFin', { dateFin });
+      }
+
+      const result = await query.getRawOne();
       return {
-        nombre_commande_en_cours: nombreCommandeEnCours.nombre_commande_en_cours || 0,
+        nombre_commande_en_cours: result?.nombre_commande_en_cours || 0,
       };
     }
     

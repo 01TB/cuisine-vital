@@ -37,8 +37,8 @@ export class AdminController {
     }
 
     @Get('commandes/en-cours/nb')
-    async getNombreCommandeEnCours(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
-        return this.adminService.getNombreCommandeEnCours(dateDebut,dateFin);
+    async getNombreCommandeEnCours(@Query('dateDebut') dateDebut: string, @Query('dateFin') dateFin: string) {
+        return this.adminService.getNombreCommandeEnCours(dateDebut, dateFin);
     }
     
     @Get('stats/top/menus')
