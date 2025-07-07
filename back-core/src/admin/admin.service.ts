@@ -20,6 +20,7 @@ import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { TopMenusView } from '../entities/TopMenusView';
 
 @Injectable()
 export class AdminService {
@@ -131,11 +132,13 @@ export class AdminService {
       };
     }
     
-    async getTopMenu(dateDebut: string, dateFin: string) {
-      // Utilisation de la vue v_top_menus
-      // Si besoin de filtrer par date, il faudrait adapter la vue ou faire une jointure, mais ici on retourne le top global
-      const result = await this.menuRepository.query('SELECT * FROM v_top_menus ORDER BY quantite_totale DESC LIMIT 5');
-      return result;
+    async getTopMenu(): Promise<TopMenusView[]> {
+      // Utilise la vue v_top_menus pour récupérer le top 5
+      return this.menuRepository.manager.getRepository(TopMenusView)
+        .createQueryBuilder('top')
+        .orderBy('top.quantiteTotale', 'DESC')
+        .limit(5)
+        .getMany();
     }
 
     async getTotalDepenses(dateDebut: Date, dateFin: Date) {
