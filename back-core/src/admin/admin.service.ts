@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from '../entities/Roles';
 import { Repository } from 'typeorm';
 import { CommandeStatutView } from '../entities/commande-statut-view.entity';
-import { HistoriqueCommandesView } from '../entities/historique-commandes-view.entity';
+import { HistoriqueCommandesView } from '../entities/historique-commandes-views.entity';
 import { BonsCommande } from '../entities/BonsCommande';
 import { PaiementsEntreprises } from '../entities/PaiementsEntreprises';
 import { PaiementsIndividuels } from '../entities/PaiementsIndividuels';
