@@ -1,7 +1,7 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcryptjs';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { CommandesIndividuelles } from '../entities/CommandesIndividuelles';
 import { CommandesEntreprises } from '../entities/CommandesEntreprises';
 import { StatutsCommande } from '../entities/StatutsCommande';
@@ -12,6 +12,13 @@ import { CommandesEntreprisesDetails } from '../entities/CommandesEntreprisesDet
 import { Menus } from '../entities/Menus';
 import { Accompagnements } from '../entities/Accompagnements';
 import { Boissons } from '../entities/Boissons';
+import { Abonnements } from 'src/entities/Abonnements';
+import { TypesAbonnement } from 'src/entities/TypesAbonnement';
+import { BonsCommande } from 'src/entities/BonsCommande';
+import { SelectionsHebdomadaires } from 'src/entities/SelectionsHebdomadaires';
+import { CreateAbonnementDto } from './dto/create-abonnement.dto';
+import { CreateBonCommandeDto } from './dto/create-bon-commande.dto';
+import { SelectionDto } from './dto/selection.dto';
 
 @Injectable()
 export class ClientService {
@@ -34,6 +41,15 @@ export class ClientService {
         private boissonsRepo: Repository<Boissons>,
         @InjectRepository(StatutsCommande)
         private statutRepo: Repository<StatutsCommande>,
+        @InjectRepository(Abonnements)
+        private abonnementsRepo: Repository<Abonnements>,
+        @InjectRepository(TypesAbonnement)
+        private typesAbonnementRepo: Repository<TypesAbonnement>,
+        @InjectRepository(BonsCommande)
+        private bonsCommandeRepo: Repository<BonsCommande>,
+        @InjectRepository(SelectionsHebdomadaires)
+        private selectionsHebdomadairesRepo: Repository<SelectionsHebdomadaires>
+
     ) {}
 
     async saveClient(clientData: Partial<Clients>): Promise<Clients> { 
@@ -83,6 +99,9 @@ export class ClientService {
         }
 
         commandeEntity.client = client; // Associate the client entity
+        if (createCommande.zoneDeLivraison) {
+            commandeEntity.zoneDeLivraison = createCommande.zoneDeLivraison;
+        }
 
         let montantTotal = 0;
         const cmdDetailsRes = [];
@@ -129,12 +148,15 @@ export class ClientService {
         return { commande: savedCommande, details: cmdDetailsRes };
     }
 
-    async getCommandes(clientIndividuel: boolean, dateCommande=null, dateLivraison=null, adresseLivraison=null, clientId=null)
+    async getCommandes(clientIndividuel: boolean, dateCommande=null, dateLivraison=null, adresseLivraison=null, clientId=null, statut_id=null, statutOrderLessThan: number | null = null, statutOrder: number | null = null)
     {
         const query = clientIndividuel ? 
             this.cmdInvRepo.createQueryBuilder('commandes')
             : 
             this.cmdEntrRepo.createQueryBuilder('commandes');
+        
+        query.leftJoinAndSelect('commandes.statut', 'statut'); // Join with StatutsCommande
+
         if(dateCommande)
         {
             query.andWhere('commandes.dateCommande = :dateCommande', {dateCommande});
@@ -150,6 +172,16 @@ export class ClientService {
         if(clientId)
         {
             query.andWhere('commandes.clientId = :clientId', {clientId});
+        }
+        if(statut_id)
+        {
+            query.andWhere('commandes.statutId = :statutId', {statut_id});
+        }
+        if (statutOrderLessThan !== null) {
+            query.andWhere('statut.ordre < :statutOrderLessThan', { statutOrderLessThan });
+        }
+        if (statutOrder !== null) {
+            query.andWhere('statut.ordre = :statutOrder', { statutOrder });
         }
         return query.getMany();
     }
@@ -174,6 +206,7 @@ export class ClientService {
         }
 
         commande.statutId = statutAnnulation.id;
+        commande.statut = statutAnnulation;
         commande.deletedAt = new Date();
         const saved = await repo.save(commande);
 
@@ -197,5 +230,131 @@ export class ClientService {
     async getAllBoissons()
     {
         return this.boissonsRepo.find();
+    }
+
+    async createAbonnement(dto: CreateAbonnementDto): Promise<Abonnements> {
+        const { clientId, typeAbonnementId, ...restOfDto } = dto;
+
+        const clientEntity = await this.clientRepository.findOneBy({ id: clientId });
+        if (!clientEntity) {
+            throw new NotFoundException(`Client with ID ${clientId} not found.`);
+        }
+
+        const typeAbonnementEntity = await this.typesAbonnementRepo.findOneBy({ id: typeAbonnementId });
+        if (!typeAbonnementEntity) {
+            throw new NotFoundException(`Subscription type with ID ${typeAbonnementId} not found.`);
+        }
+
+        const abonnementData: DeepPartial<Abonnements> = {
+            ...restOfDto,
+            actif: restOfDto.actif ?? true, 
+
+            client: Promise.resolve(clientEntity),
+            typeAbonnement: Promise.resolve(typeAbonnementEntity),
+        };
+
+        const nouvelAbonnement = this.abonnementsRepo.create(abonnementData);
+
+        return this.abonnementsRepo.save(nouvelAbonnement);
+    }
+
+    async getAbonnementsByClientId(clientId: string): Promise<Abonnements[]> {
+        return this.abonnementsRepo.find({
+            where: { 
+                clientId: clientId,
+                deletedAt: null 
+            },
+            relations: ['typeAbonnement'], 
+        });
+    }
+
+    async getAbonnementById(abonnementId: string): Promise<Abonnements> {
+        const abonnement = await this.abonnementsRepo.findOne({
+            where: { id: abonnementId, deletedAt: null },
+            relations: ['typeAbonnement', 'bonsCommandes'],
+        });
+
+        if (!abonnement) {
+            throw new NotFoundException(`Abonnement avec l'ID ${abonnementId} non trouvé.`);
+        }
+        return abonnement;
+    }
+
+
+    async cancelAbonnement(abonnementId: string): Promise<Abonnements> {
+        const abonnement = await this.getAbonnementById(abonnementId);
+        
+        abonnement.actif = false;
+        abonnement.dateFin = new Date().toISOString().split('T')[0]; 
+        abonnement.deletedAt = new Date();
+
+        return this.abonnementsRepo.save(abonnement);
+    }
+
+
+    async createBonCommande(dto: CreateBonCommandeDto): Promise<BonsCommande> {
+        const abonnement = await this.getAbonnementById(dto.abonnementId);
+
+        const nouveauBon = this.bonsCommandeRepo.create({
+            ...dto,
+            abonnement: Promise.resolve(abonnement), 
+            statut: 'EN_ATTENTE', 
+        });
+
+        return this.bonsCommandeRepo.save(nouveauBon);
+    }
+
+
+    async getBonCommandeById(bonCommandeId: string): Promise<BonsCommande> {
+        const bonCommande = await this.bonsCommandeRepo.findOne({
+            where: { id: bonCommandeId, deletedAt: null },
+            relations: ['selectionsHebdomadaires', 'selectionsHebdomadaires.menu'], 
+        });
+
+        if (!bonCommande) {
+            throw new NotFoundException(`Bon de commande avec l'ID ${bonCommandeId} non trouvé.`);
+        }
+        return bonCommande;
+    }
+
+    async getBonsCommandeByAbonnementId(abonnementId: string): Promise<BonsCommande[]> {
+        return this.bonsCommandeRepo.find({
+            where: { abonnement: { id: abonnementId }, deletedAt: null },
+            relations: ['selectionsHebdomadaires', 'selectionsHebdomadaires.menu'],
+            order: { createdAt: 'DESC' },
+        });
+    }
+
+
+    async updateBonCommandeStatus(bonCommandeId: string, statut: string): Promise<BonsCommande> {
+        const bonCommande = await this.getBonCommandeById(bonCommandeId);
+        bonCommande.statut = statut;
+        return this.bonsCommandeRepo.save(bonCommande);
+    }
+
+
+
+    async saveWeeklySelections(bonCommandeId: string, selections: SelectionDto[]): Promise<SelectionsHebdomadaires[]> {
+        const bonCommande = await this.getBonCommandeById(bonCommandeId);
+
+        await this.selectionsHebdomadairesRepo.delete({ bonCommandeId: bonCommande.id });
+
+        const nouvellesSelections: SelectionsHebdomadaires[] = [];
+        for (const sel of selections) {
+            const menu = await this.menuRepo.findOneBy({ id: sel.menuId });
+            if (!menu) {
+                throw new BadRequestException(`Menu avec l'ID ${sel.menuId} non trouvé.`);
+            }
+
+            const nouvelleSelection = this.selectionsHebdomadairesRepo.create({
+                bonCommandeId: bonCommande.id,
+                jourSemaine: sel.jourSemaine,
+                quantite: sel.quantite,
+                menu: Promise.resolve(menu),
+            });
+            nouvellesSelections.push(nouvelleSelection);
+        }
+
+        return this.selectionsHebdomadairesRepo.save(nouvellesSelections);
     }
 }

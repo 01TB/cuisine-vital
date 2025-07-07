@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { Tab, Nav, Button, Row, Col, Image, ListGroup, Form } from 'react-bootstrap';
 import '../styles/CommandePopup.css'
 import publicApi from '../const/publicApi';
-import api from '../const/api';
+import api from '../const/api'; // Non utilisé dans ce snippet, mais important si tu l'utilises ailleurs
+import LocalisationPopup from './LocalisationPopup';
+import { createOrder } from '../services/clientService';
 
 const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) => {
   const [activeTab, setActiveTab] = useState('boissons');
@@ -10,6 +12,9 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
   const [previewImage, setPreviewImage] = useState(null);
   const [boissons, setBoissons] = useState([]);
   const [accompagnements, setAccompagnements] = useState([]);
+  const [showLocationPopup, setShowLocationPopup] = useState(false);
+  const [deliveryLocation, setDeliveryLocation] = useState(null);
+  const [deliveryAddress, setDeliveryAddress] = useState('');
 
   useEffect(() => {
     const fetchExtras = async () => {
@@ -76,7 +81,18 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
     return total.toLocaleString();
   };
 
-  const handleConfirm = async () => {
+  const handleOpenLocationPopup = () => {
+    setShowLocationPopup(true);
+  };
+
+  const handleLocationSelected = (position, address) => {
+    setDeliveryLocation(position);
+    setDeliveryAddress(address);
+    setShowLocationPopup(false); // Close location popup first
+    handleConfirmOrder(position, address); // Then confirm the order
+  };
+
+  const handleConfirmOrder = async (location, address) => {
     const commandeDetails = [];
 
     selectedMenus.forEach((menu) => {
@@ -112,15 +128,16 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
       statutId: 1, // Assuming 1 is the initial status for a new order
       dateCommande: new Date().toISOString(),
       dateLivraison: new Date().toISOString().split('T')[0], // Example: today's date
-      adresseLivraison: 'Adresse par défaut', // To be replaced with actual user address
+      adresseLivraison: address, 
       montantTotal: parseFloat(calculateTotal().replace(/ /g, '')),
       details: commandeDetails,
+      zoneDeLivraison: location ? { type: 'Point', coordinates: [location.lng, location.lat] } : null,
     };
 
     try {
-      const response = await api.post('/client/create-order', commandeData);
-      console.log('Commande créée avec succès:', response.data);
-      onClose();
+      const response = await createOrder(commandeData);
+      console.log('Commande créée avec succès:', response);
+      onClose(); // Close CommandePopup after successful order
       alert('Commande créée avec succès!');
     } catch (error) {
       console.error('Erreur lors de la création de la commande:', error.response ? error.response.data : error.message);
@@ -133,12 +150,19 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
 
   return (
     <>
+      {/* Fond sombre personnalisé pour CommandePopup.
+        Z-index ajusté à 1045 pour être en dessous de la modale react-bootstrap (1050+).
+      */}
       <div
         className="position-fixed top-0 start-0 w-100 h-100"
-        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1050 }}
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1045 }}
         onClick={onClose}
       ></div>
 
+      {/* Contenu principal de CommandePopup.
+        Z-index ajusté à 1046 pour être au-dessus de son propre fond,
+        mais en dessous du contenu de la modale react-bootstrap (1055).
+      */}
       <div
         className="position-fixed bottom-0 start-0 w-100 fade-in-up"
         style={{
@@ -146,11 +170,10 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
           backgroundColor: 'rgb(255, 255, 255, 0.8)',
           borderTopLeftRadius: '2rem',
           borderTopRightRadius: '2rem',
-          zIndex: 1055,
+          zIndex: 1046, // Ajusté pour être en dessous de LocalisationPopup
           overflowY: 'auto',
           boxShadow: '0 -5px 15px rgba(0,0,0,0.1)',
           backdropFilter: 'blur(10px)' 
-
         }}
       >
         <div className="p-4">
@@ -244,7 +267,7 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
                 </Nav>
 
                 <Tab.Content className='p-5' style={{ backgroundColor: 'rgb(255, 255, 255, 0.6)', transform:'translateY(-25px)', borderRadius:'30px', borderTopLeftRadius:'0px' }}>
-                  <Tab.Pane eventKey={activeTab}>
+                  <Tab.Pane eventKey={activeTab}> 
                     {previewImage && (
                       <div className="text-center mb-4">
                         <Image
@@ -298,13 +321,13 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
                     </Row>
                   </Tab.Pane>
                 </Tab.Content>
-              </Tab.Container>
+              </Tab.Container> 
             </Col>
           </Row>
 
           <div className="d-flex justify-content-end mt-4">
             <Button
-              onClick={handleConfirm}
+              onClick={handleOpenLocationPopup}
               className="rounded-pill px-4 py-2 fw-bold"
               style={{ backgroundColor: '#4CAF50', border: 'none' }}
             >
@@ -314,6 +337,13 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
           </div>
         </div>
       </div>
+      
+      {/* LocalisationPopup (qui est une modale react-bootstrap) */}
+      <LocalisationPopup
+        show={showLocationPopup}
+        handleClose={() => setShowLocationPopup(false)}
+        onSelectLocation={handleLocationSelected}
+      />
     </>
   );
 }

@@ -39,6 +39,9 @@ export class CreateCommande {
 
     livreurId: string;
 
+    zoneDeLivraison?: any; // Added for geographic point (GeoJSON)
+
     @IsNotEmpty()
     details: CommandeDetails[];
+
 }

@@ -1,73 +1,52 @@
-import { useState, useEffect } from 'react';
-import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from "react-router-dom";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../const/api';
 
-export function AuthProvider({ children })
-{
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(null);
-    const navigate = useNavigate();
+const AuthContext = createContext(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            api.get('/client/auth')
-            .then((res) => {
-                setUser(res.data);
-                setToken(token);
-            }) 
-            .catch(() => {
-                localStorage.removeItem('token');
-                setUser(null);
-                setToken(null);
-                navigate('/login');
-            });
-        } else {
-            navigate('/login');
-            setUser(null);
-            setToken(null);
-        }
-    }, []);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const navigate = useNavigate();
 
-    async function login(email, motDePasse) {
-        try {
-            const response = await fetch('http://localhost:3000/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: email,
-                    motDePasse: motDePasse
-                })
-            })
-            if(response.ok)
-            {
-                const { access_token, user } = await response.json();
-                localStorage.setItem('token', access_token);
-                setUser(user);
-                setToken(access_token);
-            } else {
-                throw Error('Erreur de login');
-            }
-        } catch (error) {
-            console.error("Erreur de login", error);
-            throw error;
-        }
+  useEffect(() => {
+    if (token) {
+
+    } else {
+      setUser(null);
     }
+  }, [token]);
 
-    async function logout()
-    {
-        localStorage.removeItem('token');
-        setUser(null);
-        setToken(null);
-        navigate('/login');
+  const login = async (email, motDePasse) => {
+    try {
+      const response = await api.post('/auth/login', { email, motDePasse });
+      const { access_token, user } = response.data;
+      localStorage.setItem('token', access_token);
+      setToken(access_token);
+      setUser(user);
+      navigate('/'); 
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw new Error(error.response?.data?.message || 'Login failed');
     }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+    navigate('/login');
+  };
+
+  const isLoggedIn = !!user;
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoggedIn, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

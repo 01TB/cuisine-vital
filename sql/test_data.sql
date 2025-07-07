@@ -420,3 +420,12 @@ INSERT INTO exemplaires_ingredient (ingredient_id, quantite, date_peremption) VA
 (43, 40.00, '2025-07-14'), -- Lait
 (44, 200.00, '2025-07-21'), -- Œufs
 (45, 15.00, '2025-07-18'); -- Fromage local
+
+INSERT INTO statuts_commande (nom, ordre) VALUES
+('EN_ATTENTE', 1),
+('CONFIRMEE', 2),
+('EN_PREPARATION', 3),
+('PRETE', 4),
+('EN_LIVRAISON', 5),
+('LIVREE', 6),
+('ANNULEE', 7);

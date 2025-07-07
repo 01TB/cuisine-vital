@@ -62,6 +62,15 @@ export class CommandesIndividuelles {
   @Column("uuid", { name: "livreur_id", nullable: true })
   livreurId: string | null;
 
+  @Column({
+    type: 'geometry',
+    spatialFeatureType: 'Point',
+    srid: 4326,
+    nullable: true,
+    name: 'zone_de_livraison',
+  })
+  zoneDeLivraison: string | null;
+
   @Column("timestamp without time zone", {
     name: "created_at",
     nullable: true,
@@ -89,10 +98,10 @@ export class CommandesIndividuelles {
   @ManyToOne(
     () => StatutsCommande,
     (statutsCommande) => statutsCommande.commandesIndividuelles,
-    { lazy: true }
+    { eager: true }
   )
   @JoinColumn([{ name: "statut_id", referencedColumnName: "id" }])
-  statut: Promise<StatutsCommande>;
+  statut: StatutsCommande;
 
   @OneToMany(
     () => CommandesIndividuellesDetails,

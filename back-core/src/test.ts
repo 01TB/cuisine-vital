@@ -40,7 +40,6 @@ async function bootstrap() {
 
   try {
     const res = await clientService.creerCommandeClient(fakeCommande);
-    console.log('Commande créée avec succès :');
     console.dir(res, { depth: null });
   } catch (e) {
     console.error('Erreur lors de la création de la commande :', e.message);
@@ -49,7 +48,6 @@ async function bootstrap() {
   // ----------------------test anaoavana annulation ana commande----------------------------------------------- 
   try {
     const res = await clientService.annulerCommande(false, 'd84442ec-01e3-4d6f-9155-e4a10799e8a2');
-    console.log(res);
   }catch (e) {
     console.error(e.message);
   }

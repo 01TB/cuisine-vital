@@ -3,12 +3,16 @@ import CommandePopup from '../components/CommandePopup';
 import '../styles/Menu.css';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import publicApi from '../const/publicApi';
+import { useAuth } from '../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const Menu = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [selectedMenus, setSelectedMenus] = useState([]);
     const [menus, setMenus] = useState([]);
     const [search, setSearch] = useState('');
+    const { isLoggedIn } = useAuth();
+    const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMenus = async () => {
@@ -24,6 +28,10 @@ const Menu = () => {
   }, []);
 
   const handleSelect = (menu) => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
     setSelectedMenus((prev) => {
       const existingMenu = prev.find((item) => item.id === menu.id);
       if (existingMenu) {
@@ -37,6 +45,10 @@ const Menu = () => {
   };
 
   const handleMenuQuantityChange = (menuId, quantity) => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
     setSelectedMenus((prev) =>
       prev.map((menu) =>
         menu.id === menuId ? { ...menu, quantity: Math.max(1, quantity) } : menu
@@ -50,6 +62,10 @@ const Menu = () => {
   );
 
   const handleOrder = () => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
     setShowPopup(true);
   };
 

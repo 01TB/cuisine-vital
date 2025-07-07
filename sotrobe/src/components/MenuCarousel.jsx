@@ -3,6 +3,8 @@ import { Parallax } from 'react-parallax';
 import menu1 from '../assets/ravitoto-sy-henakisoa.png';
 import menu3 from '../assets/poulet-sy-voanjo.jpg';
 import bgParallax from '../assets/parallax-bg.jpg'; // <-- Ton image de fond
+import { useAuth } from '../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const menus = [
   {
@@ -23,6 +25,18 @@ const menus = [
 ];
 
 const MenuCarousel = () => {
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+
+  const handleAddToCartClick = () => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    } else {
+      // Implement add to cart logic here
+      alert('Ajouté au panier (si connecté)!');
+    }
+  };
+
   return (
     <Parallax bgImage={bgParallax} strength={500}>
       <div>
@@ -49,7 +63,7 @@ const MenuCarousel = () => {
                         <div className="menu-bottom-row">
                           <p className="menu-description">{menu.description}</p>
                           <div className="menu-buttons">
-                            <button className="icon-button">
+                            <button className="icon-button" onClick={handleAddToCartClick}>
                               <i className="bi bi-cart-check"></i>
                             </button>
                             <button className="icon-button">

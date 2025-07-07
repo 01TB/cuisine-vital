@@ -1,26 +1,13 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCube } from "@fortawesome/free-solid-svg-icons";
-import publicApi from '../const/publicApi';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../providers/AuthProvider';
 import { useNavigate, Link } from 'react-router-dom'; 
 
 const Login = () => {
-  const [loginData, setLoginData] = useState(null);
   const [formData, setFormData] = useState({ email: "", motDePasse: "" });
   const { login } = useAuth();
   const navigate = useNavigate();
-
-  const handleSuccess = () => {
-  };
-
-  const handleError = () => {
-    alert("Identifiants incorrects");
-  };
-
-  const isDataOk = (data) => {
-    return data.status === 1 || data.user != null;
-  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -30,9 +17,9 @@ const Login = () => {
     e.preventDefault();
     try {
       await login(formData.email, formData.motDePasse);
-      navigate('/home'); 
+      // navigate('/home'); // Navigation is now handled by AuthProvider
     } catch (error) {
-      alert(error); 
+      alert(error.message); 
     }
   };
 

@@ -97,10 +97,10 @@ export class CommandesEntreprises {
   @ManyToOne(
     () => StatutsCommande,
     (statutsCommande) => statutsCommande.commandesEntreprises,
-    { lazy: true }
+    { eager: true }
   )
   @JoinColumn([{ name: "statut_id", referencedColumnName: "id" }])
-  statut: Promise<StatutsCommande>;
+  statut: StatutsCommande;
 
   @OneToMany(
     () => CommandesEntreprisesDetails,

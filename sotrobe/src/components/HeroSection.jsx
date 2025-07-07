@@ -3,6 +3,8 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 import foodImage from '../assets/food-image.png';
 import FloatingPill from './FloatingPill';
 import MapIcon from './MapIcon';
+import { useAuth } from '../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const qualityPills = [
   { text: 'Livraison Rapide & Fiable', initialStyle: { top: '5%', left: '15%' }, animationDelay: '0s' },
@@ -25,8 +27,20 @@ const qualityPills = [
 
 const HeroSection = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
 
-  // const [scrollY, setScrollY] = useState(0);
+  const handleOrderNowClick = () => {
+    if (isLoggedIn) {
+      navigate('/menus'); // Or to a dedicated order creation page
+    } else {
+      navigate('/login');
+    }
+  };
+
+  const handleViewDishesClick = () => {
+    navigate('/menus');
+  };
 
   useEffect(() => {
     // const handleScroll = () => {
@@ -57,11 +71,11 @@ const HeroSection = () => {
             Les meilleurs plats de votre ville, livrés chauds et rapidement à votre porte. Découvrez une expérience culinaire inoubliable.
           </p>
         <div className="cta-buttons fade-in-up">
-        <Button className="btn-custom btn-order rounded-5" style={{ backgroundColor:'#99621E', border:'none' }}>
+        <Button className="btn-custom btn-order rounded-5" style={{ backgroundColor:'#99621E', border:'none' }} onClick={handleOrderNowClick}>
             <i className="bi bi-bicycle me-2"></i>
             Commander maintenant
         </Button>
-        <Button className="btn-custom border-black rounded-5 mx-3" style={{ backgroundColor:'#2C5530', border:'none', color:'white' }}>
+        <Button className="btn-custom border-black rounded-5 mx-3" style={{ backgroundColor:'#2C5530', border:'none', color:'white' }} onClick={handleViewDishesClick}>
             <i className="bi bi-calendar-check me-2"></i> 
             Voir les plats du jour
         </Button>

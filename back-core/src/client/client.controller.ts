@@ -3,7 +3,8 @@ import {
   Get, 
   HttpException, 
   HttpStatus, 
-  UseGuards 
+  UseGuards, 
+  Query
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { JwtAuthGuard } from '../guards/jwt-auth';
@@ -20,10 +21,8 @@ export class ClientController {
   @UseGuards(JwtAuthGuard)
   @Get('auth')
   async authenticateClient(@CurrentUser() user: any) {
-    console.log('[ClientController] Authenticating client. User from token:', user);
     try {
       const client = await this.clientService.getClientById(user.userId);
-      console.log('[ClientController] Client found by ID:', client);
       
       if (!client) {
         throw new HttpException(
@@ -36,7 +35,8 @@ export class ClientController {
         id: client.id,
         email: client.email,
         nom: client.nom,
-        prenom: client.prenom
+        prenom: client.prenom,
+        typeClient: client.typeClient
       };
     } catch (error) {
       console.error('[ClientController] Error during authentication:', error);
@@ -49,11 +49,9 @@ export class ClientController {
 
   @Post('register')
   async registerClient(@Body() clientData: Clients): Promise<Clients> {
-    console.log('[ClientController] Registering new client. Data:', clientData);
     try {
 
       const newClient = await this.clientService.saveClient(clientData);
-      console.log('[ClientController] Client registered successfully:', newClient.id);
       const { motDePasse, ...result } = newClient;
       return result as Clients; 
     } catch (error) {
@@ -97,7 +95,6 @@ export class ClientController {
   async getAllAccompagnements() {
     try {
       const accompagnements = await this.clientService.getAllAccompagnements();
-      console.log(accompagnements);
       return accompagnements;
     } catch (error) {
       throw new HttpException(
@@ -115,6 +112,95 @@ export class ClientController {
     } catch (error) {
       throw new HttpException(
         error.message || 'Erreur lors de la récupération des boissons.',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Get('commandes')
+  @UseGuards(JwtAuthGuard)
+  async getCommandes(
+    @CurrentUser() user: any,
+    @Query('clientIndividuel') clientIndividuel: boolean,
+    @Query('statutOrderLessThan') statutOrderLessThan: number,
+    @Query('statutOrder') statutOrder: number,
+  ) {
+    try {
+      const clientId = user.userId;
+      const commandes = await this.clientService.getCommandes(
+        clientIndividuel,
+        null,
+        null,
+        null,
+        clientId,
+        statutOrder,
+        statutOrderLessThan
+      );
+      return commandes;
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Erreur lors de la récupération des commandes.',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Post('cancel-order')
+  @UseGuards(JwtAuthGuard)
+  async cancelOrder(
+    @Body('commandeId') commandeId: string,
+    @Body('commandeIndividuelle') commandeIndividuelle: boolean,
+  ) {
+    try {
+      const result = await this.clientService.annulerCommande(commandeIndividuelle, commandeId);
+      if (!result.success) {
+        throw new HttpException(result.message, HttpStatus.BAD_REQUEST);
+      }
+      return { message: result.message };
+    } catch (error) {
+      throw new HttpException(
+        error.message || "Erreur lors de l'annulation de la commande.",
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Get('enterprise-profile/:clientId')
+  @UseGuards(JwtAuthGuard)
+  async getEnterpriseClientProfile(@CurrentUser() user: any) {
+    try {
+      const clientId = user.userId;
+      const client = await this.clientService.getClientById(clientId);
+      if (!client || client.typeClient !== 'ENTREPRISE') {
+        throw new HttpException('Client non trouvé ou non autorisé.', HttpStatus.NOT_FOUND);
+      }
+
+      const abonnements = await this.clientService.getAbonnementsByClientId(clientId);
+      let subscriptionData = null;
+      let orderVouchers = [];
+
+      if (abonnements.length > 0) {
+        // Assuming an enterprise client has one active subscription for simplicity
+        subscriptionData = abonnements[0];
+        orderVouchers = await this.clientService.getBonsCommandeByAbonnementId(subscriptionData.id);
+      }
+
+      const availableMenus = await this.clientService.getAllMenus();
+      const availableAccompaniments = await this.clientService.getAllAccompagnements();
+      const availableBoissons = await this.clientService.getAllBoissons();
+
+      return {
+        clientInfo: client,
+        subscriptionData,
+        availableMenus,
+        availableAccompaniments,
+        availableBoissons,
+        orderVouchers,
+      };
+    } catch (error) {
+      console.error('[ClientController] Error fetching enterprise client profile:', error);
+      throw new HttpException(
+        error.message || 'Erreur lors de la récupération du profil client entreprise.',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

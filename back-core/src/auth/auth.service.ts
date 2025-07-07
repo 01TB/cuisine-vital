@@ -35,7 +35,8 @@ export class AuthService {
                 id: user.id,
                 email: user.email,
                 nom: user.nom,
-                prenom: user.prenom
+                prenom: user.prenom, 
+                typeClient: user.typeClient
             },
         };
     }
@@ -60,7 +61,8 @@ export class AuthService {
                 id: client.id,
                 email: client.email,
                 nom: client.nom,
-                prenom: client.prenom
+                prenom: client.prenom,
+                typeClient: client.typeClient
             },
         };
     }

@@ -1,13 +1,25 @@
 import { Container, Row, Col, ListGroup, Button, Image } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import kafe from '../assets/kafe.png';
+import { useAuth } from '../providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
 const AddOnSection = () => {
     const [imageUrl, setImageUrl] = useState(null);
+    const { isLoggedIn } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setImageUrl(kafe);
     }, []);
+
+    const handleViewMenusClick = () => {
+        if (isLoggedIn) {
+            navigate('/menus');
+        } else {
+            navigate('/login');
+        }
+    };
 
     return (
         <Container fluid className="">
@@ -34,7 +46,7 @@ const AddOnSection = () => {
                         C'est inclus dans votre formule !
                     </p>
 
-                    <Button variant="dark rounded-5">Voir les menus</Button>
+                    <Button variant="dark rounded-5" onClick={handleViewMenusClick}>Voir les menus</Button>
                 </Col>
 
                 <Col md={6} className="d-flex justify-content-center">

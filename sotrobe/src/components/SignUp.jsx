@@ -133,7 +133,7 @@ const SignUp = () => {
                             </div>
                         )}
 
-                        <div className="mx-auto w-100" style={{ maxWidth: '450px' }}>
+                        <div className="w-100" style={{ maxWidth: '450px' }}>
                             <div className="form-check form-switch mb-4">
                                 <input 
                                     className="form-check-input" 

@@ -11,6 +11,10 @@ import { CommandesIndividuelles } from '../entities/CommandesIndividuelles';
 import { CommandesIndividuellesDetails } from '../entities/CommandesIndividuellesDetails';
 import { Menus } from '../entities/Menus';
 import { StatutsCommande } from '../entities/StatutsCommande';
+import { Abonnements } from 'src/entities/Abonnements';
+import { TypesAbonnement } from 'src/entities/TypesAbonnement';
+import { BonsCommande } from 'src/entities/BonsCommande';
+import { SelectionsHebdomadaires } from 'src/entities/SelectionsHebdomadaires';
 
 @Module({
   imports: [
@@ -24,6 +28,10 @@ import { StatutsCommande } from '../entities/StatutsCommande';
       Accompagnements,
       Boissons,
       StatutsCommande,
+      Abonnements,
+      TypesAbonnement,
+      BonsCommande,
+      SelectionsHebdomadaires
     ]),
   ],
   providers: [ClientService],

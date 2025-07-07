@@ -501,6 +501,8 @@ CREATE TABLE alertes (
 alter table clients alter column mot_de_passe set type text;
 alter table clients drop column zone_livraison_id;
 alter table accompagnements rename column prix_uniatire to prix_unitaire;
+alter table commandes_individuelles add column zone_de_livraison GEOMETRY(Point, 4326) NULL;
+
 
 -- =============================================
 -- SYSTÈME DE GESTION DE LIVRAISON DE REPAS
