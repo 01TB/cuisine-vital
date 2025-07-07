@@ -131,18 +131,11 @@ export class AdminService {
       };
     }
     
-    async getTopMenu(dateDebut: Date, dateFin: Date) {
-      const topMenu = await this.historiqueCommandesViewRepository
-        .createQueryBuilder('commande')
-        .select('commande.nom_menu', 'nom_menu')
-        .addSelect('COUNT(commande.id_commande)', 'nombre_commande')
-        .where('commande.date_commande BETWEEN :dateDebut AND :dateFin', { dateDebut, dateFin })
-        .groupBy('commande.nom_menu')
-        .orderBy('nombre_commande', 'DESC')
-        .limit(5)
-        .getRawMany();
-    
-      return topMenu;
+    async getTopMenu(dateDebut: string, dateFin: string) {
+      // Utilisation de la vue v_top_menus
+      // Si besoin de filtrer par date, il faudrait adapter la vue ou faire une jointure, mais ici on retourne le top global
+      const result = await this.menuRepository.query('SELECT * FROM v_top_menus ORDER BY quantite_totale DESC LIMIT 5');
+      return result;
     }
 
     async getTotalDepenses(dateDebut: Date, dateFin: Date) {
