@@ -3,3 +3,4 @@
 back-core/.env
 /back-core/node_modules
 back-core/package-lock.json
+sotrobe
