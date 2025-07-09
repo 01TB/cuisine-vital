@@ -152,7 +152,7 @@ export class ChefCuisinierService {
           );
         }
         return queryRunner.manager.create(Recettes, {
-          menu: savedMenu.id,
+          menu: savedMenu,
           ingredient: ingredient,
           quantite: recetteDto.quantite
         });
