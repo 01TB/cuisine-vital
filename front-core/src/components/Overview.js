@@ -11,6 +11,11 @@ const Overview = () => {
   const [loadingCA, setLoadingCA] = useState(true);
   const [errorCA, setErrorCA] = useState(null);
 
+  // Nouveaux états pour commandes en cours
+  const [nbCommandesEnCours, setNbCommandesEnCours] = useState(0);
+  const [loadingCmd, setLoadingCmd] = useState(true);
+  const [errorCmd, setErrorCmd] = useState(null);
+
   // Utilisation de useCallback pour que la fonction puisse être passée en dépendance ou à un événement onClick
   const fetchCA = useCallback(async () => {
     setLoadingCA(true);
@@ -19,20 +24,36 @@ const Overview = () => {
       const res = await axios.get(api('admin/stats/chiffres-affaire'));
       setChiffresAffaire(res.data);
     } catch (err) {
-      setErrorCA('Erreur de chargement du C.A.'); // Message plus court
-      console.error(err); // Toujours bon de logguer l'erreur complète
+      setErrorCA('Erreur de chargement du C.A.');
+      console.error(err);
     } finally {
       setLoadingCA(false);
     }
   }, []);
 
+  // Nouvelle fonction pour récupérer le nombre de commandes en cours
+  const fetchNbCommandesEnCours = useCallback(async () => {
+    setLoadingCmd(true);
+    setErrorCmd(null);
+    try {
+      const res = await axios.get(api('admin/commandes/en-cours/nb'));
+      setNbCommandesEnCours(res.data.nombre_commande_en_cours || 0);
+    } catch (err) {
+      setErrorCmd('Erreur de chargement des commandes en cours');
+      console.error(err);
+    } finally {
+      setLoadingCmd(false);
+    }
+  }, []);
+
   useEffect(() => {
     fetchCA();
-  }, [fetchCA]);
+    fetchNbCommandesEnCours();
+  }, [fetchCA, fetchNbCommandesEnCours]);
 
   const totalCA = parseFloat(chiffresAffaire.chiffre_affaire_individuel) + parseFloat(chiffresAffaire.chiffre_affaire_entreprise);
 
-  // Fonction pour afficher le card de Chiffre d'Affaires en fonction de l'état
+  // Fonction pour afficher la card de Chiffre d'Affaires en fonction de l'état
   const renderRevenueCard = () => {
     if (loadingCA) {
       // Squelette de chargement pour une meilleure UX
@@ -72,9 +93,47 @@ const Overview = () => {
         title="Chiffre d'affaires"
         value={`${totalCA.toFixed(2)} €`}
         subtitle={`Ind: ${parseFloat(chiffresAffaire.chiffre_affaire_individuel).toFixed(2)}€ | Ent: ${parseFloat(chiffresAffaire.chiffre_affaire_entreprise).toFixed(2)}€`}
-        change="📈 +8.5% ce mois" // Note: cette valeur est statique pour l'instant
+        change="📈 +8.5% ce mois"
         icon={Euro}
         color="green"
+      />
+    );
+  };
+
+  // Fonction pour afficher la card Commandes en cours
+  const renderCommandesEnCoursCard = () => {
+    if (loadingCmd) {
+      return (
+        <StatsCard
+          title="Commandes en cours"
+          value="..."
+          subtitle="Chargement..."
+          change=""
+          icon={Package}
+          color="blue"
+        />
+      );
+    }
+    if (errorCmd) {
+      return (
+        <StatsCard
+          title="Commandes en cours"
+          value="Erreur"
+          subtitle={errorCmd}
+          change=""
+          icon={Package}
+          color="red"
+        />
+      );
+    }
+    return (
+      <StatsCard
+        title="Commandes en cours"
+        value={nbCommandesEnCours}
+        subtitle="Actives et en progression"
+        change="📈 +12% depuis hier"
+        icon={Package}
+        color="blue"
       />
     );
   };
@@ -87,28 +146,18 @@ const Overview = () => {
       </div>
       <div className="dashboard-content">
         <div className="dashboard-stats grid grid-cols-1 md:grid-cols-3 gap-4">
-          <StatsCard
-            title="Commandes en cours"
-            value="0"
-            subtitle="Actives et en progression"
-            change="📈 +12% depuis hier"
-            icon={Package}
-            color="blue"
-          />
-          
-          {/* Le card de Chiffre d'Affaires est maintenant géré par cette fonction */}
+          {renderCommandesEnCoursCard()}
           {renderRevenueCard()}
-          
           <StatsCard
             title="Revenus journaliers"
-            value={`0.00 €`} // Valeur par défaut plus appropriée
+            value={`0.00 €`}
             subtitle="Revenus d'aujourd'hui"
             change="📈 +5%"
             icon={BarChart3}
-            color="purple" // Changement de couleur pour la variété visuelle
+            color="purple"
           />
         </div>
-        <div className="dashboard-details mt-6"> {/* Ajout d'un margin-top */}
+        <div className="dashboard-details mt-6">
           <PopularDishes />
           <KitchenWorkflow />
         </div>

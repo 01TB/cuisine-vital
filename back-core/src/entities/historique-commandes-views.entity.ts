@@ -12,7 +12,7 @@ import { Abonnements } from './Abonnements';
       .createQueryBuilder()
       // La logique de la vue est dans la BDD, ici on ne fait que la mapper.
       // Cette expression n'est pas exécutée si la vue existe déjà.
-      .select('ci.id', 'commande_id')
+      .select('ci.id', 'commande_id'),
       .from('commandes_individuelles', 'ci'),
 })
 export class HistoriqueCommandesView {
