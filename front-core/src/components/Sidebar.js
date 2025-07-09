@@ -5,7 +5,9 @@ import {
   Menu,
   ChefHat,
   Package,
-  Settings
+  Settings,
+  Route,
+  Calculator
 } from 'lucide-react';
 import { useUserAuth } from '../hooks/useUserAuth';
 
@@ -74,7 +76,19 @@ const Sidebar = () => {
       label: 'Historique des commandes',
       icon: ShoppingCart,
       roles: ['admin']
-    }
+    },
+    {
+      to: '/admin/dashboard/gestion-trajets',
+      label: 'Gestion des trajets',
+      icon: Route,
+      roles: ['admin']
+    },
+    {
+      to: '/admin/dashboard/calcul-itineraire', // Nouvelle URL
+      label: "Calcul d'itinéraire",
+      icon: Calculator,
+      roles: ['admin']
+    },
   ];
 
   const filteredNavLinks = allNavLinks.filter(link => link.roles.includes(currentUserRole));
@@ -87,8 +101,7 @@ const Sidebar = () => {
             <NavLink
               to={link.to}
               className={({ isActive }) =>
-                `nav-link d-flex align-items-center mb-1 ${
-                  isActive ? 'active fw-semibold bg-primary text-white' : 'text-dark'
+                `nav-link d-flex align-items-center mb-1 ${isActive ? 'active fw-semibold bg-primary text-white' : 'text-dark'
                 }`
               }
             >
@@ -102,8 +115,7 @@ const Sidebar = () => {
                     key={subIndex}
                     to={subLink.to}
                     className={({ isActive }) =>
-                      `nav-link px-2 py-1 mb-1 ${
-                        isActive ? 'bg-secondary bg-opacity-10 text-primary fw-medium' : 'text-muted'
+                      `nav-link px-2 py-1 mb-1 ${isActive ? 'bg-secondary bg-opacity-10 text-primary fw-medium' : 'text-muted'
                       }`
                     }
                   >

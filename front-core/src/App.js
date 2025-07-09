@@ -23,7 +23,8 @@ import Unauthorized from './pages/Unauthorized';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MenusPage from './pages/MenusPage';
 import ItinerairePage from './pages/ItinerairePage';
-
+import GestionTrajets from './pages/GestionTrajets';
+import ItineraireAdminPage from './pages/ItineraireAdminPage';
 
 const roleMap = { 1: 'admin', 2: 'chef cuisinier', 3: 'livreur' };
 
@@ -53,7 +54,7 @@ const MainLayout = ({ children }) => {
       {/* Affiche la bonne navbar en fonction du rôle */}
       {userRole === 'admin' || userRole === 'chef cuisinier' ? <AdminNavbar /> : null}
       {userRole === 'livreur' ? <LivreurNavbar /> : null}
-      
+
       {/* Ajuster la marge dynamiquement */}
       <div style={{ marginTop: userRole ? '70px' : '0' }}>
         {children}
@@ -73,8 +74,8 @@ function App() {
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* LIVREUR ROUTE */}
-          <Route 
-            path="/admin/livreur/dashboard" 
+          <Route
+            path="/admin/livreur/dashboard"
             element={
               <RoleProtectedRoute allowedRoles={['livreur']}>
                 <MainLayout>
@@ -85,8 +86,8 @@ function App() {
           />
 
           {/* 2. Ajouter la nouvelle route pour l'itinéraire */}
-          <Route 
-            path="/admin/livreur/itineraire" 
+          <Route
+            path="/admin/livreur/itineraire"
             element={
               <RoleProtectedRoute allowedRoles={['livreur']}>
                 <MainLayout>
@@ -97,27 +98,48 @@ function App() {
           />
 
           {/* ADMIN & CHEF CUISINIER ROUTES */}
-        <Route 
-          path="/admin/dashboard" 
-          element={
-            <RoleProtectedRoute allowedRoles={['admin', 'chef cuisinier']}>
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
-            </RoleProtectedRoute>
-          }
-        >
-          {/* Sous-routes ici */}
-          <Route path="chef/commandes" element={<Commandes />} />
-          <Route path="chef/menus" element={<MenusPage />} />
-          <Route path="overview" element={<Overview />} />
-          {/* ... d'autres sous-routes */}
-        </Route>
+          <Route
+            path="/admin/dashboard"
+            element={
+              <RoleProtectedRoute allowedRoles={['admin', 'chef cuisinier']}>
+                <MainLayout>
+                  <Dashboard />
+                </MainLayout>
+              </RoleProtectedRoute>
+            }
+          >
+            {/* Sous-routes ici */}
+            <Route path="chef/commandes" element={<Commandes />} />
+            <Route path="chef/menus" element={<MenusPage />} />
+            <Route path="overview" element={<Overview />} />
+            {/* ... d'autres sous-routes */}
+
+            <Route 
+              path="gestion-trajets" 
+              element={
+                <RoleProtectedRoute allowedRoles={['admin']}>
+                  <GestionTrajets />
+                </RoleProtectedRoute>
+              } 
+            />
+
+            {/* ▼▼▼ AJOUTER LA NOUVELLE ROUTE ICI ▼▼▼ */}
+            <Route 
+              path="calcul-itineraire" 
+              element={
+                <RoleProtectedRoute allowedRoles={['admin']}>
+                  <ItineraireAdminPage />
+                </RoleProtectedRoute>
+              } 
+            />
+          </Route>
+
+          
 
 
           {/* ADMIN ONLY ROUTES (Example) */}
-           <Route 
-            path="/admin/clients" 
+          <Route
+            path="/admin/clients"
             element={
               <RoleProtectedRoute allowedRoles={['admin']}>
                 <MainLayout>
@@ -126,8 +148,8 @@ function App() {
               </RoleProtectedRoute>
             }
           />
-          <Route 
-            path="/admin/settings" 
+          <Route
+            path="/admin/settings"
             element={
               <RoleProtectedRoute allowedRoles={['admin']}>
                 <MainLayout>
