@@ -949,7 +949,7 @@ ventes_entreprises AS (
     WHERE ce.deleted_at IS NULL
     GROUP BY m.id, m.nom
 )
-SELECT 
+SELECT
     m.id,
     m.nom,
     COALESCE(vi.qte_vendue_ind, 0) + COALESCE(ve.qte_vendue_ent, 0) as quantite_totale,
