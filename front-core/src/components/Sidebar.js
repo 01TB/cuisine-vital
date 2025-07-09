@@ -130,9 +130,6 @@ const Sidebar = () => {
             <div className="text-muted small">{currentUserRole}</div>
           </div>
         </div>
-        <div className="text-center text-muted small mt-3">
-          Made with <span className="text-primary fw-bold">Ysily</span>
-        </div>
       </div>
     </aside>
   );

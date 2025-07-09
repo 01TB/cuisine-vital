@@ -1,70 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Tabs, Tab, Table, Form } from 'react-bootstrap';
-
-// Mockup des menus
-const mockMenus = [
-  { id: 1, nom: 'Menu Zebu', description: 'Viande zébu + riz', prix_carte: 12000 },
-  { id: 2, nom: 'Menu Poulet', description: 'Poulet grillé + légumes', prix_carte: 15000 },
-  { id: 3, nom: 'Menu Végétarien', description: 'Tofu + salade', prix_carte: 10000 },
-];
-
-// Mockup des détails des commandes
-const mockDetails = {
-  '1': [
-    { menu_id: 1, quantite: 1, prix_unitaire: 12000, accompagnement_id: null, boisson_id: 1, notes: "Peu épicé" },
-    { menu_id: 2, quantite: 2, prix_unitaire: 15000, accompagnement_id: null, boisson_id: 2, notes: "" }
-  ],
-  '2': [
-    { menu_id: 2, quantite: 1, prix_unitaire: 15000, accompagnement_id: null, boisson_id: 1, notes: "Sans sauce" },
-    { menu_id: 3, quantite: 3, prix_unitaire: 10000, accompagnement_id: null, boisson_id: 3, notes: "Vegan" }
-  ],
-  '3': [
-    { menu_id: 1, quantite: 2, prix_unitaire: 12000, accompagnement_id: null, boisson_id: 1, notes: "" }
-  ]
-};
-
-// Mockup des commandes
-const mockCommandes = [
-  {
-    id: '1',
-    numero_commande: 'CMD001',
-    date_commande: new Date().toISOString(),
-    nom_client: 'Jean Rakoto',
-    montant_total: 35000,
-    total_quantite: 3,
-  },
-  {
-    id: '2',
-    numero_commande: 'CMD002',
-    date_commande: new Date().toISOString(),
-    nom_client: 'Sophie Rasoanaivo',
-    montant_total: 42000,
-    total_quantite: 4,
-  },
-  {
-    id: '3',
-    numero_commande: 'CMD003',
-    date_commande: new Date().toISOString(),
-    nom_client: 'Tiana Randria',
-    montant_total: 27000,
-    total_quantite: 2,
-  }
-];
+import { Modal, Button, Tabs, Tab, Table, Form, InputGroup } from 'react-bootstrap';
+import api from '../const/api';
 
 const Commandes = () => {
   const [commandes, setCommandes] = useState([]);
   const [filteredCommandes, setFilteredCommandes] = useState([]);
+  const [historique, setHistorique] = useState([]);
+
   const [selectedCommande, setSelectedCommande] = useState(null);
-  const [commandeDetails, setCommandeDetails] = useState([]);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [noteMessage, setNoteMessage] = useState('');
   const [filtre, setFiltre] = useState({ quantite: '', prix: '', ordre: '' });
 
+  const fetchHistorique = async () => {
+    try {
+      const res = await fetch(api('chef-cuisinier/commandes/all'));
+      const data = await res.json();
+      setHistorique(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchCommandes = async () => {
+    try {
+      const res = await fetch(api('chef-cuisinier/commandes/today'));
+      const data = await res.json();  
+      setCommandes(data);
+      setFilteredCommandes(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    setCommandes(mockCommandes);
-    setFilteredCommandes(mockCommandes);
+    fetchCommandes();
+    fetchHistorique();
   }, []);
+
 
   const handleFiltrer = () => {
     let result = [...commandes];
@@ -77,24 +51,18 @@ const Commandes = () => {
 
   const openDetails = (commande) => {
     setSelectedCommande(commande);
-    const details = mockDetails[commande.id] || [];
-    setCommandeDetails(details);
     setShowDetailsModal(true);
   };
 
   const sendNote = () => {
+    // Appel API ici pour envoyer la note
     setShowNoteModal(false);
     setNoteMessage('');
     alert('Note envoyée !');
   };
 
-  const getMenuName = (menuId) => {
-    const menu = mockMenus.find(m => m.id === menuId);
-    return menu ? menu.nom : 'Menu inconnu';
-  };
-
   return (
-    <div>
+    <div className="container mt-4">
       <h2 className="mb-4">Liste des Commandes</h2>
       <Tabs defaultActiveKey="aujourdhui">
         <Tab eventKey="aujourdhui" title="Commandes d'aujourd'hui">
@@ -147,49 +115,45 @@ const Commandes = () => {
         </Tab>
 
         <Tab eventKey="historique" title="Historique des commandes">
-          <p className="mt-3">À venir : Historique global des commandes</p>
+          <Table striped bordered hover className="mt-3">
+            <thead>
+              <tr>
+                <th>Numéro</th>
+                <th>Date</th>
+                <th>Client</th>
+                <th>Montant</th>
+              </tr>
+            </thead>
+            <tbody>
+              {historique.map(cmd => (
+                <tr key={cmd.id}>
+                  <td>{cmd.numero_commande}</td>
+                  <td>{new Date(cmd.date_commande).toLocaleString()}</td>
+                  <td>{cmd.nom_client}</td>
+                  <td>{cmd.montant_total} Ar</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
         </Tab>
       </Tabs>
 
-      {/* MODAL DÉTAILS */}
       <Modal show={showDetailsModal} onHide={() => setShowDetailsModal(false)} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Détails de la commande</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedCommande && (
-            <>
+            <div>
               <p><strong>Commande :</strong> {selectedCommande.numero_commande}</p>
               <p><strong>Client :</strong> {selectedCommande.nom_client}</p>
               <p><strong>Montant total :</strong> {selectedCommande.montant_total} Ar</p>
-              <h5 className="mt-4">Menus commandés</h5>
-              <Table size="sm" bordered>
-                <thead>
-                  <tr>
-                    <th>Menu</th>
-                    <th>Quantité</th>
-                    <th>Prix unitaire</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {commandeDetails.map((detail, index) => (
-                    <tr key={index}>
-                      <td>{getMenuName(detail.menu_id)}</td>
-                      <td>{detail.quantite}</td>
-                      <td>{detail.prix_unitaire} Ar</td>
-                      <td>{detail.notes || '-'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
               <Button onClick={() => setShowNoteModal(true)}>Envoyer une note</Button>
-            </>
+            </div>
           )}
         </Modal.Body>
       </Modal>
 
-      {/* MODAL NOTE */}
       <Modal show={showNoteModal} onHide={() => setShowNoteModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Envoyer une note</Modal.Title>

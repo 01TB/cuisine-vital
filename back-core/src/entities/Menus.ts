@@ -27,7 +27,7 @@ export class Menus {
   description: string | null;
 
   @Column("numeric", { name: "prix_carte", precision: 8, scale: 2 })
-  prixCarte: string;
+  prixCarte: number;
 
   @Column("integer", { name: "temps_preparation" })
   tempsPreparation: number;
@@ -61,44 +61,37 @@ export class Menus {
 
   @OneToMany(
     () => CommandesEntreprisesDetails,
-    (commandesEntreprisesDetails) => commandesEntreprisesDetails.menu,
-    { lazy: true }
+    (commandesEntreprisesDetails) => commandesEntreprisesDetails.menu
   )
   commandesEntreprisesDetails: Promise<CommandesEntreprisesDetails[]>;
 
   @OneToMany(
     () => CommandesIndividuellesDetails,
-    (commandesIndividuellesDetails) => commandesIndividuellesDetails.menu,
-    { lazy: true }
+    (commandesIndividuellesDetails) => commandesIndividuellesDetails.menu
   )
   commandesIndividuellesDetails: Promise<CommandesIndividuellesDetails[]>;
 
   @OneToMany(
     () => MenuTypeAbonnement,
-    (menuTypeAbonnement) => menuTypeAbonnement.menu,
-    { lazy: true }
+    (menuTypeAbonnement) => menuTypeAbonnement.menu
   )
   menuTypeAbonnements: Promise<MenuTypeAbonnement[]>;
 
-  @OneToMany(() => MenusFavoris, (menusFavoris) => menusFavoris.menu, {
-    lazy: true,
-  })
+  @OneToMany(() => MenusFavoris, (menusFavoris) => menusFavoris.menu)
   menusFavorises: Promise<MenusFavoris[]>;
 
   @OneToMany(
     () => PlanningProduction,
-    (planningProduction) => planningProduction.menu,
-    { lazy: true }
+    (planningProduction) => planningProduction.menu
   )
   planningProductions: Promise<PlanningProduction[]>;
 
-  @OneToMany(() => Recettes, (recettes) => recettes.menu, { lazy: true })
+  @OneToMany(() => Recettes, (recettes) => recettes.menu)
   recettes: Promise<Recettes[]>;
 
   @OneToMany(
     () => SelectionsHebdomadaires,
-    (selectionsHebdomadaires) => selectionsHebdomadaires.menu,
-    { lazy: true }
+    (selectionsHebdomadaires) => selectionsHebdomadaires.menu
   )
   selectionsHebdomadaires: Promise<SelectionsHebdomadaires[]>;
 

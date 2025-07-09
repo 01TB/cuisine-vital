@@ -13,9 +13,16 @@ const Commandes = () => {
 
   const fetchCommandes = async () => {
     try {
-      const res = await api.get('/commandes/aujourdhui');
-      setCommandes(res.data);
-      setFilteredCommandes(res.data);
+      const res = await fetch(api('chef-cuisinier/commandes/today'), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await res.json();  
+      setCommandes(data);
+      setFilteredCommandes(data);
     } catch (err) {
       console.error(err);
     }

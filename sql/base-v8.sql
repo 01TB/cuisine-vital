@@ -156,6 +156,7 @@ CREATE TABLE menus (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
+
 CREATE TABLE menu_valide (
     id SERIAL PRIMARY KEY,
     id_menu NOT NLL REFERENCES menu(id) ON DELETE
@@ -257,6 +258,18 @@ CREATE TABLE commandes_individuelles (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
+-- Détails des commandes individuelles
+CREATE TABLE commandes_individuelles_details (
+    id SERIAL PRIMARY KEY,
+    commande_id UUID NOT NULL REFERENCES commandes_individuelles(id) ON DELETE CASCADE,
+    menu_id INTEGER REFERENCES menus(id),
+    accompagnement_id INTEGER DEFAULT NULL REFERENCES accompagnements(id),
+    zone_de_livraison GEOMETRY(Point, 4326) DEFAULT NULL,
+    quantite INTEGER NOT NULL,
+    prix_unitaire DECIMAL(8,2) NOT NULL,
+    boisson_id INTEGER REFERENCES boissons(id),
+    notes TEXT
+);
 -- Commandes entreprises (abonnements)
 CREATE TABLE commandes_entreprises (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -273,18 +286,6 @@ CREATE TABLE commandes_entreprises (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
--- Détails des commandes individuelles
-CREATE TABLE commandes_individuelles_details (
-    id SERIAL PRIMARY KEY,
-    commande_id UUID NOT NULL REFERENCES commandes_individuelles(id) ON DELETE CASCADE,
-    menu_id INTEGER REFERENCES menus(id),
-    accompagnement_id INTEGER DEFAULT NULL REFERENCES accompagnements(id),
-    zone_de_livraison GEOMETRY(Point, 4326) DEFAULT NULL,
-    quantite INTEGER NOT NULL,
-    prix_unitaire DECIMAL(8,2) NOT NULL,
-    boisson_id INTEGER REFERENCES boissons(id),
-    notes TEXT
-);
 
 -- Détails des commandes entreprises
 CREATE TABLE commandes_entreprises_details (

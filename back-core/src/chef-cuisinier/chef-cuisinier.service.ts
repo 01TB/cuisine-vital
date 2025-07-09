@@ -4,176 +4,133 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CommandesEntreprises } from 'src/entities/CommandesEntreprises';
-import { CommandesIndividuelles } from 'src/entities/CommandesIndividuelles';
-import { StatutsCommande } from 'src/entities/StatutsCommande';
-import { In, Repository } from 'typeorm';
-import { UpdateCommandeStatutDto } from './dto/update-commande-statut.dto';
-import { CreateMenuDto } from './dto/create-menu.dto'
 import { Menus } from 'src/entities/Menus';
 import { Recettes } from 'src/entities/Recettes';
 import { Ingredients } from 'src/entities/Ingredients';
-import { DataSource } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
+import { CreateMenuDto } from './dto/create-menu.dto';
+import { CommandesIndividuelles } from 'src/entities/CommandesIndividuelles';
 
 @Injectable()
 export class ChefCuisinierService {
   constructor(
     private dataSource: DataSource,
-    @InjectRepository(CommandesIndividuelles)
-    private readonly commandesIndividuellesRepo: Repository<CommandesIndividuelles>,
-    @InjectRepository(CommandesEntreprises)
-    private readonly commandesEntreprisesRepo: Repository<CommandesEntreprises>,
-    @InjectRepository(StatutsCommande)
-    private readonly statutsCommandeRepo: Repository<StatutsCommande>,
+
     @InjectRepository(Menus)
     private readonly menusRepo: Repository<Menus>,
+
+    @InjectRepository(Recettes)
+    private readonly recettesRepo: Repository<Recettes>,
+
     @InjectRepository(Ingredients)
     private readonly ingredientsRepo: Repository<Ingredients>,
   ) {}
 
-  async findCommandesIndividuellesEnCours(): Promise<CommandesIndividuelles[]> {
-    return this.commandesIndividuellesRepo
-      .createQueryBuilder('commande')
-      .leftJoinAndSelect('commande.statut', 'statut')
-      .leftJoinAndSelect(
-        'commande.commandesIndividuellesDetails',
-        'details',
-      )
-      .leftJoinAndSelect('details.menu', 'menu')
-      .leftJoinAndSelect('details.accompagnement', 'accompagnement')
-      .leftJoinAndSelect('details.boisson', 'boisson')
-      .leftJoinAndSelect('commande.client', 'client')
-      .where('statut.nom IN (:...statuts)', {
-        statuts: ['Payée', 'En préparation', 'Prête'],
-      })
-      .orderBy('commande.dateLivraison', 'ASC')
-      .getMany();
-  }
-
-  async findCommandesEntreprisesEnCours(): Promise<CommandesEntreprises[]> {
-    return this.commandesEntreprisesRepo
-      .createQueryBuilder('commande')
-      .leftJoinAndSelect('commande.statut', 'statut')
-      .leftJoinAndSelect('commande.commandesEntreprisesDetails', 'details')
-      .leftJoinAndSelect('details.menu', 'menu')
-      .leftJoinAndSelect('details.boisson', 'boisson')
-      .leftJoinAndSelect('commande.client', 'client')
-      .where('statut.nom IN (:...statuts)', {
-        statuts: ['Payée', 'En préparation', 'Prête'],
-      })
-      .orderBy('commande.dateLivraison', 'ASC')
-      .getMany();
-  }
-
-  private async updateStatut<
-    T extends CommandesIndividuelles | CommandesEntreprises,
-  >(
-    id: string,
-    dto: UpdateCommandeStatutDto,
-    repo: Repository<T>,
-  ): Promise<T> {
-    // 1. Vérifier que le statut demandé existe
-    const statut = await this.statutsCommandeRepo.findOneBy({
-      id: dto.statutId,
-    });
-    if (!statut) {
-      throw new BadRequestException(
-        `Le statut avec l'ID ${dto.statutId} n'existe pas.`,
-      );
-    }
-
-    // 2. Vérifier que la commande existe
-    const commande = await repo.findOneBy({ id } as any);
-    if (!commande) {
-      throw new NotFoundException(`La commande avec l'ID ${id} est introuvable.`);
-    }
-
-    // 3. Mettre à jour le statut et sauvegarder
-    commande.statutId = dto.statutId;
-    return repo.save(commande);
-  }
-
-  async updateCommandeIndividuelleStatut(
-    id: string,
-    dto: UpdateCommandeStatutDto,
-  ): Promise<CommandesIndividuelles> {
-    return this.updateStatut<CommandesIndividuelles>(
-      id,
-      dto,
-      this.commandesIndividuellesRepo,
-    );
-  }
-
-  async updateCommandeEntrepriseStatut(
-    id: string,
-    dto: UpdateCommandeStatutDto,
-  ): Promise<CommandesEntreprises> {
-    return this.updateStatut<CommandesEntreprises>(
-      id,
-      dto,
-      this.commandesEntreprisesRepo,
-    );
-  }
-
   async createMenu(dto: CreateMenuDto): Promise<Menus> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    await qr.startTransaction();
 
     try {
-      const { recettes: recettesDto, ...menuData } = dto;
+      const { recette: recettesDto, ...menuData } = dto;
 
-      const ingredientIds = recettesDto.map((r) => r.ingredientId);
-      const ingredients = await queryRunner.manager.findBy(Ingredients, {
-        id: In(ingredientIds),
-      });
+      const ingredientIds = recettesDto.map(r => r.ingredient_id);
+      const ingredients = await qr.manager.findBy(Ingredients, { id: In(ingredientIds) });
       if (ingredients.length !== ingredientIds.length) {
-        throw new BadRequestException(
-          "Un ou plusieurs ingrédients spécifiés n'existent pas.",
-        );
+        throw new BadRequestException('Un ou plusieurs ingrédients sont invalides.');
       }
 
-      const menu = this.menusRepo.create({
-        ...menuData,
+      const menu = qr.manager.create(Menus, {
+        nom: dto.nom,
+        description: dto.description,
+        prixCarte: dto.prix_carte,
+        tempsPreparation: dto.temps_preparation,
         disponible: false,
         valide: false,
       });
-      const savedMenu = await queryRunner.manager.save(menu);
 
-      const recettes = recettesDto.map((recetteDto) => {
-        const ingredient = ingredients.find(
-          (i) => i.id === recetteDto.ingredientId,
-        );
-        // La vérification ci-dessous est la correction clé.
-        // Elle assure à TypeScript que `ingredient` n'est pas undefined.
-        if (!ingredient) {
-          throw new BadRequestException(
-            `Incohérence interne: L'ingrédient avec l'ID ${recetteDto.ingredientId} est introuvable.`,
-          );
-        }
-        return queryRunner.manager.create(Recettes, {
-          menu: savedMenu,
-          ingredient: ingredient,
-          quantite: recetteDto.quantite
-        });
-      });
-      await queryRunner.manager.save(recettes);
+      console.log(menu);
+      const savedMenu = await qr.manager.save(menu);
 
-      await queryRunner.commitTransaction();
+      console.log(savedMenu);
+
+      const recettesEntities = [];
+      for (const rd of recettesDto) {
+        const ing = ingredients.find(i => i.id === rd.ingredient_id);
+        if (!ing) throw new BadRequestException(`Ingredient ${rd.ingredient_id} introuvable`);
+        const recette = new Recettes();
+        recette.menu = Promise.resolve(savedMenu);
+        recette.menuId = savedMenu.id;
+        recette.ingredient = Promise.resolve(ing);
+        recette.ingredientId = ing.id;
+        recette.quantite = rd.quantite;
+        recettesEntities.push(recette);
+      }
+
+      await qr.manager.save(recettesEntities);
+      await qr.commitTransaction();
 
       return this.menusRepo.findOne({
         where: { id: savedMenu.id },
-        relations: {
-          recettes: {
-            ingredient: true,
-          },
-        },
+        relations: { recettes: { ingredient: true } },
       });
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
+    } catch (err) {
+      await qr.rollbackTransaction();
+      throw err;
     } finally {
-      await queryRunner.release();
+      await qr.release();
     }
   }
+
+
+  async getAllMenus()
+  {
+    return this.menusRepo.find();
+  }
+
+  async getAllIngredients()
+  {
+    return this.ingredientsRepo.find();
+  }
+
+  async filterCommandes(date: Date = new Date()) {
+    const dateStr = date.toISOString().split('T')[0]; 
+
+    const result = await this.dataSource
+      .getRepository(CommandesIndividuelles)
+      .createQueryBuilder('c')
+      .leftJoin('c.commandesIndividuellesDetails', 'd')
+      .leftJoin('c.client', 'client')
+      .select('c.id', 'id')
+      .addSelect('c.numeroCommande', 'numero_commande')
+      .addSelect('c.dateCommande', 'date_commande')
+      .addSelect('SUM(d.quantite * d.prixUnitaire)', 'montant_total')
+      .addSelect('SUM(d.quantite)', 'total_quantite')
+      .addSelect('client.nom', 'nom_client')
+      .where('DATE(c.dateCommande) = :today', { today: dateStr })
+      .groupBy('c.id, client.nom, c.numeroCommande, c.dateCommande')
+      .getRawMany();
+
+    return result;
+  }
+
+  async getAllCommandes() {
+  const result = await this.dataSource
+    .getRepository(CommandesIndividuelles)
+    .createQueryBuilder('c')
+    .leftJoin('c.commandesIndividuellesDetails', 'd')
+    .leftJoin('c.client', 'client')
+    .select('c.id', 'id')
+    .addSelect('c.numeroCommande', 'numero_commande')
+    .addSelect('c.dateCommande', 'date_commande')
+    .addSelect('SUM(d.quantite * d.prixUnitaire)', 'montant_total')
+    .addSelect('SUM(d.quantite)', 'total_quantite')
+    .addSelect('client.nom', 'nom_client')
+    .groupBy('c.id, client.nom, c.numeroCommande, c.dateCommande')
+    .getRawMany();
+
+  return result;
+}
+
+
 }

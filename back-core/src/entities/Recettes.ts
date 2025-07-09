@@ -20,21 +20,21 @@ export class Recettes {
   menuId: number;
 
   @Column("numeric", { name: "quantite", precision: 8, scale: 2 })
-  quantite: string;
+  quantite: number;
 
-  @ManyToOne(() => Ingredients, (ingredients) => ingredients.recettes, {
-    lazy: true,
-  })
+  @Column("integer", { name: "ingredient_id" })
+  ingredientId: number;
+
+  @ManyToOne(() => Ingredients, (ingredients) => ingredients.recettes)
   @JoinColumn([{ name: "ingredient_id", referencedColumnName: "id" }])
   ingredient: Promise<Ingredients>;
 
   @ManyToOne(() => Menus, (menus) => menus.recettes, {
-    onDelete: "CASCADE",
-    lazy: true,
+    onDelete: "CASCADE"
   })
   @JoinColumn([{ name: "menu_id", referencedColumnName: "id" }])
   menu: Promise<Menus>;
-
+  
   constructor(init?: Partial<Recettes>) {
     Object.assign(this, init);
   }
