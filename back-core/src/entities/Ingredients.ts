@@ -4,51 +4,50 @@ import {
   Index,
   OneToMany,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { ExemplairesIngredient } from "./ExemplairesIngredient";
-import { Recettes } from "./Recettes";
+} from 'typeorm';
+import { ExemplairesIngredient } from './ExemplairesIngredient';
+import { Recettes } from './Recettes';
 
-@Index("ingredients_pkey", ["id"], { unique: true })
-@Index("idx_ingredients_stock_min", ["stockMinimum"], {})
-@Entity("ingredients", { schema: "public" })
+@Index('ingredients_pkey', ['id'], { unique: true })
+@Index('idx_ingredients_stock_min', ['stockMinimum'], {})
+@Entity('ingredients', { schema: 'public' })
 export class Ingredients {
-  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
+  @PrimaryGeneratedColumn({ type: 'integer', name: 'id' })
   id: number;
 
-  @Column("character varying", { name: "nom", length: 100 })
+  @Column('character varying', { name: 'nom', length: 100 })
   nom: string;
 
-  @Column("character varying", { name: "unite_mesure", length: 10 })
+  @Column('character varying', { name: 'unite_mesure', length: 10 })
   uniteMesure: string;
 
-  @Column("numeric", { name: "prix_unitaire", precision: 8, scale: 2 })
-  prixUnitaire: string;
+  @Column('numeric', { name: 'prix_unitaire', precision: 8, scale: 2 })
+  prixUnitaire: number;
 
-  @Column("numeric", { name: "stock_minimum", precision: 8, scale: 2 })
-  stockMinimum: string;
+  @Column('numeric', { name: 'stock_minimum', precision: 8, scale: 2 })
+  stockMinimum: number;
 
-  @Column("boolean", { name: "actif", nullable: true, default: () => "true" })
+  @Column('boolean', { name: 'actif', nullable: true, default: () => 'true' })
   actif: boolean | null;
 
-  @Column("timestamp without time zone", {
-    name: "created_at",
+  @Column('timestamp without time zone', {
+    name: 'created_at',
     nullable: true,
-    default: () => "CURRENT_TIMESTAMP",
+    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date | null;
 
-  @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
+  @Column('timestamp without time zone', { name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
 
   @OneToMany(
     () => ExemplairesIngredient,
     (exemplairesIngredient) => exemplairesIngredient.ingredient,
-    { lazy: true }
   )
-  exemplairesIngredients: Promise<ExemplairesIngredient[]>;
+  exemplairesIngredients: ExemplairesIngredient[];
 
   @OneToMany(() => Recettes, (recettes) => recettes.ingredient, { lazy: true })
-  recettes: Promise<Recettes[]>;
+  recettes: Recettes[];
 
   constructor(init?: Partial<Ingredients>) {
     Object.assign(this, init);

@@ -16,9 +16,10 @@ import { Menus } from '../entities/Menus';
 import { MouvementsStock } from '../entities/MouvementsStock';
 import { Utilisateurs } from '../entities/Utilisateurs';
 import { TopMenusView } from '../entities/TopMenusView';
+import { ExemplairesIngredient } from '../entities/ExemplairesIngredient';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Roles, CommandeStatutView, HistoriqueCommandesView, BonsCommande, PaiementsIndividuels, PaiementsEntreprises, Salaires, Ingredients, FacturesIndividuelles, FacturesEntreprises, Menus, MouvementsStock, Utilisateurs, TopMenusView])],
+  imports: [TypeOrmModule.forFeature([Roles, CommandeStatutView, HistoriqueCommandesView, BonsCommande, PaiementsIndividuels, PaiementsEntreprises, Salaires, Ingredients, FacturesIndividuelles, FacturesEntreprises, Menus, MouvementsStock, Utilisateurs, TopMenusView, ExemplairesIngredient])],
   controllers: [AdminController],
   providers: [AdminService]
 })

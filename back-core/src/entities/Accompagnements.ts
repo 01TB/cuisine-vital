@@ -4,43 +4,43 @@ import {
   Index,
   OneToMany,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { AccompagnementTypeAbonnement } from "./AccompagnementTypeAbonnement";
-import { CommandesIndividuellesDetails } from "./CommandesIndividuellesDetails";
+} from 'typeorm';
+import { AccompagnementTypeAbonnement } from './AccompagnementTypeAbonnement';
+import { CommandesIndividuellesDetails } from './CommandesIndividuellesDetails';
 
-@Index("accompagnements_pkey", ["id"], { unique: true })
-@Entity("accompagnements", { schema: "public" })
+@Index('accompagnements_pkey', ['id'], { unique: true })
+@Entity('accompagnements', { schema: 'public' })
 export class Accompagnements {
-  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
+  @PrimaryGeneratedColumn({ type: 'integer', name: 'id' })
   id: number;
 
-  @Column("character varying", { name: "nom", length: 50 })
+  @Column('character varying', { name: 'nom', length: 50 })
   nom: string;
 
-  @Column("character varying", { name: "type", length: 10 })
+  @Column('character varying', { name: 'type', length: 10 })
   type: string;
 
-  @Column("text", { name: "description", nullable: true })
+  @Column('text', { name: 'description', nullable: true })
   description: string | null;
 
-  @Column("numeric", { name: "prix_unitaire", precision: 10, scale: 2 })
+  @Column('numeric', { name: 'prix_unitaire', precision: 10, scale: 2 })
   prixUnitaire: string;
 
-  @Column("timestamp without time zone", {
-    name: "created_at",
+  @Column('timestamp without time zone', {
+    name: 'created_at',
     nullable: true,
-    default: () => "CURRENT_TIMESTAMP",
+    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date | null;
 
-  @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
+  @Column('timestamp without time zone', { name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
 
   @OneToMany(
     () => AccompagnementTypeAbonnement,
     (accompagnementTypeAbonnement) =>
       accompagnementTypeAbonnement.accompagnement,
-    { lazy: true }
+    { lazy: true },
   )
   accompagnementTypeAbonnements: Promise<AccompagnementTypeAbonnement[]>;
 
@@ -48,7 +48,7 @@ export class Accompagnements {
     () => CommandesIndividuellesDetails,
     (commandesIndividuellesDetails) =>
       commandesIndividuellesDetails.accompagnement,
-    { lazy: true }
+    { lazy: true },
   )
   commandesIndividuellesDetails: Promise<CommandesIndividuellesDetails[]>;
 

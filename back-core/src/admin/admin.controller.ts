@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, ValidationPipe, ParseIntPipe } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
@@ -6,6 +6,9 @@ import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateStockEntryDto, UseStockDto } from './dto/stock.dto';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { Utilisateurs } from '../entities/Utilisateurs';
 
 @Controller('admin')
 export class AdminController {
@@ -89,6 +92,33 @@ export class AdminController {
     async getMouvementStock(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
         return this.adminService.getMouvementStock(dateDebut,dateFin);
     }
+
+    // =============================================
+    // GESTION FINE DU STOCK
+    // =============================================
+
+    @Get('stock')
+    getStockOverview() {
+        return this.adminService.getStockOverview();
+    }
+
+    @Post('stock/entry')
+    @UsePipes(new ValidationPipe())
+    addStockEntry(@Body() createStockEntryDto: CreateStockEntryDto, @CurrentUser() user: Utilisateurs) {
+        return this.adminService.addStockEntry(createStockEntryDto, user);
+    }
+
+    @Post('stock/use')
+    @UsePipes(new ValidationPipe())
+    useStock(@Body() useStockDto: UseStockDto, @CurrentUser() user: Utilisateurs) {
+        return this.adminService.useStock(useStockDto, user);
+    }
+
+    @Get('stock/:ingredientId/history')
+    getStockHistory(@Param('ingredientId', ParseIntPipe) ingredientId: number) {
+        return this.adminService.getStockHistory(ingredientId);
+    }
+
 
     // CRUD Menus
     @Post('menus')

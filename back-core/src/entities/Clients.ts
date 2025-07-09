@@ -5,64 +5,64 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-} from "typeorm";
-import { Abonnements } from "./Abonnements";
-import { ClientsIndividuelsFideles } from "./ClientsIndividuelsFideles";
-import { CommandesEntreprises } from "./CommandesEntreprises";
-import { CommandesIndividuelles } from "./CommandesIndividuelles";
-import { FacturesEntreprises } from "./FacturesEntreprises";
-import { FacturesIndividuelles } from "./FacturesIndividuelles";
-import { MenusFavoris } from "./MenusFavoris";
+} from 'typeorm';
+import { Abonnements } from './Abonnements';
+import { ClientsIndividuelsFideles } from './ClientsIndividuelsFideles';
+import { CommandesEntreprises } from './CommandesEntreprises';
+import { CommandesIndividuelles } from './CommandesIndividuelles';
+import { FacturesEntreprises } from './FacturesEntreprises';
+import { FacturesIndividuelles } from './FacturesIndividuelles';
+import { MenusFavoris } from './MenusFavoris';
 
-@Index("clients_email_key", ["email"], { unique: true })
-@Index("idx_clients_email", ["email"], {})
-@Index("clients_pkey", ["id"], { unique: true })
-@Index("idx_clients_type", ["typeClient"], {})
-@Entity("clients", { schema: "public" })
+@Index('clients_email_key', ['email'], { unique: true })
+@Index('idx_clients_email', ['email'], {})
+@Index('clients_pkey', ['id'], { unique: true })
+@Index('idx_clients_type', ['typeClient'], {})
+@Entity('clients', { schema: 'public' })
 export class Clients {
-  @Column("uuid", {
+  @Column('uuid', {
     primary: true,
-    name: "id",
-    default: () => "uuid_generate_v4()",
+    name: 'id',
+    default: () => 'uuid_generate_v4()',
   })
   id: string;
 
-  @Column("character varying", { name: "nom", length: 100 })
+  @Column('character varying', { name: 'nom', length: 100 })
   nom: string;
 
-  @Column("character varying", { name: "prenom", nullable: true, length: 100 })
+  @Column('character varying', { name: 'prenom', nullable: true, length: 100 })
   prenom: string | null;
 
-  @Column("character varying", { name: "email", unique: true, length: 255 })
+  @Column('character varying', { name: 'email', unique: true, length: 255 })
   email: string;
 
-  @Column("character varying", { name: "mot_de_passe", length: 255 })
+  @Column('character varying', { name: 'mot_de_passe', length: 255 })
   motDePasse: string;
 
-  @Column("character varying", {
-    name: "telephone",
+  @Column('character varying', {
+    name: 'telephone',
     nullable: true,
     length: 20,
   })
   telephone: string | null;
 
-  @Column("text", { name: "adresse" })
+  @Column('text', { name: 'adresse' })
   adresse: string;
 
-  @Column("character varying", { name: "type_client", length: 15 })
+  @Column('character varying', { name: 'type_client', length: 15 })
   typeClient: string;
 
-  @Column("boolean", { name: "actif", nullable: true, default: () => "true" })
+  @Column('boolean', { name: 'actif', nullable: true, default: () => 'true' })
   actif: boolean | null;
 
-  @Column("timestamp without time zone", {
-    name: "created_at",
+  @Column('timestamp without time zone', {
+    name: 'created_at',
     nullable: true,
-    default: () => "CURRENT_TIMESTAMP",
+    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date | null;
 
-  @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
+  @Column('timestamp without time zone', { name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
 
   @OneToMany(() => Abonnements, (abonnements) => abonnements.client, {
@@ -73,35 +73,35 @@ export class Clients {
   @OneToMany(
     () => ClientsIndividuelsFideles,
     (clientsIndividuelsFideles) => clientsIndividuelsFideles.client,
-    { lazy: true }
+    { lazy: true },
   )
   clientsIndividuelsFideles: Promise<ClientsIndividuelsFideles[]>;
 
   @OneToMany(
     () => CommandesEntreprises,
     (commandesEntreprises) => commandesEntreprises.client,
-    { lazy: true }
+    { lazy: true },
   )
   commandesEntreprises: Promise<CommandesEntreprises[]>;
 
   @OneToMany(
     () => CommandesIndividuelles,
     (commandesIndividuelles) => commandesIndividuelles.client,
-    { lazy: true }
+    { lazy: true },
   )
   commandesIndividuelles: Promise<CommandesIndividuelles[]>;
 
   @OneToMany(
     () => FacturesEntreprises,
     (facturesEntreprises) => facturesEntreprises.client,
-    { lazy: true }
+    { lazy: true },
   )
   facturesEntreprises: Promise<FacturesEntreprises[]>;
 
   @OneToMany(
     () => FacturesIndividuelles,
     (facturesIndividuelles) => facturesIndividuelles.client,
-    { lazy: true }
+    { lazy: true },
   )
   facturesIndividuelles: Promise<FacturesIndividuelles[]>;
 

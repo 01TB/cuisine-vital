@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from '../entities/Roles';
-import { Repository } from 'typeorm';
+import { DataSource, MoreThan, Repository } from 'typeorm';
 import { CommandeStatutView } from '../entities/commande-statut-view.entity';
 import { HistoriqueCommandesView } from '../entities/historique-commandes-views.entity';
 import { BonsCommande } from '../entities/BonsCommande';
@@ -21,6 +21,8 @@ import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { TopMenusView } from '../entities/TopMenusView';
+import { ExemplairesIngredient } from '../entities/ExemplairesIngredient';
+import { CreateStockEntryDto, UseStockDto } from './dto/stock.dto';
 
 @Injectable()
 export class AdminService {
@@ -64,8 +66,14 @@ export class AdminService {
         @InjectRepository(Utilisateurs)
         private readonly utilisateurRepository: Repository<Utilisateurs>,
 
+        @InjectRepository(ExemplairesIngredient)
+        private exemplairesRepository: Repository<ExemplairesIngredient>,
+        
+        private dataSource: DataSource,
+
     ){}
 
+    // ... Méthodes existantes ...
     async getOrderStatusSummary(): Promise<CommandeStatutView[]> {
         return this.commandeStatutViewRepository.find({
           order: {
@@ -112,7 +120,6 @@ export class AdminService {
     }
     
     async getNombreCommandeEnCours(dateDebut: string, dateFin: string) {
-      // Statuts considérés comme "en cours"
       const statutsEnCours = ['RECUE', 'EN_PREPARATION', 'PRETE'];
       const query = this.historiqueCommandesViewRepository
         .createQueryBuilder('commande')
@@ -133,7 +140,6 @@ export class AdminService {
     }
     
     async getTopMenu(): Promise<TopMenusView[]> {
-      // Utilise la vue v_top_menus pour récupérer le top 5
       return this.menuRepository.manager.getRepository(TopMenusView)
         .createQueryBuilder('top')
         .orderBy('top.quantiteTotale', 'DESC')
@@ -317,4 +323,151 @@ export class AdminService {
     removeUser(id: number) {
         return this.utilisateurRepository.delete(id);
     }
+
+    // =============================================
+    // GESTION FINE DU STOCK (NOUVELLE IMPLEMENTATION)
+    // =============================================
+
+    /**
+     * Récupère l'état de tous les stocks en une seule requête optimisée.
+     */
+    async getStockOverview() {
+        const results = await this.ingredientRepository.createQueryBuilder('i')
+            .select('i.id', 'id')
+            .addSelect('i.nom', 'nom')
+            .addSelect('i.unite_mesure', 'unite_mesure')
+            .addSelect('i.stock_minimum', 'stock_minimum')
+            .addSelect((subQuery) => {
+                return subQuery
+                    .select('COALESCE(SUM(ex.quantite), 0)', 'total')
+                    .from(ExemplairesIngredient, 'ex')
+                    .where('ex.ingredient_id = i.id')
+                    .andWhere('(ex.date_peremption IS NULL OR ex.date_peremption > CURRENT_DATE)');
+            }, 'stockActuel')
+            .where('i.actif = true')
+            .groupBy('i.id')
+            .orderBy('i.nom', 'ASC')
+            .getRawMany();
+        
+        // Conversion des résultats bruts en nombres
+        return results.map(r => ({
+            ...r,
+            stock_minimum: parseFloat(r.stock_minimum),
+            stockActuel: parseFloat(r.stockActuel)
+        }));
+    }
+
+    /**
+     * Calcule le stock actuel pour un ingrédient spécifique.
+     */
+    private async getIngredientCurrentStock(ingredientId: number): Promise<number> {
+        const result = await this.exemplairesRepository.createQueryBuilder('ex')
+            .select('SUM(ex.quantite)', 'total')
+            .where('ex.ingredient_id = :ingredientId', { ingredientId })
+            .getRawOne();
+        return parseFloat(result.total) || 0;
+    }
+
+    /**
+     * Ajoute une entrée de stock en utilisant directement les repositories.
+     */
+    async addStockEntry(dto: CreateStockEntryDto, utilisateur: Utilisateurs) {
+        const { ingredientId, quantite, datePeremption, prixUnitaireAchat } = dto;
+
+        const ingredient = await this.ingredientRepository.findOneBy({ id: ingredientId });
+        if (!ingredient) {
+            throw new NotFoundException(`Ingrédient avec l'ID ${ingredientId} non trouvé.`);
+        }
+
+        const stockAvant = await this.getIngredientCurrentStock(ingredientId);
+
+        const nouvelExemplaire = this.exemplairesRepository.create({
+            ingredient: ingredient,
+            quantite: quantite,
+            datePeremption: datePeremption ? new Date(datePeremption) : undefined,
+        });
+        const savedExemplaire = await this.exemplairesRepository.save(nouvelExemplaire);
+
+        const mouvement = this.mouvementStockRepository.create({
+            exemplaireIngredient: savedExemplaire,
+            typeMouvement: 'ENTREE',
+            quantite: quantite,
+            stockAvant: stockAvant,
+            stockApres: stockAvant + quantite,
+            commentaire: `Achat - Prix unitaire: ${prixUnitaireAchat}`,
+            utilisateur: utilisateur,
+        });
+        await this.mouvementStockRepository.save(mouvement);
+
+        return savedExemplaire;
+    }
+
+    /**
+     * Utilise du stock avec une logique FIFO et des appels directs au repository.
+     */
+    async useStock(dto: UseStockDto, utilisateur: Utilisateurs) {
+        const { ingredientId, quantite } = dto;
+
+        const ingredient = await this.ingredientRepository.findOneBy({ id: ingredientId });
+        if (!ingredient) {
+            throw new NotFoundException(`Ingrédient avec l'ID ${ingredientId} non trouvé.`);
+        }
+
+        const stockActuel = await this.getIngredientCurrentStock(ingredientId);
+        if (stockActuel < quantite) {
+            throw new BadRequestException(`Stock insuffisant pour ${ingredient.nom}. Actuel: ${stockActuel}, Demandé: ${quantite}`);
+        }
+
+        const exemplairesDisponibles = await this.exemplairesRepository.find({
+            where: { ingredient: ingredient, quantite: MoreThan(0) },
+            order: { datePeremption: 'ASC' }, // FIFO: les plus anciens (ou sans date) d'abord
+        });
+
+        let quantiteRestanteADeduire = quantite;
+        for (const exemplaire of exemplairesDisponibles) {
+            if (quantiteRestanteADeduire <= 0) break;
+
+            const quantiteAPrendre = Math.min(exemplaire.quantite, quantiteRestanteADeduire);
+            exemplaire.quantite -= quantiteAPrendre;
+            quantiteRestanteADeduire -= quantiteAPrendre;
+
+            await this.exemplairesRepository.save(exemplaire); // Sauvegarde chaque exemplaire modifié
+        }
+
+        const mouvement = this.mouvementStockRepository.create({
+            typeMouvement: 'SORTIE',
+            quantite: quantite,
+            stockAvant: stockActuel,
+            stockApres: stockActuel - quantite,
+            commentaire: 'Utilisation pour production',
+            utilisateur: utilisateur,
+            // On ne lie pas à un exemplaire car plusieurs peuvent être impactés
+        });
+        await this.mouvementStockRepository.save(mouvement);
+
+        return { message: `Stock de ${ingredient.nom} mis à jour avec succès.` };
+    }
+
+    /**
+     * Récupère un historique de stock enrichi avec les informations de l'utilisateur.
+     */
+    async getStockHistory(ingredientId: number) {
+        const ingredient = await this.ingredientRepository.findOneBy({ id: ingredientId });
+        if (!ingredient) {
+            throw new NotFoundException(`Ingrédient avec l'ID ${ingredientId} non trouvé.`);
+        }
+
+        return this.mouvementStockRepository.createQueryBuilder('mvt')
+            .leftJoin('mvt.exemplaire', 'ex')
+            .leftJoin('mvt.utilisateur', 'u')
+            .select([
+                'mvt.id', 'mvt.created_at', 'mvt.type_mouvement', 'mvt.quantite', 
+                'mvt.stock_avant', 'mvt.stock_apres', 'mvt.commentaire',
+                'u.nom', 'u.prenom'
+            ])
+            .where('ex.ingredient_id = :ingredientId', { ingredientId })
+            .orderBy('mvt.created_at', 'DESC')
+            .getMany();
+    }
 }
+

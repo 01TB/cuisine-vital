@@ -6,47 +6,45 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-} from "typeorm";
-import { Ingredients } from "./Ingredients";
-import { MouvementsStock } from "./MouvementsStock";
+} from 'typeorm';
+import { Ingredients } from './Ingredients';
+import { MouvementsStock } from './MouvementsStock';
 
-@Index("idx_exemplaires_peremption", ["datePeremption"], {})
-@Index("exemplaires_ingredient_pkey", ["id"], { unique: true })
-@Entity("exemplaires_ingredient", { schema: "public" })
+@Index('idx_exemplaires_peremption', ['datePeremption'], {})
+@Index('exemplaires_ingredient_pkey', ['id'], { unique: true })
+@Entity('exemplaires_ingredient', { schema: 'public' })
 export class ExemplairesIngredient {
-  @PrimaryGeneratedColumn({ type: "integer", name: "id" })
+  @PrimaryGeneratedColumn({ type: 'integer', name: 'id' })
   id: number;
 
-  @Column("numeric", { name: "quantite", precision: 100, scale: 2 })
-  quantite: string;
+  @Column('numeric', { name: 'quantite', precision: 100, scale: 2 })
+  quantite: number;
 
-  @Column("date", { name: "date_peremption", nullable: true })
-  datePeremption: string | null;
+  @Column('date', { name: 'date_peremption', nullable: true })
+  datePeremption: Date | null;
 
-  @Column("timestamp without time zone", {
-    name: "created_at",
+  @Column('timestamp without time zone', {
+    name: 'created_at',
     nullable: true,
-    default: () => "CURRENT_TIMESTAMP",
+    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date | null;
 
-  @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
+  @Column('timestamp without time zone', { name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
 
   @ManyToOne(
     () => Ingredients,
     (ingredients) => ingredients.exemplairesIngredients,
-    { lazy: true }
   )
-  @JoinColumn([{ name: "ingredient_id", referencedColumnName: "id" }])
-  ingredient: Promise<Ingredients>;
+  @JoinColumn([{ name: 'ingredient_id', referencedColumnName: 'id' }])
+  ingredient: Ingredients;
 
   @OneToMany(
     () => MouvementsStock,
     (mouvementsStock) => mouvementsStock.exemplaireIngredient,
-    { lazy: true }
   )
-  mouvementsStocks: Promise<MouvementsStock[]>;
+  mouvementsStocks: MouvementsStock[];
 
   constructor(init?: Partial<ExemplairesIngredient>) {
     Object.assign(this, init);
