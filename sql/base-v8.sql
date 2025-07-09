@@ -66,7 +66,7 @@ CREATE TABLE utilisateurs (
     prenom VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     telephone VARCHAR(20),
-    mot_de_passe VARCHAR(255) NOT NULL,
+    mot_de_passe TEXT NOT NULL,
     role_id INTEGER NOT NULL REFERENCES roles(id),
     zone_livraison_id INTEGER REFERENCES zones_livraison(id),
     actif BOOLEAN DEFAULT TRUE,
@@ -94,10 +94,9 @@ CREATE TABLE clients (
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100), -- NULL pour entreprises
     email VARCHAR(255) UNIQUE NOT NULL,
-    mot_de_passe VARCHAR(50),
+    mot_de_passe TEXT,
     telephone VARCHAR(20),
     adresse TEXT NOT NULL,
-    zone_livraison_id INTEGER NOT NULL REFERENCES zones_livraison(id),
     type_client VARCHAR(15) NOT NULL CHECK (type_client IN ('PARTICULIER', 'ENTREPRISE')),
     actif BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -151,11 +150,16 @@ CREATE TABLE menus (
     prix_carte DECIMAL(8,2) NOT NULL,
     temps_preparation INTEGER NOT NULL, -- en minutes
     disponible BOOLEAN DEFAULT TRUE,
+    valide BOOLEAN DEFAULT FALSE,
     photo_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
+CREATE TABLE menu_valide (
+    id SERIAL PRIMARY KEY,
+    id_menu NOT NLL REFERENCES menu(id) ON DELETE
+)
 -- Recettes simplifiées (ingrédients principaux par menu)
 CREATE TABLE recettes (
     id SERIAL PRIMARY KEY,
@@ -178,7 +182,7 @@ CREATE TABLE accompagnements (
     nom VARCHAR(50) NOT NULL,
     type VARCHAR(10) NOT NULL CHECK (type IN ('ENTREE', 'DESSERT')),
     description TEXT,
-    prix_uniatire DECIMAL(10,2) NOT NULL,
+    prix_unitaire DECIMAL(10,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
@@ -275,6 +279,7 @@ CREATE TABLE commandes_individuelles_details (
     commande_id UUID NOT NULL REFERENCES commandes_individuelles(id) ON DELETE CASCADE,
     menu_id INTEGER REFERENCES menus(id),
     accompagnement_id INTEGER DEFAULT NULL REFERENCES accompagnements(id),
+    zone_de_livraison GEOMETRY(Point, 4326) DEFAULT NULL,
     quantite INTEGER NOT NULL,
     prix_unitaire DECIMAL(8,2) NOT NULL,
     boisson_id INTEGER REFERENCES boissons(id),
@@ -498,12 +503,6 @@ CREATE TABLE alertes (
 );
 
 
-alter table clients alter column mot_de_passe set type text;
-alter table clients drop column zone_livraison_id;
-alter table accompagnements rename column prix_uniatire to prix_unitaire;
-alter table commandes_individuelles add column zone_de_livraison GEOMETRY(Point, 4326) NULL;
-
-
 -- =============================================
 -- SYSTÈME DE GESTION DE LIVRAISON DE REPAS
 -- INDEX ESSENTIELS, FONCTIONS, TRIGGERS ET VUES
@@ -522,7 +521,6 @@ CREATE INDEX idx_sessions_expire ON sessions(expire_at);
 -- Index pour la gestion des clients
 CREATE INDEX idx_clients_email ON clients(email) WHERE deleted_at IS NULL;
 CREATE INDEX idx_clients_type ON clients(type_client) WHERE deleted_at IS NULL;
-CREATE INDEX idx_clients_zone ON clients(zone_livraison_id) WHERE deleted_at IS NULL;
 
 -- Index pour les abonnements
 CREATE INDEX idx_abonnements_client ON abonnements(client_id) WHERE deleted_at IS NULL;

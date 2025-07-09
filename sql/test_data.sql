@@ -113,20 +113,20 @@ INSERT INTO ingredients (nom, unite_mesure, prix_unitaire, stock_minimum) VALUES
 -- MENUS MALGACHES
 -- =============================================
 
-INSERT INTO menus (nom, description, prix_carte, temps_preparation, disponible, photo_url) VALUES
+INSERT INTO menus (nom, description, prix_carte, temps_preparation, disponible, valide, photo_url) VALUES
 -- Plats principaux traditionnels
-('Romazava', 'Plat national malgache avec zébu, brèdes mafana et anana, accompagné de riz blanc', 15.00, 90, true, '/images/romazava.jpg'),
-('Ravitoto sy henakisoa', 'Feuilles de manioc pilées avec porc, plat emblématique du sud', 14.00, 120, true, '/images/ravitoto.jpg'),
-('Akoho sy voanio', 'Poulet au lait de coco, spécialité de la côte', 16.00, 75, true, '/images/akoho_voanio.jpg'),
-('Hen''omby ritra', 'Viande de zébu aux brèdes, saveur authentique', 17.00, 85, true, '/images/henomby_ritra.jpg'),
-('Vary amin''anana', 'Riz sauté aux légumes verts et viande', 12.00, 45, true, '/images/vary_anana.jpg'),
-('Trondro gasy', 'Poisson d''eau douce aux légumes locaux', 18.00, 60, true, '/images/trondro_gasy.jpg'),
-('Voanjobory sy henakisoa', 'Haricots bambara au porc, consistant et savoureux', 13.00, 70, true, '/images/voanjobory.jpg'),
-('Sosoa sy rononkisoa', 'Riz gluant au lait de coco sucré', 10.00, 40, true, '/images/sosoa.jpg'),
-('Hena-kisoa sy tsaramaso', 'Porc aux haricots rouges, plat familial', 14.50, 80, true, '/images/hena_tsaramaso.jpg'),
-('Kitoza sy vary', 'Viande séchée grillée avec riz rouge', 19.00, 35, true, '/images/kitoza.jpg'),
-('Akoho misy sakamalao', 'Poulet au gingembre et curcuma', 15.50, 65, true, '/images/akoho_sakamalao.jpg'),
-('Hen''omby sy voatabia', 'Bœuf à la courge, mijotage traditionnel', 16.50, 95, true, '/images/henomby_voatabia.jpg');
+('Romazava', 'Plat national malgache avec zébu, brèdes mafana et anana, accompagné de riz blanc', 15.00, 90, true, true, '/images/romazava.jpg'),
+('Ravitoto sy henakisoa', 'Feuilles de manioc pilées avec porc, plat emblématique du sud', 14.00, 120, true, true, '/images/ravitoto.jpg'),
+('Akoho sy voanio', 'Poulet au lait de coco, spécialité de la côte', 16.00, 75, true, true, '/images/akoho_voanio.jpg'),
+('Hen''omby ritra', 'Viande de zébu aux brèdes, saveur authentique', 17.00, 85, true, true, '/images/henomby_ritra.jpg'),
+('Vary amin''anana', 'Riz sauté aux légumes verts et viande', 12.00, 45, true, true, '/images/vary_anana.jpg'),
+('Trondro gasy', 'Poisson d''eau douce aux légumes locaux', 18.00, 60, true, true, '/images/trondro_gasy.jpg'),
+('Voanjobory sy henakisoa', 'Haricots bambara au porc, consistant et savoureux', 13.00, 70, true, true, '/images/voanjobory.jpg'),
+('Sosoa sy rononkisoa', 'Riz gluant au lait de coco sucré', 10.00, 40, true, true, '/images/sosoa.jpg'),
+('Hena-kisoa sy tsaramaso', 'Porc aux haricots rouges, plat familial', 14.50, 80, true, true, '/images/hena_tsaramaso.jpg'),
+('Kitoza sy vary', 'Viande séchée grillée avec riz rouge', 19.00, 35, true, true, '/images/kitoza.jpg'),
+('Akoho misy sakamalao', 'Poulet au gingembre et curcuma', 15.50, 65, true, true, '/images/akoho_sakamalao.jpg'),
+('Hen''omby sy voatabia', 'Bœuf à la courge, mijotage traditionnel', 16.50, 95, true, true, '/images/henomby_voatabia.jpg');
 
 -- =============================================
 -- RECETTES (INGRÉDIENTS PAR MENU)

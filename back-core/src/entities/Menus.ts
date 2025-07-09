@@ -39,6 +39,9 @@ export class Menus {
   })
   disponible: boolean | null;
 
+  @Column("boolean", { name: "valide", nullable: false, default: () => "false" })
+  valide: boolean;
+
   @Column("character varying", {
     name: "photo_url",
     nullable: true,
