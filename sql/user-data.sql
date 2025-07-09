@@ -1,7 +1,12 @@
-INSERT INTO roles (nom, description) VALUES
-  ('admin', 'Administrateur du système'),
-  ('chef cuisinier', 'Responsable de la préparation des plats'),
-  ('livreur', 'Responsable de la livraison des commandes');
+INSERT INTO zones_livraison (nom, description) VALUES
+('Antaninarenina', 'Centre-ville, quartier des affaires'),
+('Analakely', 'Marché central et environs'),
+('Isotry', 'Quartier résidentiel sud'),
+('Behoririka', 'Zone commerciale'),
+('Ambatonakanga', 'Quartier historique'),
+('Tsaralalàna', 'Zone administrative'),
+('Ankadifotsy', 'Quartier résidentiel'),
+('Ampefiloha', 'Zone diplomatique');
 
 INSERT INTO utilisateurs (nom, prenom, email, telephone, mot_de_passe, role_id, zone_livraison_id, actif)
 VALUES
