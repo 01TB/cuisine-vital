@@ -14,152 +14,131 @@ const Menu = () => {
     const { isLoggedIn } = useAuth();
     const navigate = useNavigate();
 
-    // List of available images from the /public/assets folder
-    const imageAssets = [
-      '/assets/anana.png',
-      '/assets/henabolina.jpg',
-      '/assets/henakisoa-sy-voanjobory.jpg',
-      '/assets/manga.jpg',
-      '/assets/omby.jpg',
-      '/assets/ravitoto.jpg',
-      '/assets/saosisy.jpg',
-      '/assets/trondro.jpg',
-      '/assets/votabia.jpg'
-    ];
-
-    useEffect(() => {
-        const fetchMenus = async () => {
-            try {
-                const response = await publicApi.get('/client/menus');
-                // Modify the menu data here
-                const modifiedMenus = response.data.map(menu => {
-                    // Select a random image
-                    const randomImage = imageAssets[Math.floor(Math.random() * imageAssets.length)];
-                    
-                    // Extract the filename without extension to use as the new name
-                    const imageName = randomImage.split('/').pop().split('.').slice(0, -1).join('.');
-                    
-                    return {
-                        ...menu,
-                        photoUrl: randomImage, // Assign the random image path
-                        nom: imageName.charAt(0).toUpperCase() + imageName.slice(1) // Capitalize first letter
-                    };
-                });
-                setMenus(modifiedMenus);
-            } catch (error) {
-                console.error('Error fetching menus:', error);
-            }
-        };
-
-        fetchMenus();
-    }, []);
-
-    const handleSelect = (menu) => {
-        if (!isLoggedIn) {
-            navigate('/login');
-            return;
-        }
-        setSelectedMenus((prev) => {
-            const existingMenu = prev.find((item) => item.id === menu.id);
-            if (existingMenu) {
-                return prev.filter((item) => item.id !== menu.id);
-            } else {
-                return [...prev, { ...menu, quantity: 1 }];
-            }
-        });
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const response = await publicApi.get('/client/menus');
+        setMenus(response.data);
+      } catch (error) {
+        console.error('Error fetching menus:', error);
+      }
     };
 
-    const handleMenuQuantityChange = (menuId, quantity) => {
-        if (!isLoggedIn) {
-            navigate('/login');
-            return;
-        }
-        setSelectedMenus((prev) =>
-            prev.map((menu) =>
-                menu.id === menuId ? { ...menu, quantity: Math.max(1, quantity) } : menu
-            )
-        );
-    };
+    fetchMenus();
+  }, []);
 
-    const filteredMenus = menus.filter(menu =>
-        menu.nom.toLowerCase().includes(search.toLowerCase()) ||
-        menu.description.toLowerCase().includes(search.toLowerCase())
+  const handleSelect = (menu) => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+    setSelectedMenus((prev) => {
+      const existingMenu = prev.find((item) => item.id === menu.id);
+      if (existingMenu) {
+        // If menu is already selected, remove it (checkbox behavior)
+        return prev.filter((item) => item.id !== menu.id);
+      } else {
+        // Add new menu with quantity 1
+        return [...prev, { ...menu, quantity: 1 }];
+      }
+    });
+  };
+
+  const handleMenuQuantityChange = (menuId, quantity) => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+    setSelectedMenus((prev) =>
+      prev.map((menu) =>
+        menu.id === menuId ? { ...menu, quantity: Math.max(1, quantity) } : menu
+      )
     );
+  };
 
-    const handleOrder = () => {
-        if (!isLoggedIn) {
-            navigate('/login');
-            return;
-        }
-        setShowPopup(true);
-    };
+  const filteredMenus = menus.filter(menu =>
+    menu.nom.toLowerCase().includes(search.toLowerCase()) ||
+    menu.description.toLowerCase().includes(search.toLowerCase())
+  );
 
-    return (
-        <Container fluid className="menu-grid-page py-5 position-relative">
-            <h2 className="text-center mb-4 fw-bold">Nos Menus</h2>
+  const handleOrder = () => {
+    if (!isLoggedIn) {
+      navigate('/login');
+      return;
+    }
+    setShowPopup(true);
+  };
 
-            <div className="d-flex justify-content-center mb-5">
-                <Form.Control
-                    type="text"
-                    placeholder="Rechercher un plat..."
-                    className="menu-grid-search w-75 w-md-50 w-lg-25"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
+  return (
+    <Container fluid className="menu-grid-page py-5 position-relative">
+      <h2 className="text-center mb-4 fw-bold">Nos Menus</h2>
+
+      <div className="d-flex justify-content-center mb-5">
+        <Form.Control
+          type="text"
+          placeholder="Rechercher un plat..."
+          className="menu-grid-search w-75 w-md-50 w-lg-25"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      <Row className="g-4 justify-content-center px-4">
+        {filteredMenus.map(menu => (
+          <Col key={menu.id} xs={12} sm={6} md={4} lg={3}>
+            <div className="menu-grid-card-square position-relative">
+            <div className="menu-grid-checkbox-wrapper">
+              <input
+                type="checkbox"
+                id={`check-${menu.id}`}
+                className="menu-grid-checkbox visually-hidden"
+                checked={selectedMenus.some(item => item.id === menu.id)}
+                onChange={() => handleSelect(menu)}
+              />
+              <label htmlFor={`check-${menu.id}`} className={`menu-grid-checkbox-icon ${selectedMenus.some(item => item.id === menu.id) ? 'selected' : ''}`}>
+                <i className="bi bi-check-circle-fill"></i>
+              </label>
             </div>
-
-            <Row className="g-4 justify-content-center px-4">
-                {filteredMenus.map(menu => (
-                    <Col key={menu.id} xs={12} sm={6} md={4} lg={3}>
-                        <div className="menu-grid-card-square position-relative">
-                            <div className="menu-grid-checkbox-wrapper">
-                                <input
-                                    type="checkbox"
-                                    id={`check-${menu.id}`}
-                                    className="menu-grid-checkbox visually-hidden"
-                                    checked={selectedMenus.some(item => item.id === menu.id)}
-                                    onChange={() => handleSelect(menu)}
-                                />
-                                <label htmlFor={`check-${menu.id}`} className={`menu-grid-checkbox-icon ${selectedMenus.some(item => item.id === menu.id) ? 'selected' : ''}`}>
-                                    <i className="bi bi-check-circle-fill"></i>
-                                </label>
-                            </div>
-                            <img
-                                src={menu.photoUrl} // This will now always have a value
-                                alt={menu.nom}
-                                className="menu-grid-image-square"
-                            />
-                            <div className="menu-grid-overlay-always d-flex flex-column justify-content-end p-3">
-                                <h5 className="text-white fw-bold mb-1">{menu.nom}</h5>
-                                <p className="text-white small mb-0">{menu.description}</p>
-                            </div>
-                        </div>
-                    </Col>
-                ))}
-            </Row>
-
-            {selectedMenus.length > 0 && (
-                <div className="menu-grid-order-button-wrapper">
-                    <Button
-                        className="px-4 py-2"
-                        style={{ backgroundColor: 'rgb(112, 73, 255)', border: 'none' }}
-                        onClick={handleOrder}
-                    >
-                        <i className="bi bi-box2 me-2"></i>
-                        Commander ({selectedMenus.reduce((sum, menu) => sum + menu.quantity, 0)})
-                    </Button>
-                </div>
-            )}
-            {showPopup && (
-                <CommandePopup
-                    show={showPopup}
-                    onClose={() => setShowPopup(false)}
-                    selectedMenus={selectedMenus}
-                    onMenuQuantityChange={handleMenuQuantityChange}
+              {menu.photoUrl ? (
+                <img
+                  src={menu.photoUrl}
+                  alt={menu.nom}
+                  className="menu-grid-image-square"
                 />
-            )}
-        </Container>
-    );
+              ) : (
+                <div className="menu-grid-image-placeholder">Image non disponible</div>
+              )}
+              <div className="menu-grid-overlay-always d-flex flex-column justify-content-end p-3">
+                <h5 className="text-white fw-bold mb-1">{menu.nom}</h5>
+                <p className="text-white small mb-0">{menu.description}</p>
+              </div>
+            </div>
+          </Col>
+        ))}
+      </Row>
+
+      {selectedMenus.length > 0 && (
+        <div className="menu-grid-order-button-wrapper">
+          <Button
+            className="px-4 py-2"
+            style={{ backgroundColor:'rgb(112, 73, 255)', border: 'none' }}
+            onClick={handleOrder}
+          >
+            <i className="bi bi-box2 me-2"></i>
+            Commander ({selectedMenus.reduce((sum, menu) => sum + menu.quantity, 0)})
+          </Button>
+        </div>
+      )}
+      {showPopup && (
+        <CommandePopup
+            show={showPopup}
+            onClose={() => setShowPopup(false)}
+            selectedMenus={selectedMenus}
+            onMenuQuantityChange={handleMenuQuantityChange}
+        />
+        )}
+    </Container>
+  );
 };
 
 export default Menu;
