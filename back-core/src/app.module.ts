@@ -113,6 +113,7 @@ import { AuthModule } from './auth/auth.module';
     CuisinierModule,
     LivreurModule,
     AuthModule,
+    UserAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
