@@ -179,7 +179,10 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
         <div className="p-4">
           <Row>
             <Col md={6}>
-              <h5 className="fw-bold mb-3">🧾 Vos Plats</h5>
+            <h5 className="fw-bold mb-3">
+              <i className="bi bi-receipt me-2"></i>
+              Vos Plats
+            </h5>
               <ListGroup variant="flush">
                 {selectedMenus.map((menu) => (
                   <ListGroup.Item
@@ -217,52 +220,60 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
                   </ListGroup.Item>
                 ))}
               </ListGroup>
+              <div className="bg-light p-4 rounded-4 shadow-sm mt-4">
+                <h5 className="fw-bold mb-3">
+                  <i className="bi bi-cart-check me-2"></i>
+                  Résumé de la Commande
+                </h5>
 
-              <h5 className="fw-bold mt-4 mb-3">🛒 Résumé de la Commande</h5>
-              <ListGroup variant="flush">
-                {selectedMenus.map((menu) => (
-                  <ListGroup.Item key={`summary-menu-${menu.id}`} className="d-flex justify-content-between align-items-center border-0 p-1">
-                    <span>{menu.nom} x {menu.quantity}</span>
-                    <span>Ar {(parseFloat(menu.prixCarte) * menu.quantity).toLocaleString()}</span>
+                <ListGroup variant="flush">
+                  {selectedMenus.map((menu) => (
+                    <ListGroup.Item key={`summary-menu-${menu.id}`} className="d-flex justify-content-between align-items-center border-0 p-1">
+                      <span>{menu.nom} x {menu.quantity}</span>
+                      <span>Ar {(parseFloat(menu.prixCarte) * menu.quantity).toLocaleString()}</span>
+                    </ListGroup.Item>
+                  ))}
+                  {selectedExtras.boissons.map((boisson) => (
+                    <ListGroup.Item key={`summary-boisson-${boisson.id}`} className="d-flex justify-content-between align-items-center border-0 p-1">
+                      <span>{boisson.nom} x {boisson.quantity}</span>
+                      <span>Ar {(parseFloat(boisson.prix) * boisson.quantity).toLocaleString()}</span>
+                    </ListGroup.Item>
+                  ))}
+                  {selectedExtras.accompagnements.map((accompagnement) => (
+                    <ListGroup.Item key={`summary-acc-${accompagnement.id}`} className="d-flex justify-content-between align-items-center border-0 p-1">
+                      <span>{accompagnement.nom} x {accompagnement.quantity}</span>
+                      <span>Ar {(parseFloat(accompagnement.prixUnitaire) * accompagnement.quantity).toLocaleString()}</span>
+                    </ListGroup.Item>
+                  ))}
+                  <ListGroup.Item className="d-flex justify-content-between align-items-center border-0 p-1 fw-bold">
+                    <span>Total:</span>
+                    <span>Ar {calculateTotal()}</span>
                   </ListGroup.Item>
-                ))}
-                {selectedExtras.boissons.map((boisson) => (
-                  <ListGroup.Item key={`summary-boisson-${boisson.id}`} className="d-flex justify-content-between align-items-center border-0 p-1">
-                    <span>{boisson.nom} x {boisson.quantity}</span>
-                    <span>Ar {(parseFloat(boisson.prix) * boisson.quantity).toLocaleString()}</span>
-                  </ListGroup.Item>
-                ))}
-                {selectedExtras.accompagnements.map((accompagnement) => (
-                  <ListGroup.Item key={`summary-acc-${accompagnement.id}`} className="d-flex justify-content-between align-items-center border-0 p-1">
-                    <span>{accompagnement.nom} x {accompagnement.quantity}</span>
-                    <span>Ar {(parseFloat(accompagnement.prixUnitaire) * accompagnement.quantity).toLocaleString()}</span>
-                  </ListGroup.Item>
-                ))}
-                <ListGroup.Item className="d-flex justify-content-between align-items-center border-0 p-1 fw-bold">
-                  <span>Total:</span>
-                  <span>Ar {calculateTotal()}</span>
-                </ListGroup.Item>
-              </ListGroup>
+                </ListGroup>
+              </div>
             </Col>
 
             <Col md={6}>
               <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
                 <Nav className="mb-4 gap-2">
                   <Nav.Item>
-                    <Nav.Link
-                      eventKey="boissons"
-                      className={`commande-tab ${activeTab === 'boissons' ? 'active-tab' : ''}`}
-                    >
-                      🥤 Boissons
-                    </Nav.Link>
+                  <Nav.Link
+                    eventKey="boissons"
+                    className={`commande-tab ${activeTab === 'boissons' ? 'active-tab' : ''}`}
+                  >
+                    <i className="bi bi-cup-straw me-2"></i>
+                    Boissons
+                  </Nav.Link>
+
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link
-                      eventKey="accompagnements"
-                      className={`commande-tab ${activeTab === 'accompagnements' ? 'active-tab' : ''}`}
-                    >
-                      🍚 Accompagnements
-                    </Nav.Link>
+                  <Nav.Link
+                    eventKey="accompagnements"
+                    className={`commande-tab ${activeTab === 'accompagnements' ? 'active-tab' : ''}`}
+                  >
+                    <i className="bi bi-basket me-2"></i>
+                    Accompagnements
+                  </Nav.Link>
                   </Nav.Item>
                 </Nav>
 
@@ -324,19 +335,23 @@ const CommandePopup = ({ show, onClose, selectedMenus, onMenuQuantityChange }) =
               </Tab.Container> 
             </Col>
           </Row>
-
-          <div className="d-flex justify-content-end mt-4">
-            <Button
-              onClick={handleOpenLocationPopup}
-              className="rounded-pill px-4 py-2 fw-bold"
-              style={{ backgroundColor: '#4CAF50', border: 'none' }}
-            >
-              <i className="bi bi-check-circle me-2"></i>
-              Valider la commande
-            </Button>
-          </div>
         </div>
       </div>
+      <Button
+          onClick={handleOpenLocationPopup}
+          className="position-fixed rounded-pill px-4 py-2 fw-bold"
+          style={{
+            backgroundColor: '#4CAF50',
+            border: 'none',
+            bottom: '25px',
+            right: '25px',
+            zIndex: 1050, 
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+          }}
+        >
+          <i className="bi bi-check-circle me-2"></i>
+          Valider la commande
+      </Button>
       
       {/* LocalisationPopup (qui est une modale react-bootstrap) */}
       <LocalisationPopup

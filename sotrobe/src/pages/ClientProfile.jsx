@@ -1,6 +1,7 @@
 import { Container, Row, Col, Button, Image, Form, Nav, Badge, Card } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import { getClientOrders, cancelOrder, getHistoricalOrders } from '../services/clientService';
+import { useAuth } from '../providers/AuthProvider';
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('commandes');
@@ -10,6 +11,7 @@ const UserProfile = () => {
   const [historicalOrders, setHistoricalOrders] = useState([]);
   const [loadingHistoricalOrders, setLoadingHistoricalOrders] = useState(false);
   const [errorHistoricalOrders, setErrorHistoricalOrders] = useState(null);
+  const  {user}  = useAuth();
 
   const handleCancelOrder = async (orderId, isIndividualClient) => {
     if (window.confirm('Êtes-vous sûr de vouloir annuler cette commande ?')) {
@@ -318,8 +320,8 @@ const UserProfile = () => {
           )}
         </Col>
         <Col md={9} className="d-flex flex-column justify-content-center">
-          <h4 className="fw-bold mb-1">Jean Dupont</h4>
-          <p className="text-muted mb-0">jean.dupont@example.com</p>
+          <h4 className="fw-bold mb-1">{ user.nom } { user.prenom }</h4>
+          <p className="text-muted mb-0">{ user.email }</p>
           <Badge style={{ backgroundColor: '#00b894', color: 'white' }} className="w-fit-content mt-2 px-3 py-2">Client actif</Badge>
         </Col>
       </Row>

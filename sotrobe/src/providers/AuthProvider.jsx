@@ -5,15 +5,17 @@ import api from '../const/api';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState( localStorage.getItem('client'));
   const [token, setToken] = useState(localStorage.getItem('token'));
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    if (token) {
+    const user = localStorage.getItem('client');
+    const token = localStorage.getItem('token');
+    if (token && user) {
         setToken(token);
-        setUser(user);
+        setUser(JSON.parse(user));
         setIsLoggedIn(true);
     } else {
       setUser(null);
@@ -27,11 +29,14 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post('/auth/login', { email, motDePasse });
       const { access_token, user } = response.data;
       localStorage.setItem('token', access_token);
+      localStorage.setItem('client', JSON.stringify(user));
       setToken(access_token);
       setUser(user);
       setIsLoggedIn(true);
       navigate('/'); 
     } catch (error) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('client');
       setIsLoggedIn(false);
       setUser(null);
       setToken(null);
@@ -42,6 +47,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('client');
     setToken(null);
     setUser(null);
     navigate('/login');
