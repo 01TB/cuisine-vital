@@ -3,24 +3,19 @@ import { UserAuthProvider } from './providers/UserAuthProvider';
 import { useUserAuth } from './hooks/useUserAuth';
 import AdminNavbar from './components/AdminNavbar';
 import Dashboard from './pages/Dashboard';
-import Abonnements from './pages/Abonnements';
-import Commandes from './pages/Commandes';
-import Clients from './pages/Clients';
-import Stocks from './pages/Stocks';
-import Menu from './pages/Menu';
-import Livraisons from './pages/Livraisons';
-import Facturation from './pages/Facturation';
-import KitchenManagement from './pages/KitchenManagement';
-import Ingredients from './pages/Ingredients';
-import Statistics from './pages/Statistics';
-import Settings from './pages/Settings';
 import Login from './pages/Login';
-import Overview from './components/Overview';
-import HistoriqueCommandes from './pages/historique_commandes';
-import LivreurDashboard from './pages/LivreurDashboard';
 import Unauthorized from './pages/Unauthorized';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Page Imports
+import Commandes from './pages/Commandes';
 import MenusPage from './pages/MenusPage';
+import Clients from './pages/Clients';
+import Settings from './pages/Settings';
+import LivreurDashboard from './pages/LivreurDashboard';
+import StockOverview from './pages/StockOverview';
+import StockEntry from './pages/StockEntry';
+import StockHistory from './pages/StockHistory';
 
 
 const roleMap = { 1: 'admin', 2: 'chef cuisinier', 3: 'livreur' };
@@ -78,26 +73,27 @@ function App() {
           />
 
           {/* ADMIN & CHEF CUISINIER ROUTES */}
-        <Route 
-          path="/admin/dashboard" 
-          element={
-            <RoleProtectedRoute allowedRoles={['admin', 'chef cuisinier']}>
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
-            </RoleProtectedRoute>
-          }
-        >
-          {/* Sous-routes ici */}
-          <Route path="chef/commandes" element={<Commandes />} />
-          <Route path="chef/menus" element={<MenusPage />} />
-          <Route path="overview" element={<Overview />} />
-          {/* ... d'autres sous-routes */}
-        </Route>
-
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <RoleProtectedRoute allowedRoles={['admin', 'chef cuisinier']}>
+                <MainLayout>
+                  <Dashboard />
+                </MainLayout>
+              </RoleProtectedRoute>
+            }
+          >
+            {/* Sous-routes pour le dashboard */}
+            <Route path="commandes" element={<Commandes />} />
+            <Route path="menus" element={<MenusPage />} />
+            <Route path="stock" element={<StockOverview />} />
+            <Route path="stock/entry" element={<StockEntry />} />
+            <Route path="stock/history" element={<StockHistory />} />
+            {/* Ajoutez d'autres sous-routes ici */}
+          </Route>
 
           {/* ADMIN ONLY ROUTES (Example) */}
-           <Route 
+          <Route 
             path="/admin/clients" 
             element={
               <RoleProtectedRoute allowedRoles={['admin']}>
@@ -127,14 +123,14 @@ function App() {
   );
 }
 
-// This component handles the initial redirect after login, before a protected route takes over.
+// This component handles the initial redirect after login
 const RootRedirect = () => {
   const { user } = useUserAuth();
   if (user) {
     switch (roleMap[user.roleId]) {
       case 'admin':
       case 'chef cuisinier':
-        return <Navigate to="/admin/dashboard/overview" replace />;
+        return <Navigate to="/admin/dashboard/stock" replace />; // Redirect to stock overview
       case 'livreur':
         return <Navigate to="/admin/livreur/dashboard" replace />;
       default:
