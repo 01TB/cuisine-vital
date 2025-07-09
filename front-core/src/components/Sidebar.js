@@ -31,13 +31,19 @@ const Sidebar = () => {
       to: '/admin/dashboard/gestion-menu',
       label: 'Gestion du menu',
       icon: Menu,
-      roles: ['admin', 'chef cuisinier'],
+      roles: ['admin'],
       subLinks: [
-        { to: '/admin/dashboard/gestion-menu/plats', label: 'Plats', roles: ['admin', 'chef cuisinier'] },
+        { to: '/admin/dashboard/chef/menus', label: 'Plats', roles: ['admin', 'chef cuisinier'] },
         { to: '/admin/dashboard/gestion-menu/categories', label: 'Catégories', roles: ['admin', 'chef cuisinier'] },
         { to: '/admin/dashboard/gestion-menu/nouveau-plat', label: 'Ajouter un nouveau plat', roles: ['admin', 'chef cuisinier'] },
         { to: '/admin/dashboard/gestion-menu/promotions', label: 'Promotions', roles: ['admin', 'chef cuisinier'] },
       ]
+    },
+    {
+      to: '/admin/dashboard/chef/menus',
+      label: 'Menus',
+      icon: Menu,
+      roles: ['chef cuisinier']
     },
     {
       to: '/admin/dashboard/gestion-cuisine',

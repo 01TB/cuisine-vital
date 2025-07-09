@@ -20,6 +20,7 @@ import HistoriqueCommandes from './pages/historique_commandes';
 import LivreurDashboard from './pages/LivreurDashboard';
 import Unauthorized from './pages/Unauthorized';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import MenusPage from './pages/MenusPage';
 
 
 const roleMap = { 1: 'admin', 2: 'chef cuisinier', 3: 'livreur' };
@@ -77,21 +78,22 @@ function App() {
           />
 
           {/* ADMIN & CHEF CUISINIER ROUTES */}
-          <Route 
-            path="/admin/dashboard" 
-            element={
-              <RoleProtectedRoute allowedRoles={['admin', 'chef cuisinier']}>
-                <MainLayout>
-                  <Dashboard />
-                </MainLayout>
-              </RoleProtectedRoute>
-            }
-          />
-              <Route 
-                path="chef/commandes" 
-                element={<Commandes/>}
-              />
-          <Route/>
+        <Route 
+          path="/admin/dashboard" 
+          element={
+            <RoleProtectedRoute allowedRoles={['admin', 'chef cuisinier']}>
+              <MainLayout>
+                <Dashboard />
+              </MainLayout>
+            </RoleProtectedRoute>
+          }
+        >
+          {/* Sous-routes ici */}
+          <Route path="chef/commandes" element={<Commandes />} />
+          <Route path="chef/menus" element={<MenusPage />} />
+          <Route path="overview" element={<Overview />} />
+          {/* ... d'autres sous-routes */}
+        </Route>
 
 
           {/* ADMIN ONLY ROUTES (Example) */}

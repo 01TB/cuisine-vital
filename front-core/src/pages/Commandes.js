@@ -1,6 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button, Tabs, Tab, Table, Form } from 'react-bootstrap';
 
+// Mockup des menus
+const mockMenus = [
+  { id: 1, nom: 'Menu Zebu', description: 'Viande zébu + riz', prix_carte: 12000 },
+  { id: 2, nom: 'Menu Poulet', description: 'Poulet grillé + légumes', prix_carte: 15000 },
+  { id: 3, nom: 'Menu Végétarien', description: 'Tofu + salade', prix_carte: 10000 },
+];
+
+// Mockup des détails des commandes
+const mockDetails = {
+  '1': [
+    { menu_id: 1, quantite: 1, prix_unitaire: 12000, accompagnement_id: null, boisson_id: 1, notes: "Peu épicé" },
+    { menu_id: 2, quantite: 2, prix_unitaire: 15000, accompagnement_id: null, boisson_id: 2, notes: "" }
+  ],
+  '2': [
+    { menu_id: 2, quantite: 1, prix_unitaire: 15000, accompagnement_id: null, boisson_id: 1, notes: "Sans sauce" },
+    { menu_id: 3, quantite: 3, prix_unitaire: 10000, accompagnement_id: null, boisson_id: 3, notes: "Vegan" }
+  ],
+  '3': [
+    { menu_id: 1, quantite: 2, prix_unitaire: 12000, accompagnement_id: null, boisson_id: 1, notes: "" }
+  ]
+};
+
+// Mockup des commandes
 const mockCommandes = [
   {
     id: '1',
@@ -32,13 +55,13 @@ const Commandes = () => {
   const [commandes, setCommandes] = useState([]);
   const [filteredCommandes, setFilteredCommandes] = useState([]);
   const [selectedCommande, setSelectedCommande] = useState(null);
+  const [commandeDetails, setCommandeDetails] = useState([]);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [noteMessage, setNoteMessage] = useState('');
   const [filtre, setFiltre] = useState({ quantite: '', prix: '', ordre: '' });
 
   useEffect(() => {
-    // Simuler une récupération d'API
     setCommandes(mockCommandes);
     setFilteredCommandes(mockCommandes);
   }, []);
@@ -54,6 +77,8 @@ const Commandes = () => {
 
   const openDetails = (commande) => {
     setSelectedCommande(commande);
+    const details = mockDetails[commande.id] || [];
+    setCommandeDetails(details);
     setShowDetailsModal(true);
   };
 
@@ -63,8 +88,13 @@ const Commandes = () => {
     alert('Note envoyée !');
   };
 
+  const getMenuName = (menuId) => {
+    const menu = mockMenus.find(m => m.id === menuId);
+    return menu ? menu.nom : 'Menu inconnu';
+  };
+
   return (
-    <div className="container mt-4">
+    <div>
       <h2 className="mb-4">Liste des Commandes</h2>
       <Tabs defaultActiveKey="aujourdhui">
         <Tab eventKey="aujourdhui" title="Commandes d'aujourd'hui">
@@ -121,22 +151,45 @@ const Commandes = () => {
         </Tab>
       </Tabs>
 
+      {/* MODAL DÉTAILS */}
       <Modal show={showDetailsModal} onHide={() => setShowDetailsModal(false)} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Détails de la commande</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {selectedCommande && (
-            <div>
+            <>
               <p><strong>Commande :</strong> {selectedCommande.numero_commande}</p>
               <p><strong>Client :</strong> {selectedCommande.nom_client}</p>
               <p><strong>Montant total :</strong> {selectedCommande.montant_total} Ar</p>
+              <h5 className="mt-4">Menus commandés</h5>
+              <Table size="sm" bordered>
+                <thead>
+                  <tr>
+                    <th>Menu</th>
+                    <th>Quantité</th>
+                    <th>Prix unitaire</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {commandeDetails.map((detail, index) => (
+                    <tr key={index}>
+                      <td>{getMenuName(detail.menu_id)}</td>
+                      <td>{detail.quantite}</td>
+                      <td>{detail.prix_unitaire} Ar</td>
+                      <td>{detail.notes || '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
               <Button onClick={() => setShowNoteModal(true)}>Envoyer une note</Button>
-            </div>
+            </>
           )}
         </Modal.Body>
       </Modal>
 
+      {/* MODAL NOTE */}
       <Modal show={showNoteModal} onHide={() => setShowNoteModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Envoyer une note</Modal.Title>
