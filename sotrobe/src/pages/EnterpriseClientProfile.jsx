@@ -111,7 +111,6 @@ const EnterpriseClientProfile = () => {
               <Card className="h-100 border-0 shadow-lg position-relative overflow-hidden">
                 <div 
                   className="position-absolute top-0 start-0 w-100 h-100 opacity-10"
-                  style={{ background: subscriptionStyle.gradient }}
                 ></div>
                 <Card.Body className="p-4 position-relative">
                   <div className="d-flex justify-content-between align-items-start mb-4">

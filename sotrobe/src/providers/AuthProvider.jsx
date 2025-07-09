@@ -8,12 +8,17 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     if (token) {
-
+        setToken(token);
+        setUser(user);
+        setIsLoggedIn(true);
     } else {
       setUser(null);
+      setToken(null);
+      setIsLoggedIn(false);
     }
   }, [token]);
 
@@ -24,8 +29,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('token', access_token);
       setToken(access_token);
       setUser(user);
+      setIsLoggedIn(true);
       navigate('/'); 
     } catch (error) {
+      setIsLoggedIn(false);
+      setUser(null);
+      setToken(null);
       console.error('Login failed:', error);
       throw new Error(error.response?.data?.message || 'Login failed');
     }
@@ -38,7 +47,6 @@ export const AuthProvider = ({ children }) => {
     navigate('/login');
   };
 
-  const isLoggedIn = !!user;
 
   return (
     <AuthContext.Provider value={{ user, isLoggedIn, login, logout }}>
