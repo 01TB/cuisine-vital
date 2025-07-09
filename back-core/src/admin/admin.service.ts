@@ -111,6 +111,24 @@ export class AdminService {
       };
     }
     
+    async getChiffreAffaireJournalier(date: Date) {
+      const dateStr = date.toISOString().slice(0, 10); // format YYYY-MM-DD
+      const caInd = await this.paiementIndividuelsRepository
+        .createQueryBuilder('paiement')
+        .select('SUM(paiement.montant)', 'chiffre_affaires')
+        .where('DATE(paiement.date_paiement) = :date', { date: dateStr })
+        .getRawOne();
+      const caEnt = await this.paiementEntreprisesRepository
+        .createQueryBuilder('paiement')
+        .select('SUM(paiement.montant)', 'chiffre_affaires')
+        .where('DATE(paiement.date_paiement) = :date', { date: dateStr })
+        .getRawOne();
+      return {
+        chiffre_affaire_individuel: caInd && caInd.chiffre_affaires ? caInd.chiffre_affaires : 0,
+        chiffre_affaire_entreprise: caEnt && caEnt.chiffre_affaires ? caEnt.chiffre_affaires : 0,
+      };
+    }
+    
     async getNombreCommandeEnCours(dateDebut: string, dateFin: string) {
       // Statuts considérés comme "en cours"
       const statutsEnCours = ['RECUE', 'EN_PREPARATION', 'PRETE'];

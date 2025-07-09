@@ -36,6 +36,19 @@ export class AdminController {
         return this.adminService.getChiffreAffaires(dateDebut,dateFin);
     }
 
+    @Get('stats/chiffres-affaire/journalier')
+    async getChiffreAffaireJournalier(@Query('date') date?: string) {
+        let d: Date;
+        if (date) {
+            d = new Date(date);
+        } else {
+            d = new Date();
+        }
+        // Correction : forcer le format YYYY-MM-DD
+        const dateStr = d.toISOString().slice(0, 10);
+        return this.adminService.getChiffreAffaireJournalier(new Date(dateStr));
+    }
+
     @Get('commandes/en-cours/nb')
     async getNombreCommandeEnCours(@Query('dateDebut') dateDebut: string, @Query('dateFin') dateFin: string) {
         return this.adminService.getNombreCommandeEnCours(dateDebut, dateFin);
@@ -45,7 +58,7 @@ export class AdminController {
     async getTopMenu() {
         return this.adminService.getTopMenu();
     }
-    // la colonne salaire.montant tsy m'existe
+
     @Get('stats/total-depense')
     async getTotalDepenses(@Query('dateDebut') dateDebut: Date, @Query('dateFin') dateFin: Date) {
         return this.adminService.getTotalDepenses(dateDebut,dateFin);

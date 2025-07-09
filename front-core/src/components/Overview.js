@@ -7,9 +7,11 @@ import PopularDishes from './PopularDishes';
 import KitchenWorkflow from './KitchenWorkflow';
 
 const Overview = () => {
-  const [chiffresAffaire, setChiffresAffaire] = useState({ chiffre_affaire_individuel: 0, chiffre_affaire_entreprise: 0 });
+  const [caMensuel, setCaMensuel] = useState(null);
+  const [caAnnuel, setCaAnnuel] = useState(null);
   const [loadingCA, setLoadingCA] = useState(true);
   const [errorCA, setErrorCA] = useState(null);
+  const [carouselIndex, setCarouselIndex] = useState(0);
 
   // Nouveaux états pour commandes en cours
   const [nbCommandesEnCours, setNbCommandesEnCours] = useState(0);
@@ -17,15 +19,30 @@ const Overview = () => {
   const [errorCmd, setErrorCmd] = useState(null);
 
   // Utilisation de useCallback pour que la fonction puisse être passée en dépendance ou à un événement onClick
-  const fetchCA = useCallback(async () => {
+  const fetchChiffresAffaire = useCallback(async () => {
     setLoadingCA(true);
     setErrorCA(null);
     try {
-      const res = await axios.get(api('admin/stats/chiffres-affaire'));
-      setChiffresAffaire(res.data);
+      const now = new Date();
+      const dateFin = now.toISOString();
+      // 30 jours avant
+      const dateDebutMois = new Date(now);
+      dateDebutMois.setDate(now.getDate() - 30);
+      // 1er janvier
+      const dateDebutAnnee = new Date(now.getFullYear(), 0, 1);
+
+      const [resMois, resAnnee] = await Promise.all([
+        axios.get(api('admin/stats/chiffres-affaire'), {
+          params: { dateDebut: dateDebutMois.toISOString(), dateFin }
+        }),
+        axios.get(api('admin/stats/chiffres-affaire'), {
+          params: { dateDebut: dateDebutAnnee.toISOString(), dateFin }
+        })
+      ]);
+      setCaMensuel(resMois.data);
+      setCaAnnuel(resAnnee.data);
     } catch (err) {
       setErrorCA('Erreur de chargement du C.A.');
-      console.error(err);
     } finally {
       setLoadingCA(false);
     }
@@ -46,12 +63,43 @@ const Overview = () => {
     }
   }, []);
 
-  useEffect(() => {
-    fetchCA();
-    fetchNbCommandesEnCours();
-  }, [fetchCA, fetchNbCommandesEnCours]);
+  const [caJournalier, setCaJournalier] = useState(null);
+  const [loadingCAJournalier, setLoadingCAJournalier] = useState(true);
+  const [errorCAJournalier, setErrorCAJournalier] = useState(null);
 
-  const totalCA = parseFloat(chiffresAffaire.chiffre_affaire_individuel) + parseFloat(chiffresAffaire.chiffre_affaire_entreprise);
+  // Nouvelle fonction pour charger le chiffre d'affaires journalier
+  const fetchChiffreAffaireJournalier = useCallback(async () => {
+    setLoadingCAJournalier(true);
+    setErrorCAJournalier(null);
+    try {
+      const today = new Date();
+      const dateStr = today.toISOString().slice(0, 10); // YYYY-MM-DD
+      const res = await axios.get(api('admin/stats/chiffres-affaire/journalier'), {
+        params: { date: dateStr }
+      });
+      setCaJournalier(res.data);
+    } catch (err) {
+      setErrorCAJournalier('Erreur de chargement du CA journalier');
+    } finally {
+      setLoadingCAJournalier(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchChiffresAffaire();
+    fetchNbCommandesEnCours();
+    fetchChiffreAffaireJournalier();
+  }, [fetchChiffresAffaire, fetchNbCommandesEnCours, fetchChiffreAffaireJournalier]);
+
+  // Carrousel automatique
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCarouselIndex((prev) => (prev === 0 ? 1 : 0));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const totalCA = parseFloat(caMensuel?.chiffre_affaire_individuel) + parseFloat(caMensuel?.chiffre_affaire_entreprise);
 
   // Fonction pour afficher la card de Chiffre d'Affaires en fonction de l'état
   const renderRevenueCard = () => {
@@ -79,7 +127,7 @@ const Overview = () => {
             <h3 className="text-sm font-medium text-red-600">{errorCA}</h3>
             <p className="text-xs text-gray-500 mb-3">Impossible de récupérer les données.</p>
             <button 
-              onClick={fetchCA} 
+              onClick={fetchChiffresAffaire} 
               className="text-xs font-semibold text-blue-600 hover:text-blue-800 underline"
             >
               Réessayer
@@ -91,8 +139,8 @@ const Overview = () => {
     return (
       <StatsCard
         title="Chiffre d'affaires"
-        value={`${totalCA.toFixed(2)} €`}
-        subtitle={`Ind: ${parseFloat(chiffresAffaire.chiffre_affaire_individuel).toFixed(2)}€ | Ent: ${parseFloat(chiffresAffaire.chiffre_affaire_entreprise).toFixed(2)}€`}
+        value={`${totalCA.toFixed(2)} Ariary`}
+        subtitle={`Ind: ${parseFloat(caMensuel?.chiffre_affaire_individuel).toFixed(2)}Ar | Ent: ${parseFloat(caMensuel?.chiffre_affaire_entreprise).toFixed(2)}Ar`}
         change="📈 +8.5% ce mois"
         icon={Euro}
         color="green"
@@ -138,6 +186,90 @@ const Overview = () => {
     );
   };
 
+  // Carrousel pour le chiffre d'affaires
+  const renderRevenueCarousel = () => {
+    if (loadingCA) {
+      return (
+        <StatsCard
+          title="Chiffre d'affaires"
+          value="..."
+          subtitle="Chargement..."
+          change=""
+          icon={Euro}
+          color="green"
+        />
+      );
+    }
+    if (errorCA) {
+      return (
+        <StatsCard
+          title="Chiffre d'affaires"
+          value="Erreur"
+          subtitle={errorCA}
+          change=""
+          icon={Euro}
+          color="red"
+        />
+      );
+    }
+    const ca = carouselIndex === 0 ? caMensuel : caAnnuel;
+    const label = carouselIndex === 0 ? "30 derniers jours" : "Année en cours";
+    const totalCA = ca
+      ? Number(ca.chiffre_affaire_individuel || 0) + Number(ca.chiffre_affaire_entreprise || 0)
+      : 0;
+    return (
+      <StatsCard
+        title={`Chiffre d'affaires (${label})`}
+        value={`${totalCA.toFixed(2)} Ariary`}
+        subtitle={`Ind: ${Number(ca?.chiffre_affaire_individuel || 0).toFixed(2)}Ar | Ent: ${Number(ca?.chiffre_affaire_entreprise || 0).toFixed(2)}Ar`}
+        change={carouselIndex === 0 ? "📈 Mensuel" : "📈 Annuel"}
+        icon={Euro}
+        color="green"
+      />
+    );
+  };
+
+  // Fonction pour afficher la carte Revenus journaliers
+  const renderRevenusJournaliersCard = () => {
+    if (loadingCAJournalier) {
+      return (
+        <StatsCard
+          title="Revenus journaliers"
+          value="..."
+          subtitle="Chargement..."
+          change=""
+          icon={BarChart3}
+          color="purple"
+        />
+      );
+    }
+    if (errorCAJournalier) {
+      return (
+        <StatsCard
+          title="Revenus journaliers"
+          value="Erreur"
+          subtitle={errorCAJournalier}
+          change=""
+          icon={BarChart3}
+          color="red"
+        />
+      );
+    }
+    const totalCA = caJournalier
+      ? Number(caJournalier.chiffre_affaire_individuel || 0) + Number(caJournalier.chiffre_affaire_entreprise || 0)
+      : 0;
+    return (
+      <StatsCard
+        title="Revenus journaliers"
+        value={`${totalCA.toFixed(2)} €`}
+        subtitle={`Ind: ${Number(caJournalier?.chiffre_affaire_individuel || 0).toFixed(2)}Ar | Ent: ${Number(caJournalier?.chiffre_affaire_entreprise || 0).toFixed(2)}Ar`}
+        change={"Aujourd'hui"}
+        icon={BarChart3}
+        color="purple"
+      />
+    );
+  };
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -147,15 +279,8 @@ const Overview = () => {
       <div className="dashboard-content">
         <div className="dashboard-stats grid grid-cols-1 md:grid-cols-3 gap-4">
           {renderCommandesEnCoursCard()}
-          {renderRevenueCard()}
-          <StatsCard
-            title="Revenus journaliers"
-            value={`0.00 €`}
-            subtitle="Revenus d'aujourd'hui"
-            change="📈 +5%"
-            icon={BarChart3}
-            color="purple"
-          />
+          {renderRevenueCarousel()}
+          {renderRevenusJournaliersCard()}
         </div>
         <div className="dashboard-details mt-6">
           <PopularDishes />
