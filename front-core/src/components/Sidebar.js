@@ -10,7 +10,7 @@ import {
 import { useUserAuth } from '../hooks/useUserAuth';
 
 const Sidebar = () => {
-  const { user } = useUserAuth();
+  const { user, logout } = useUserAuth();
 
   const roleMap = {
     1: 'admin',
@@ -129,6 +129,14 @@ const Sidebar = () => {
             <div className="fw-semibold small">{user?.nom} {user?.prenom}</div>
             <div className="text-muted small">{currentUserRole}</div>
           </div>
+        </div>
+        <div className="px-2">
+          <button
+            className="btn btn-outline-danger btn-sm w-100"
+            onClick={logout}
+          >
+            Se déconnecter
+          </button>
         </div>
       </div>
     </aside>
