@@ -19,6 +19,9 @@ export class MenuTypeAbonnement {
   @Column("integer", { name: "type_abonnement_id" })
   typeAbonnementId: number;
 
+  @Column("integer", { name: "menu_id" })
+  menuId: number;
+
   @Column("boolean", {
     name: "disponible",
     nullable: true,

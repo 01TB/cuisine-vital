@@ -13,15 +13,16 @@ import KitchenManagement from './pages/KitchenManagement';
 import Ingredients from './pages/Ingredients';
 import Statistics from './pages/Statistics';
 import Settings from './pages/Settings';
+import AbonnementsPage from './pages/Abonnements';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Overview from './components/Overview';
 import HistoriqueCommandes from './pages/historique_commandes';
+import BonsCommandePage from './pages/BonsCommande';
 
 function App() {
   return (
     <Router>
-      <AdminNavbar />
-      <div style={{ marginTop: '70px' }}>
+      <div>
         <Routes>
           {/* Redirection racine */}
           <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
@@ -42,6 +43,8 @@ function App() {
               <Route path="statistiques" element={<Statistics />} />
               <Route path="historique" element={<HistoriqueCommandes />} />
               <Route path="parametres" element={<Settings />} />
+              <Route path="abonnements" element={<AbonnementsPage />} />
+              <Route path="bonscommande" element={<BonsCommandePage />} />
           </Route>
 
           {/* Autres routes à plat */}

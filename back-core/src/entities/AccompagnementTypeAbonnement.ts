@@ -31,6 +31,12 @@ export class AccompagnementTypeAbonnement {
 
   @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
+  
+  @Column("integer", { name: "accompagnement_id" })
+  accompagnementId: number;
+
+  @Column("integer", { name: "type_abonnement_id" })
+  typeAbonnementId: number;
 
   @ManyToOne(
     () => Accompagnements,

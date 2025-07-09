@@ -82,7 +82,7 @@ INSERT INTO ingredients (nom, unite_mesure, prix_unitaire, stock_minimum) VALUES
 ('Chocolat Noir 70%', 'kg', 18.00, 2.0);
 
 -- Accompagnements (Entrées / Desserts)
-INSERT INTO accompagnements (nom, type, description, prix_uniatire) VALUES
+INSERT INTO accompagnements (nom, type, description, prix_unitaire) VALUES
 ('Salade de saison', 'ENTREE', 'Mélange de jeunes pousses et légumes de saison', 3.50),
 ('Velouté de légumes', 'ENTREE', 'Soupe onctueuse de légumes du marché', 4.00),
 ('Mousse au chocolat', 'DESSERT', 'Mousse légère au chocolat noir intense', 4.50),

@@ -1,0 +1,8 @@
+.icon-hover svg {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.icon-hover:hover svg {
+  transform: scale(1.1) rotate(3deg);
+  color: #4f46e5 !important; /* Indigo pastel */
+}

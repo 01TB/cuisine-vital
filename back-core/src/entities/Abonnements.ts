@@ -49,36 +49,29 @@ export class Abonnements {
   @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
 
-  @ManyToOne(() => Clients, (clients) => clients.abonnements, { lazy: true })
+  @ManyToOne(() => Clients, (clients) => clients.abonnements)
   @JoinColumn([{ name: "client_id", referencedColumnName: "id" }])
-  client: Promise<Clients>;
+  client: Clients;
 
   @ManyToOne(
     () => TypesAbonnement,
-    (typesAbonnement) => typesAbonnement.abonnements,
-    { lazy: true }
+    (typesAbonnement) => typesAbonnement.abonnements
   )
   @JoinColumn([{ name: "type_abonnement_id", referencedColumnName: "id" }])
-  typeAbonnement: Promise<TypesAbonnement>;
+  typeAbonnement: TypesAbonnement;
 
-  @OneToMany(() => BonsCommande, (bonsCommande) => bonsCommande.abonnement, {
-    lazy: true,
-  })
-  bonsCommandes: Promise<BonsCommande[]>;
+  @OneToMany(() => BonsCommande, (bonsCommande) => bonsCommande.abonnement)
+  bonsCommandes: BonsCommande[];
 
   @OneToMany(
     () => CommandesEntreprises,
-    (commandesEntreprises) => commandesEntreprises.abonnement,
-    { lazy: true }
-  )
-  commandesEntreprises: Promise<CommandesEntreprises[]>;
+    (commandesEntreprises) => commandesEntreprises.abonnement)
+  commandesEntreprises: CommandesEntreprises[];
 
   @OneToMany(
     () => FacturesEntreprises,
-    (facturesEntreprises) => facturesEntreprises.abonnement,
-    { lazy: true }
-  )
-  facturesEntreprises: Promise<FacturesEntreprises[]>;
+    (facturesEntreprises) => facturesEntreprises.abonnement)
+  facturesEntreprises: FacturesEntreprises[];
 
   constructor(init?: Partial<Abonnements>) {
     Object.assign(this, init);

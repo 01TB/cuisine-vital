@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UsePipes, ValidationPipe, Put } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateMenuDto } from './dto/create-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
@@ -6,6 +6,8 @@ import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateAbonnementDto, UpdateAbonnementDto } from './dto/create-abonnement.dto';
+import { TypesAbonnement } from '../entities/TypesAbonnement';
 
 @Controller('admin')
 export class AdminController {
@@ -186,4 +188,116 @@ export class AdminController {
     removeUser(@Param('id') id: string) {
         return this.adminService.removeUser(+id);
     }
+
+    @Post('abonnements')
+    @UsePipes(new ValidationPipe())
+    createAbonnement(@Body() createAbonnementDto: CreateAbonnementDto) {
+        return this.adminService.createAbonnement(createAbonnementDto);
+    }
+
+    @Get('abonnements')
+    async findAllAbonnements() {
+        const abn = await this.adminService.findAllAbonnements();
+        return abn;
+    }
+
+    @Get('abonnements/:id')
+    findOneAbonnement(@Param('id') id: string) {
+        return this.adminService.findOneAbonnement(id);
+    }
+
+    @Patch('abonnements/:id')
+    @UsePipes(new ValidationPipe())
+    updateAbonnement(@Param('id') id: string, @Body() updateAbonnementDto: UpdateAbonnementDto) {
+        return this.adminService.updateAbonnement(id, updateAbonnementDto);
+    }
+
+    @Delete('abonnements/:id')
+    removeAbonnement(@Param('id') id: string) {
+        return this.adminService.removeAbonnement(id);
+    }
+
+  @Get('types-abonnement')
+  getAllTypesAbonnement(): Promise<TypesAbonnement[]> {
+    return this.adminService.getAllTypesAbonnement();
+  }
+
+  @Get('types-abonnement/:id')
+  getTypeAbonnementById(@Param('id') id: number): Promise<TypesAbonnement> {
+    return this.adminService.getTypeAbonnementById(id);
+  }
+
+  @Post('types-abonnement')
+  createTypeAbonnement(@Body() body: Partial<TypesAbonnement>): Promise<TypesAbonnement> {
+    return this.adminService.createTypeAbonnement(body);
+  }
+
+  @Put('types-abonnement/:id')
+  updateTypeAbonnement(@Param('id') id: number, @Body() body: Partial<TypesAbonnement>) {
+    return this.adminService.updateTypeAbonnement(id, body);
+  }
+
+  @Delete('types-abonnement/:id')
+  deleteTypeAbonnement(@Param('id') id: number): Promise<void> {
+    return this.adminService.deleteTypeAbonnement(id);
+  }
+
+  @Get('types-abonnement/:id/menus')
+  getMenusForTypeAbonnement(@Param('id') id: number) {
+    return this.adminService.getMenusForTypeAbonnement(id);
+  }
+
+  @Post('types-abonnement/:id/menus')
+  updateMenusForTypeAbonnement(@Param('id') id: number, @Body() body: { menuIds: number[] }) {
+    return this.adminService.updateMenusForTypeAbonnement(id, body.menuIds);
+  }
+
+  @Get('types-abonnement/:id/accompagnements')
+  getAccompagnementsForTypeAbonnement(@Param('id') id: number) {
+    return this.adminService.getAccompagnementsForTypeAbonnement(id);
+  }
+
+  @Post('types-abonnement/:id/accompagnements')
+  updateAccompagnementsForTypeAbonnement(@Param('id') id: number, @Body() body: { accompagnementIds: number[] }) {
+    return this.adminService.updateAccompagnementsForTypeAbonnement(id, body.accompagnementIds);
+  }
+
+@Get('bons-commande')
+async getAllBonsCommande() {
+  return this.adminService.getAllBonsCommande();
+}
+
+@Post('bons-commande/filtrer')
+async filterBonsCommande(@Body() body: {
+  clientId?: string;
+  dateDebut?: string;
+  dateFin?: string;
+}) {
+  return this.adminService.filterBonsCommande(body);
+}
+
+@Get('bons-commande/non-valides')
+async getBonsCommandeNonValides() {
+  return this.adminService.getBonsCommandeNonValides();
+}
+
+@Get('bons-commande/:id')
+async getBonCommandeDetails(@Param('id') id: string) {
+  return this.adminService.getBonCommandeDetails(id);
+}
+
+@Patch('bons-commande/:id/statut')
+async updateBonCommandeStatut(
+  @Param('id') id: string,
+  @Body() body: { statut: 'VALIDE' | 'TRAITE' | 'REFUSE' }
+) {
+  return this.adminService.updateStatutBonCommande(id, body.statut);
+}
+
+@Get('bons-commande/:id')
+getBonCommande(@Param('id') id: string) {
+  return this.adminService.getBonCommandeById(id);
+}
+
+
 }

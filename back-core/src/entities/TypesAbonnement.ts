@@ -38,25 +38,21 @@ export class TypesAbonnement {
   @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
 
-  @OneToMany(() => Abonnements, (abonnements) => abonnements.typeAbonnement, {
-    lazy: true,
-  })
-  abonnements: Promise<Abonnements[]>;
+  @OneToMany(() => Abonnements, (abonnements) => abonnements.typeAbonnement)
+  abonnements: Abonnements[];
 
   @OneToMany(
     () => AccompagnementTypeAbonnement,
     (accompagnementTypeAbonnement) =>
-      accompagnementTypeAbonnement.typeAbonnement,
-    { lazy: true }
-  )
-  accompagnementTypeAbonnements: Promise<AccompagnementTypeAbonnement[]>;
+      accompagnementTypeAbonnement.typeAbonnement
+ )
+  accompagnementTypeAbonnements: AccompagnementTypeAbonnement[];
 
   @OneToMany(
     () => MenuTypeAbonnement,
-    (menuTypeAbonnement) => menuTypeAbonnement.typeAbonnement,
-    { lazy: true }
+    (menuTypeAbonnement) => menuTypeAbonnement.typeAbonnement
   )
-  menuTypeAbonnements: Promise<MenuTypeAbonnement[]>;
+  menuTypeAbonnements: MenuTypeAbonnement[];
 
   constructor(init?: Partial<TypesAbonnement>) {
     Object.assign(this, init);

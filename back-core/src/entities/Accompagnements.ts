@@ -23,8 +23,8 @@ export class Accompagnements {
   @Column("text", { name: "description", nullable: true })
   description: string | null;
 
-  @Column("numeric", { name: "prix_uniatire", precision: 10, scale: 2 })
-  prixUniatire: string;
+  @Column("numeric", { name: "prix_unitaire", precision: 10, scale: 2 })
+  prixunitaire: string;
 
   @Column("timestamp without time zone", {
     name: "created_at",

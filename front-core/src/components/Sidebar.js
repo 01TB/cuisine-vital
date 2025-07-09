@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   ShoppingCart,
@@ -5,161 +6,109 @@ import {
   Menu,
   ChefHat,
   Package,
-  Settings
+  Settings,
+  Box,
+  UserCircle2,
+  ChevronDown,
+  ChevronUp,
+  ClipboardList
 } from 'lucide-react';
+import '../styles/sidebar.css';
 
 const Sidebar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenuDropdown = () => {
+    setMenuOpen(!menuOpen);
+  };
+
   return (
-    <aside className="d-flex flex-column bg-light vh-100 p-3 border-end" style={{ width: '250px' }}>
-      <nav className="nav nav-pills flex-column mb-auto">
-        <NavLink
-          to="/admin/dashboard/overview"
-          className={({ isActive }) =>
-            `nav-link d-flex align-items-center mb-1 ${
-              isActive ? 'active fw-semibold bg-primary text-white' : 'text-dark'
-            }`
-          }
-        >
-          <ShoppingCart size={18} className="me-2" />
-          Commandes
-        </NavLink>
+    <aside
+      className="d-flex flex-column bg-white vh-100 p-4 border-end shadow-sm"
+      style={{ width: '260px' }}
+    >
+      {/* Titre */}
+      <h1 className="d-flex align-items-center gap-2 text-primary fw-bold mb-4 fs-4">
+        <Box className="icon-hover text-primary" size={24} />
+        Sotrobe Manager
+      </h1>
 
-        <NavLink
-          to="/admin/dashboard/gestion-menu"
-          className={({ isActive }) =>
-            `nav-link d-flex align-items-center mb-1 ${
-              isActive ? 'active fw-semibold bg-primary text-white' : 'text-dark'
-            }`
-          }
-        >
-          <Menu size={18} className="me-2" />
-          Gestion du menu
-        </NavLink>
+      {/* Navigation */}
+      <nav className="nav flex-column gap-1">
+        <NavItem to="/admin/dashboard/overview" icon={<ShoppingCart />} label="Commandes" />
 
-        <div className="ms-4">
-          <NavLink
-            to="/admin/dashboard/gestion-menu/plats"
-            className={({ isActive }) =>
-              `nav-link px-2 py-1 mb-1 ${
-                isActive ? 'bg-secondary bg-opacity-10 text-primary fw-medium' : 'text-muted'
-              }`
-            }
-          >
-            Plats
-          </NavLink>
-          <NavLink
-            to="/admin/dashboard/gestion-menu/categories"
-            className={({ isActive }) =>
-              `nav-link px-2 py-1 mb-1 ${
-                isActive ? 'bg-secondary bg-opacity-10 text-primary fw-medium' : 'text-muted'
-              }`
-            }
-          >
-            Catégories
-          </NavLink>
-          <NavLink
-            to="/admin/dashboard/gestion-menu/nouveau-plat"
-            className={({ isActive }) =>
-              `nav-link px-2 py-1 mb-1 ${
-                isActive ? 'bg-secondary bg-opacity-10 text-primary fw-medium' : 'text-muted'
-              }`
-            }
-          >
-            Ajouter un nouveau plat
-          </NavLink>
-          <NavLink
-            to="/admin/dashboard/gestion-menu/promotions"
-            className={({ isActive }) =>
-              `nav-link px-2 py-1 mb-1 ${
-                isActive ? 'bg-secondary bg-opacity-10 text-primary fw-medium' : 'text-muted'
-              }`
-            }
-          >
-            Promotions
-          </NavLink>
-        </div>
-
-        <NavLink
-          to="/admin/dashboard/gestion-cuisine"
-          className={({ isActive }) =>
-            `nav-link d-flex align-items-center mb-1 ${
-              isActive ? 'active fw-semibold bg-primary text-white' : 'text-dark'
-            }`
-          }
+        {/* Dropdown Gestion du menu */}
+        <button
+          onClick={toggleMenuDropdown}
+          className="btn d-flex align-items-center justify-content-between px-3 py-2 rounded-3 text-start text-dark shadow-sm"
         >
-          <ChefHat size={18} className="me-2" />
-          Gestion de la cuisine
-        </NavLink>
+          <div className="d-flex align-items-center gap-2">
+            <Menu />
+            Gestion du menu
+          </div>
+          {menuOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+        </button>
 
-        <NavLink
-          to="/admin/dashboard/ingredients"
-          className={({ isActive }) =>
-            `nav-link d-flex align-items-center mb-1 ${
-              isActive ? 'active fw-semibold bg-primary text-white' : 'text-dark'
-            }`
-          }
-        >
-          <Package size={18} className="me-2" />
-          Ingrédients
-        </NavLink>
+        {menuOpen && (
+          <div className="ms-4 ps-2 border-start border-2 border-primary-subtle">
+            <SubNavItem to="/admin/dashboard/gestion-menu/plats" label="Plats" />
+            <SubNavItem to="/admin/dashboard/gestion-menu/categories" label="Catégories" />
+            <SubNavItem to="/admin/dashboard/gestion-menu/nouveau-plat" label="Ajouter un plat" />
+            <SubNavItem to="/admin/dashboard/gestion-menu/promotions" label="Promotions" />
+          </div>
+        )}
 
-        <NavLink
-          to="/admin/dashboard/statistiques"
-          className={({ isActive }) =>
-            `nav-link d-flex align-items-center mb-1 ${
-              isActive ? 'active fw-semibold bg-primary text-white' : 'text-dark'
-            }`
-          }
-        >
-          <BarChart3 size={18} className="me-2" />
-          Statistiques & Analyses
-        </NavLink>
-
-        <NavLink
-          to="/admin/dashboard/parametres"
-          className={({ isActive }) =>
-            `nav-link d-flex align-items-center mb-1 ${
-              isActive ? 'active fw-semibold bg-primary text-white' : 'text-dark'
-            }`
-          }
-        >
-          <Settings size={18} className="me-2" />
-          Paramètres
-        </NavLink>
-
-        <NavLink
-          to="/admin/dashboard/historique"
-          className={({ isActive }) =>
-            `nav-link d-flex align-items-center mb-1 ${
-              isActive ? 'active fw-semibold bg-primary text-white' : 'text-dark'
-            }`
-          }
-        >
-          <ShoppingCart size={18} className="me-2" />
-          Historique des commandes
-        </NavLink>
+        <NavItem to="/admin/dashboard/abonnements" icon={<Box />} label="Abonnements" />
+        <NavItem to="/admin/dashboard/bonscommande" icon={<ClipboardList />} label="Bons de commande" />
+        <NavItem to="/admin/dashboard/gestion-cuisine" icon={<ChefHat />} label="Cuisine" />
+        <NavItem to="/admin/dashboard/ingredients" icon={<Package />} label="Ingrédients" />
+        <NavItem to="/admin/dashboard/statistiques" icon={<BarChart3 />} label="Statistiques" />
+        <NavItem to="/admin/dashboard/parametres" icon={<Settings />} label="Paramètres" />
+        <NavItem to="/admin/dashboard/historique" icon={<ShoppingCart />} label="Historique" />
       </nav>
 
-      <div className="mt-auto pt-3 border-top">
+      {/* Footer admin */}
+      <div className="mt-auto pt-4 border-top">
         <div className="d-flex align-items-center gap-2 px-2">
-          <img
-            src="https://via.placeholder.com/40x40/4f46e5/ffffff?text=TB"
-            alt="User"
-            className="rounded-circle"
-            width="40"
-            height="40"
-          />
+          <UserCircle2 className="text-primary" size={40} />
           <div>
             <div className="fw-semibold small">Admin</div>
             <div className="text-muted small">Admin User</div>
           </div>
         </div>
-        <div className="text-center text-muted small mt-3">
-          Made with <span className="text-primary fw-bold">Ysily</span>
-        </div>
       </div>
     </aside>
   );
 };
+
+// Composants utilitaires
+const NavItem = ({ to, icon, label }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      `nav-link d-flex align-items-center rounded-3 px-3 py-2 gap-2 icon-hover ${
+        isActive
+          ? 'bg-primary text-white fw-semibold shadow-sm'
+          : 'text-dark bg-light-subtle'
+      }`
+    }
+  >
+    {icon}
+    {label}
+  </NavLink>
+);
+
+const SubNavItem = ({ to, label }) => (
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      `nav-link px-3 py-1 rounded-2 small ${
+        isActive ? 'text-primary fw-semibold bg-primary-subtle' : 'text-muted'
+      }`
+    }
+  >
+    {label}
+  </NavLink>
+);
 
 export default Sidebar;

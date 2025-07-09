@@ -38,7 +38,6 @@ function Statistics() {
       setLoading(true);
       setError(null);
       try {
-        // 1. Chiffre d'affaires journalier sur 30 jours
         const now = new Date();
         const caLabelsTmp = [];
         const caDataTmp = [];
@@ -47,14 +46,17 @@ function Statistics() {
           d.setDate(now.getDate() - i);
           const dateStr = d.toISOString().slice(0, 10);
           caLabelsTmp.push(dateStr);
-          // eslint-disable-next-line no-await-in-loop
-          const res = await axios.get(api('admin/stats/chiffres-affaire/journalier'), { params: { date: dateStr } });
-          const ca = Number(res.data.chiffre_affaire_individuel || 0) + Number(res.data.chiffre_affaire_entreprise || 0);
+          const res = await axios.get(api('admin/stats/chiffres-affaire/journalier'), {
+            params: { date: dateStr },
+          });
+          const ca =
+            Number(res.data.chiffre_affaire_individuel || 0) +
+            Number(res.data.chiffre_affaire_entreprise || 0);
           caDataTmp.push(ca);
         }
         setCaLabels(caLabelsTmp);
         setCaData(caDataTmp);
-        // 2. Statuts de commandes
+
         const resStatuts = await axios.get(api('admin/commandes/statuts'));
         setStatuts(resStatuts.data);
       } catch (err) {
@@ -63,75 +65,139 @@ function Statistics() {
         setLoading(false);
       }
     };
+
     fetchStats();
   }, []);
 
-  // Préparation des datasets Chart.js
   const lineData = {
     labels: caLabels,
     datasets: [
       {
-        label: "Chiffre d'affaires (30j)",
+        label: 'Chiffre d’affaires',
         data: caData,
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        tension: 0.2,
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.08)',
+        pointRadius: 1,
+        pointHoverRadius: 4,
       },
     ],
+  };
+
+  const lineOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(240, 240, 240, 0.8)' },
+        ticks: {
+          color: '#888',
+          font: { size: 12 },
+          maxTicksLimit: 7,
+        },
+      },
+      y: {
+        grid: { color: 'rgba(240, 240, 240, 0.8)' },
+        ticks: {
+          color: '#888',
+          font: { size: 12 },
+          callback: (value) => `€ ${value}`,
+        },
+      },
+    },
   };
 
   const barData = {
-    labels: statuts.map(s => s.statut),
+    labels: statuts.map((s) => s.statut),
     datasets: [
       {
-        label: 'Commandes (total)',
-        data: statuts.map(s => s.totalCommandes),
+        data: statuts.map((s) => s.totalCommandes),
         backgroundColor: [
-          '#fbbf24', // amber
-          '#22c55e', // green
-          '#3b82f6', // blue
-          '#f87171', // red
-          '#a78bfa', // purple
-          '#f472b6', // pink
+          '#a5b4fc',
+          '#6ee7b7',
+          '#93c5fd',
+          '#fca5a5',
+          '#fcd34d',
+          '#f9a8d4',
         ],
+        borderRadius: 8,
+        barThickness: 24,
       },
     ],
   };
 
+  const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      x: {
+        grid: { display: false },
+        ticks: {
+          color: '#888',
+          font: { size: 12 },
+        },
+      },
+      y: {
+        grid: { color: 'rgba(240, 240, 240, 0.8)' },
+        ticks: {
+          color: '#888',
+          font: { size: 12 },
+        },
+      },
+    },
+  };
+
   return (
-    <Container className="mt-4">
+    <Container fluid className="px-4 py-4">
       <Row>
         <Col>
-          <h2>Statistiques</h2>
-          <Card className="mb-4">
+          <h2 className="mb-4 fw-semibold text-primary">Statistiques</h2>
+          <Card className="bg-white border-0 rounded-4">
             <Card.Body>
-              <Card.Title>Analyse des performances</Card.Title>
+              <Card.Title className="mb-4 text-muted fw-normal fs-5">
+                Analyse des performances
+              </Card.Title>
+
               {loading ? (
                 <div className="text-center py-5">
                   <Spinner animation="border" />
-                  <div>Chargement des statistiques...</div>
+                  <div className="mt-2">Chargement des statistiques...</div>
                 </div>
               ) : error ? (
                 <Alert variant="danger">{error}</Alert>
               ) : (
-                <>
-                  <div className="mb-5">
-                    <h5>Évolution du chiffre d'affaires (30 derniers jours)</h5>
-                    <Line data={lineData} options={{
-                      responsive: true,
-                      plugins: { legend: { display: true }, title: { display: false } },
-                      scales: { x: { ticks: { maxTicksLimit: 10 } } }
-                    }} />
-                  </div>
-                  <div>
-                    <h5>Commandes par statut</h5>
-                    <Bar data={barData} options={{
-                      responsive: true,
-                      plugins: { legend: { display: false }, title: { display: false } },
-                    }} />
-                  </div>
-                </>
+                <Row className="gy-4">
+                  <Col lg={6} xs={12}>
+                    <div
+                      className="bg-light rounded-4 p-4"
+                      style={{ height: '360px', overflow: 'hidden' }}
+                    >
+                      <h6 className="text-secondary fw-semibold mb-3">
+                        Chiffre d’affaires (30 jours)
+                      </h6>
+                      <Line data={lineData} options={lineOptions} />
+                    </div>
+                  </Col>
+                  <Col lg={6} xs={12}>
+                    <div
+                      className="bg-light rounded-4 p-4"
+                      style={{ height: '360px', overflow: 'hidden' }}
+                    >
+                      <h6 className="text-secondary fw-semibold mb-3">
+                        Commandes par statut
+                      </h6>
+                      <Bar data={barData} options={barOptions} />
+                    </div>
+                  </Col>
+                </Row>
               )}
             </Card.Body>
           </Card>

@@ -67,10 +67,8 @@ export class Clients {
   @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
 
-  @OneToMany(() => Abonnements, (abonnements) => abonnements.client, {
-    lazy: true,
-  })
-  abonnements: Promise<Abonnements[]>;
+  @OneToMany(() => Abonnements, (abonnements) => abonnements.client)
+  abonnements: Abonnements[];
 
   @ManyToOne(() => ZonesLivraison, (zonesLivraison) => zonesLivraison.clients, {
     lazy: true,

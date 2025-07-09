@@ -48,18 +48,15 @@ export class BonsCommande {
   @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
 
-  @ManyToOne(() => Abonnements, (abonnements) => abonnements.bonsCommandes, {
-    lazy: true,
-  })
+  @ManyToOne(() => Abonnements, (abonnements) => abonnements.bonsCommandes)
   @JoinColumn([{ name: "abonnement_id", referencedColumnName: "id" }])
-  abonnement: Promise<Abonnements>;
+  abonnement: Abonnements;
 
   @OneToMany(
     () => SelectionsHebdomadaires,
-    (selectionsHebdomadaires) => selectionsHebdomadaires.bonCommande,
-    { lazy: true }
+    (selectionsHebdomadaires) => selectionsHebdomadaires.bonCommande
   )
-  selectionsHebdomadaires: Promise<SelectionsHebdomadaires[]>;
+  selectionsHebdomadaires: SelectionsHebdomadaires[];
 
   constructor(init?: Partial<BonsCommande>) {
     Object.assign(this, init);

@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { BonsCommande } from "./BonsCommande";
 import { Menus } from "./Menus";
+import { Accompagnements } from "./Accompagnements";
 
 @Index("idx_selections_bon_commande", ["bonCommandeId"], {})
 @Index("selections_hebdomadaires_pkey", ["id"], { unique: true })
@@ -38,16 +39,18 @@ export class SelectionsHebdomadaires {
   @ManyToOne(
     () => BonsCommande,
     (bonsCommande) => bonsCommande.selectionsHebdomadaires,
-    { onDelete: "CASCADE", lazy: true }
+    { onDelete: "CASCADE" }
   )
   @JoinColumn([{ name: "bon_commande_id", referencedColumnName: "id" }])
-  bonCommande: Promise<BonsCommande>;
+  bonCommande: BonsCommande;
 
-  @ManyToOne(() => Menus, (menus) => menus.selectionsHebdomadaires, {
-    lazy: true,
-  })
+  @ManyToOne(() => Menus, (menus) => menus.selectionsHebdomadaires )
   @JoinColumn([{ name: "menu_id", referencedColumnName: "id" }])
-  menu: Promise<Menus>;
+  menu: Menus;
+
+  @ManyToOne(() => Accompagnements)
+  @JoinColumn([ {name: "accompagnement_id", referencedColumnName: "id"}])
+  accompagnement: Accompagnements;
 
   constructor(init?: Partial<SelectionsHebdomadaires>) {
     Object.assign(this, init);

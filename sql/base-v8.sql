@@ -177,7 +177,7 @@ CREATE TABLE accompagnements (
     nom VARCHAR(50) NOT NULL,
     type VARCHAR(10) NOT NULL CHECK (type IN ('ENTREE', 'DESSERT')),
     description TEXT,
-    prix_uniatire DECIMAL(10,2) NOT NULL,
+    prix_unitaire DECIMAL(10,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
@@ -297,7 +297,7 @@ CREATE TABLE bons_commande (
     abonnement_id UUID NOT NULL REFERENCES abonnements(id),
     semaine_debut DATE NOT NULL,
     semaine_fin DATE NOT NULL,
-    statut VARCHAR(15) DEFAULT 'EN_ATTENTE' CHECK (statut IN ('EN_ATTENTE', 'VALIDE', 'TRAITE')),
+    statut VARCHAR(15) DEFAULT 'EN_ATTENTE' CHECK (statut IN ('EN_ATTENTE', 'VALIDE', 'TRAITE', 'REFUSE')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );

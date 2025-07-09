@@ -16,9 +16,14 @@ import { Menus } from '../entities/Menus';
 import { MouvementsStock } from '../entities/MouvementsStock';
 import { Utilisateurs } from '../entities/Utilisateurs';
 import { TopMenusView } from '../entities/TopMenusView';
+import { Abonnements } from 'src/entities/Abonnements';
+import { TypesAbonnement } from 'src/entities/TypesAbonnement';
+import { MenuTypeAbonnement } from 'src/entities/MenuTypeAbonnement';
+import { AccompagnementTypeAbonnement } from 'src/entities/AccompagnementTypeAbonnement';
+import { Accompagnements } from 'src/entities/Accompagnements';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Roles, CommandeStatutView, HistoriqueCommandesView, BonsCommande, PaiementsIndividuels, PaiementsEntreprises, Salaires, Ingredients, FacturesIndividuelles, FacturesEntreprises, Menus, MouvementsStock, Utilisateurs, TopMenusView])],
+  imports: [TypeOrmModule.forFeature([Roles, BonsCommande, Accompagnements, MenuTypeAbonnement, AccompagnementTypeAbonnement, TypesAbonnement, CommandeStatutView, Abonnements, HistoriqueCommandesView, BonsCommande, PaiementsIndividuels, PaiementsEntreprises, Salaires, Ingredients, FacturesIndividuelles, FacturesEntreprises, Menus, MouvementsStock, Utilisateurs, TopMenusView])],
   controllers: [AdminController],
   providers: [AdminService]
 })
