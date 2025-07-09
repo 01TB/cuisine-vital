@@ -2,7 +2,7 @@ import { Controller, Get, Patch, Param, Body, Post } from '@nestjs/common';
 import { ChefCuisinierService } from './chef-cuisinier.service';
 import { Menus } from '../entities/Menus';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { Ingredients } from 'src/entities/Ingredients';
+import { Ingredients } from '../entities/Ingredients';
 
 @Controller('chef-cuisinier')
 export class ChefCuisinierController {

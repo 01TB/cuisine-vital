@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { UserAuthProvider } from './providers/UserAuthProvider';
 import { useUserAuth } from './hooks/useUserAuth';
 import AdminNavbar from './components/AdminNavbar';
+import LivreurNavbar from './components/LivreurNavbar';
 import Dashboard from './pages/Dashboard';
 import Abonnements from './pages/Abonnements';
 import Commandes from './pages/Commandes';
@@ -21,6 +22,7 @@ import LivreurDashboard from './pages/LivreurDashboard';
 import Unauthorized from './pages/Unauthorized';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MenusPage from './pages/MenusPage';
+import ItinerairePage from './pages/ItinerairePage';
 
 
 const roleMap = { 1: 'admin', 2: 'chef cuisinier', 3: 'livreur' };
@@ -44,17 +46,22 @@ const RoleProtectedRoute = ({ children, allowedRoles }) => {
 // Main layout for Admin and Chef Cuisinier
 const MainLayout = ({ children }) => {
   const { user } = useUserAuth();
-  const showNavbar = user?.roleId !== 3; // No navbar for livreur
+  const userRole = user ? roleMap[user.roleId] : null;
 
   return (
     <>
-      {showNavbar && <AdminNavbar />}
-      <div style={{ marginTop: showNavbar ? '70px' : '0' }}>
+      {/* Affiche la bonne navbar en fonction du rôle */}
+      {userRole === 'admin' || userRole === 'chef cuisinier' ? <AdminNavbar /> : null}
+      {userRole === 'livreur' ? <LivreurNavbar /> : null}
+      
+      {/* Ajuster la marge dynamiquement */}
+      <div style={{ marginTop: userRole ? '70px' : '0' }}>
         {children}
       </div>
     </>
   );
 };
+
 
 function App() {
   return (
@@ -72,6 +79,18 @@ function App() {
               <RoleProtectedRoute allowedRoles={['livreur']}>
                 <MainLayout>
                   <LivreurDashboard />
+                </MainLayout>
+              </RoleProtectedRoute>
+            }
+          />
+
+          {/* 2. Ajouter la nouvelle route pour l'itinéraire */}
+          <Route 
+            path="/admin/livreur/itineraire" 
+            element={
+              <RoleProtectedRoute allowedRoles={['livreur']}>
+                <MainLayout>
+                  <ItinerairePage />
                 </MainLayout>
               </RoleProtectedRoute>
             }

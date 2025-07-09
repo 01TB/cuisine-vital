@@ -12,10 +12,10 @@ import { CommandesEntreprisesDetails } from '../entities/CommandesEntreprisesDet
 import { Menus } from '../entities/Menus';
 import { Accompagnements } from '../entities/Accompagnements';
 import { Boissons } from '../entities/Boissons';
-import { Abonnements } from 'src/entities/Abonnements';
-import { TypesAbonnement } from 'src/entities/TypesAbonnement';
-import { BonsCommande } from 'src/entities/BonsCommande';
-import { SelectionsHebdomadaires } from 'src/entities/SelectionsHebdomadaires';
+import { Abonnements } from '../entities/Abonnements';
+import { TypesAbonnement } from '../entities/TypesAbonnement';
+import { BonsCommande } from '../entities/BonsCommande';
+import { SelectionsHebdomadaires } from '../entities/SelectionsHebdomadaires';
 import { CreateAbonnementDto } from './dto/create-abonnement.dto';
 import { CreateBonCommandeDto } from './dto/create-bon-commande.dto';
 import { SelectionDto } from './dto/selection.dto';

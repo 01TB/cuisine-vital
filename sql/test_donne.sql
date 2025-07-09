@@ -1,7 +1,3 @@
--- Créer une zone de livraison avec l'id 1 si elle n'existe pas
-INSERT INTO zones_livraison (id, nom, description)
-VALUES (1, 'Zone Test', 'Zone de test pour les clients')
-ON CONFLICT (id) DO NOTHING;
 
 -- Création de 2 menus
 INSERT INTO menus (id, nom, prix_carte, temps_preparation, disponible)
@@ -40,9 +36,3 @@ INSERT INTO commandes_individuelles_details (commande_id, menu_id, quantite, pri
 VALUES ('00000000-0000-0000-0000-000000000102', 1002, 3, 12.00)
 ON CONFLICT DO NOTHING;
 
--- Résultat attendu pour le top menu :
--- Poulet Rôti : 4 ventes (1+3)
--- Pizza Margherita : 2 ventes
-
--- Pour vérifier, exécute :
--- SELECT * FROM v_top_menus ORDER BY quantite_totale DESC;

@@ -1060,7 +1060,6 @@ ORDER BY pp.date_production DESC, pp.created_at;
 -- Insertion des rôles utilisateur
 INSERT INTO roles (nom, description) VALUES 
 ('ADMIN', 'Administrateur - Accès complet au système'),
-('CHEF_CUISINIER', 'Chef cuisinier - Gestion menus et stocks'),
 ('CUISINIER', 'Cuisinier - Production et préparation'),
 ('LIVREUR', 'Livreur - Livraisons et logistique'),
 ('CLIENT', 'Client - Commandes et suivi');
@@ -1101,3 +1100,13 @@ INSERT INTO reduction (pourcentage) VALUES (5.00), (10.00), (15.00);
 -- - Ajuster les index selon l'usage réel
 -- - Nettoyer régulièrement les sessions expirées
 -- - Archiver les anciennes données si nécessaire
+
+
+
+ALTER TABLE clients
+ADD COLUMN zone_livraison_id INTEGER;
+
+-- Ensuite, on ajoute la contrainte pour lier cette colonne à la table zones_livraison
+ALTER TABLE clients
+ADD CONSTRAINT fk_clients_zones_livraison
+FOREIGN KEY (zone_livraison_id) REFERENCES zones_livraison(id);

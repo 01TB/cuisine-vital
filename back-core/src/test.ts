@@ -1,57 +1,37 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ClientService } from './client/client.service';
+import { LivreurService } from './livreur/livreur.service';
 
 async function bootstrap() {
+  console.log('Initialisation du contexte de l\'application...');
   const app = await NestFactory.createApplicationContext(AppModule);
+  console.log('Contexte initialisé.');
 
-  const clientService = app.get(ClientService);
+  const livreurService = app.get(LivreurService);
 
-  // ---------------------------- test manao commande entreprise -------------------
-  const fakeCommande = {
-    numeroCommande: 'CMD-ENTR-0006',
-    clientId: '7c88f343-7290-40b2-a274-6f1c88cb3467', 
-    abonnementId: '614b7468-bd6f-4666-8765-6458616f4227',
-    statutId: 1, // RECUE
-    dateCommande: new Date().toISOString(),
-    dateLivraison: new Date(new Date().getTime() + 86400000).toISOString(), 
-    adresseLivraison: 'Zone industrielle Andraharo',
-    montantTotal: 120.50,
-    livreurId: 'e81f4c81-5fd2-4041-a076-60062c7362f8', 
-    details: [
-      {
-        menuId: 1,               
-        accompagnementId: 1,     
-        quantite: 2,
-        prixUnitaire: 20.25,
-        boissonId: 1,            
-        notes: 'Sans piment'
-      },
-      {
-        menuId: 2,
-        accompagnementId: 2,
-        quantite: 1,
-        prixUnitaire: 25.00,
-        boissonId: null,
-        notes: ''
-      }
-    ]
-  };
+  const livreurIdPourTest = '1605a4b2-4779-4254-95a0-61301425ecdb';
 
+  // --- TEST 4: Récupérer les livraisons pour UN SEUL livreur ---
+  console.log('\n--- DÉBUT TEST 4: getLivraisonsPourLivreur ---');
   try {
-    const res = await clientService.creerCommandeClient(fakeCommande);
-    console.dir(res, { depth: null });
-  } catch (e) {
-    console.error('Erreur lors de la création de la commande :', e.message);
-  }
+    console.log(`Récupération des livraisons pour le livreur ID: ${livreurIdPourTest}...`);
+    const livraisons = await livreurService.getLivraisonsPourLivreur(livreurIdPourTest);
 
-  // ----------------------test anaoavana annulation ana commande----------------------------------------------- 
-  try {
-    const res = await clientService.annulerCommande(false, 'd84442ec-01e3-4d6f-9155-e4a10799e8a2');
-  }catch (e) {
-    console.error(e.message);
+    if (livraisons.length > 0) {
+      console.log(`✅ Succès ! ${livraisons.length} livraison(s) trouvée(s) pour le livreur ${livreurIdPourTest}:`);
+      console.dir(livraisons, { depth: null }); // Affiche l'objet complet
+    } else {
+      console.log(`✅ Succès ! Aucune livraison trouvée pour le livreur ${livreurIdPourTest}.`);
+    }
+  } catch (error) {
+    console.error('❌ Erreur lors de la récupération des livraisons du livreur :', error.message);
   }
+  console.log('--- FIN TEST 4 ---');
 
+
+  console.log('\nTests terminés. Fermeture de l\'application...');
   await app.close();
+  process.exit(0);
 }
+
 bootstrap();

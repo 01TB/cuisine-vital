@@ -13,6 +13,7 @@ import { CommandesIndividuelles } from "./CommandesIndividuelles";
 import { FacturesEntreprises } from "./FacturesEntreprises";
 import { FacturesIndividuelles } from "./FacturesIndividuelles";
 import { MenusFavoris } from "./MenusFavoris";
+import { ZonesLivraison } from "./ZonesLivraison";
 
 @Index("clients_email_key", ["email"], { unique: true })
 @Index("idx_clients_email", ["email"], {})
@@ -109,6 +110,10 @@ export class Clients {
     lazy: true,
   })
   menusFavorises: Promise<MenusFavoris[]>;
+
+  @ManyToOne(() => ZonesLivraison)
+  @JoinColumn({ name: 'zone_livraison_id' })
+  zoneLivraison: ZonesLivraison;
 
   constructor(init?: Partial<Clients>) {
     Object.assign(this, init);
