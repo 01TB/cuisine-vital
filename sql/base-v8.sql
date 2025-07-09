@@ -151,6 +151,7 @@ CREATE TABLE menus (
     prix_carte DECIMAL(8,2) NOT NULL,
     temps_preparation INTEGER NOT NULL, -- en minutes
     disponible BOOLEAN DEFAULT TRUE,
+    valide BOOLEAN DEFAULT FALSE,
     photo_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL

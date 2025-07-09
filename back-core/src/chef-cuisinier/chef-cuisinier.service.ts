@@ -1,8 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CommandesEntreprises } from 'src/entities/CommandesEntreprises';
 import { CommandesIndividuelles } from 'src/entities/CommandesIndividuelles';
+import { StatutsCommande } from 'src/entities/StatutsCommande';
 import { In, Repository } from 'typeorm';
+import { UpdateCommandeStatutDto } from './dto/update-commande-statut.dto';
 
 @Injectable()
 export class ChefCuisinierService {
@@ -11,13 +17,10 @@ export class ChefCuisinierService {
     private readonly commandesIndividuellesRepo: Repository<CommandesIndividuelles>,
     @InjectRepository(CommandesEntreprises)
     private readonly commandesEntreprisesRepo: Repository<CommandesEntreprises>,
+    @InjectRepository(StatutsCommande)
+    private readonly statutsCommandeRepo: Repository<StatutsCommande>,
   ) {}
 
-  /**
-   * Récupère les commandes individuelles considérées comme "en cours" pour la cuisine.
-   * Celles-ci incluent les statuts 'Payée', 'En préparation', et 'Prête'.
-   * Les détails complets (client, menus, accompagnements, boissons) sont inclus.
-   */
   async findCommandesIndividuellesEnCours(): Promise<CommandesIndividuelles[]> {
     return this.commandesIndividuellesRepo
       .createQueryBuilder('commande')
@@ -37,11 +40,6 @@ export class ChefCuisinierService {
       .getMany();
   }
 
-  /**
-   * Récupère les commandes entreprises considérées comme "en cours" pour la cuisine.
-   * Celles-ci incluent les statuts 'Payée', 'En préparation', et 'Prête'.
-   * Les détails complets (client, menus, boissons) sont inclus.
-   */
   async findCommandesEntreprisesEnCours(): Promise<CommandesEntreprises[]> {
     return this.commandesEntreprisesRepo
       .createQueryBuilder('commande')
@@ -55,5 +53,55 @@ export class ChefCuisinierService {
       })
       .orderBy('commande.dateLivraison', 'ASC')
       .getMany();
+  }
+
+  private async updateStatut<
+    T extends CommandesIndividuelles | CommandesEntreprises,
+  >(
+    id: string,
+    dto: UpdateCommandeStatutDto,
+    repo: Repository<T>,
+  ): Promise<T> {
+    // 1. Vérifier que le statut demandé existe
+    const statut = await this.statutsCommandeRepo.findOneBy({
+      id: dto.statutId,
+    });
+    if (!statut) {
+      throw new BadRequestException(
+        `Le statut avec l'ID ${dto.statutId} n'existe pas.`,
+      );
+    }
+
+    // 2. Vérifier que la commande existe
+    const commande = await repo.findOneBy({ id } as any);
+    if (!commande) {
+      throw new NotFoundException(`La commande avec l'ID ${id} est introuvable.`);
+    }
+
+    // 3. Mettre à jour le statut et sauvegarder
+    commande.statutId = dto.statutId;
+    return repo.save(commande);
+  }
+
+  async updateCommandeIndividuelleStatut(
+    id: string,
+    dto: UpdateCommandeStatutDto,
+  ): Promise<CommandesIndividuelles> {
+    return this.updateStatut<CommandesIndividuelles>(
+      id,
+      dto,
+      this.commandesIndividuellesRepo,
+    );
+  }
+
+  async updateCommandeEntrepriseStatut(
+    id: string,
+    dto: UpdateCommandeStatutDto,
+  ): Promise<CommandesEntreprises> {
+    return this.updateStatut<CommandesEntreprises>(
+      id,
+      dto,
+      this.commandesEntreprisesRepo,
+    );
   }
 }
