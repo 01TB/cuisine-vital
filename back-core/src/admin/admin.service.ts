@@ -458,14 +458,21 @@ export class AdminService {
         }
 
         return this.mouvementStockRepository.createQueryBuilder('mvt')
-            .leftJoin('mvt.exemplaire', 'ex')
-            .leftJoin('mvt.utilisateur', 'u')
+            .leftJoin('mvt.exemplaire_ingredient_id', 'ex') // <-- Utilisez le bon nom de relation
+            .leftJoinAndSelect('mvt.utilisateurs', 'u')
             .select([
-                'mvt.id', 'mvt.created_at', 'mvt.type_mouvement', 'mvt.quantite', 
-                'mvt.stock_avant', 'mvt.stock_apres', 'mvt.commentaire',
-                'u.nom', 'u.prenom'
+                'mvt.id',
+                'mvt.created_at',
+                'mvt.type_mouvement',
+                'mvt.quantite',
+                'mvt.stock_avant',
+                'mvt.stock_apres',
+                'mvt.commentaire',
+                'u.nom',
+                'u.prenom',
+                'ex.id' // Ajouté pour référence
             ])
-            .where('ex.ingredient_id = :ingredientId', { ingredientId })
+            .where('ex.exemplaire_ingredient_id = :ingredientId', { ingredientId })
             .orderBy('mvt.created_at', 'DESC')
             .getMany();
     }

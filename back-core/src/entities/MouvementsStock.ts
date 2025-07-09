@@ -42,14 +42,9 @@ export class MouvementsStock {
   @Column('timestamp without time zone', { name: 'deleted_at', nullable: true })
   deletedAt: Date | null;
 
-  @ManyToOne(
-    () => ExemplairesIngredient,
-    (exemplairesIngredient) => exemplairesIngredient.mouvementsStocks,
-  )
-  @JoinColumn([
-    { name: 'exemplaire_ingredient_id', referencedColumnName: 'id' },
-  ])
-  exemplaireIngredient: ExemplairesIngredient;
+  @ManyToOne(() => ExemplairesIngredient)
+  @JoinColumn({ name: 'exemplaire_ingredient_id' }) // Correspond à la colonne en base
+  exemplaireIngredient: ExemplairesIngredient; // Nom de la propriété à utiliser dans les requêtes
 
   @ManyToOne(
     () => Utilisateurs,
