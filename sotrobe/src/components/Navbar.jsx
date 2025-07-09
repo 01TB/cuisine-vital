@@ -18,10 +18,7 @@ const AppNavbar = () => {
             <Nav.Link as={Link} to="/menus" className="nav-link-custom d-flex align-items-center">
               <i className="bi bi-book-fill me-2"></i> Menu
             </Nav.Link>
-            <Nav.Link as={Link} to="#restaurants" className="nav-link-custom d-flex align-items-center">
-              <i className="bi bi-shop me-2"></i> Restaurants
-            </Nav.Link>
-            <Nav.Link as={Link} to="#contact" className="nav-link-custom d-flex align-items-center">
+            <Nav.Link as={Link} to="/contact" className="nav-link-custom d-flex align-items-center">
               <i className="bi bi-envelope-fill me-2"></i> Contact
             </Nav.Link>
           </Nav>
