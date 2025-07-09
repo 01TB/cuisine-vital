@@ -11,6 +11,7 @@ import SignUp from './components/SignUp';
 import AuthenticatedLandingPage from './pages/AuthenticatedLandingPage';
 import CursorFollower from "./components/CursorFollower";
 import AppNavbar from "./components/Navbar";
+import ContactPage from './pages/ContactPage';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function AppRoutes() {
         element={user?.typeClient === 'ENTREPRISE' ? <EnterpriseClientProfile /> : <ClientProfile />}
       ></Route>
       <Route path='/menus' element={<Menu/>}></Route>
+      <Route path="/contact" element={<ContactPage/>} />
       <Route path='/login' element={<Login/>}></Route>
       <Route path='/signup' element={<SignUp/>}></Route>        
     </Routes>
