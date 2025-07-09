@@ -51,6 +51,7 @@ import { ZonesLivraison } from './entities/ZonesLivraison';
 import { ClientController } from './client/client.controller';
 import { JwtStrategy } from './strategies/jw.strategy';
 import { AuthModule } from './auth/auth.module';
+import { UserAuthModule } from './user-auth/user-auth.module';
 
 @Module({
   imports: [

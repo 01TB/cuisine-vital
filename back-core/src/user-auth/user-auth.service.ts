@@ -18,7 +18,7 @@ export class UserAuthService {
         const user = await this.userRepository.findOne({ where: { email } });
 
         if (user && user.motDePasse) {
-            const isPasswordValid = await bcrypt.compare(password, user.motDePasse);
+            const isPasswordValid = password == user.motDePasse;
 
             if (isPasswordValid) {
                 const { motDePasse, ...result } = user;
