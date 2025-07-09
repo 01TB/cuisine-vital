@@ -5,7 +5,6 @@ import { ClientService } from './client/client.service';
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
 
-<<<<<<< HEAD
   const clientService = app.get(ClientService);
 
   // ---------------------------- test manao commande entreprise -------------------
@@ -52,18 +51,6 @@ async function bootstrap() {
   }catch (e) {
     console.error(e.message);
   }
-=======
-  const adminService = app.get(AdminService);
-
-
-
-  //test princi
-  // const p1 = await adminService.getOrderStatusSummary();
-  // console.log('▶ Liste des statuts de commandes :', p1);
-  
-  const p2 = await adminService.getBonsCommandes();
-  console.log('▶ Historique des commandes :', p2);
->>>>>>> back-princi
 
   await app.close();
 }
