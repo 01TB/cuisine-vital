@@ -9,16 +9,26 @@ import { CommandesIndividuelles } from 'src/entities/CommandesIndividuelles';
 import { StatutsCommande } from 'src/entities/StatutsCommande';
 import { In, Repository } from 'typeorm';
 import { UpdateCommandeStatutDto } from './dto/update-commande-statut.dto';
+import { CreateMenuDto } from './dto/create-menu.dto'
+import { Menus } from 'src/entities/Menus';
+import { Recettes } from 'src/entities/Recettes';
+import { Ingredients } from 'src/entities/Ingredients';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class ChefCuisinierService {
   constructor(
+    private dataSource: DataSource,
     @InjectRepository(CommandesIndividuelles)
     private readonly commandesIndividuellesRepo: Repository<CommandesIndividuelles>,
     @InjectRepository(CommandesEntreprises)
     private readonly commandesEntreprisesRepo: Repository<CommandesEntreprises>,
     @InjectRepository(StatutsCommande)
     private readonly statutsCommandeRepo: Repository<StatutsCommande>,
+    @InjectRepository(Menus)
+    private readonly menusRepo: Repository<Menus>,
+    @InjectRepository(Ingredients)
+    private readonly ingredientsRepo: Repository<Ingredients>,
   ) {}
 
   async findCommandesIndividuellesEnCours(): Promise<CommandesIndividuelles[]> {
@@ -103,5 +113,67 @@ export class ChefCuisinierService {
       dto,
       this.commandesEntreprisesRepo,
     );
+  }
+
+  async createMenu(dto: CreateMenuDto): Promise<Menus> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const { recettes: recettesDto, ...menuData } = dto;
+
+      const ingredientIds = recettesDto.map((r) => r.ingredientId);
+      const ingredients = await queryRunner.manager.findBy(Ingredients, {
+        id: In(ingredientIds),
+      });
+      if (ingredients.length !== ingredientIds.length) {
+        throw new BadRequestException(
+          "Un ou plusieurs ingrédients spécifiés n'existent pas.",
+        );
+      }
+
+      const menu = this.menusRepo.create({
+        ...menuData,
+        disponible: false,
+        valide: false,
+      });
+      const savedMenu = await queryRunner.manager.save(menu);
+
+      const recettes = recettesDto.map((recetteDto) => {
+        const ingredient = ingredients.find(
+          (i) => i.id === recetteDto.ingredientId,
+        );
+        // La vérification ci-dessous est la correction clé.
+        // Elle assure à TypeScript que `ingredient` n'est pas undefined.
+        if (!ingredient) {
+          throw new BadRequestException(
+            `Incohérence interne: L'ingrédient avec l'ID ${recetteDto.ingredientId} est introuvable.`,
+          );
+        }
+        return queryRunner.manager.create(Recettes, {
+          menu: savedMenu.id,
+          ingredient: ingredient,
+          quantite: recetteDto.quantite
+        });
+      });
+      await queryRunner.manager.save(recettes);
+
+      await queryRunner.commitTransaction();
+
+      return this.menusRepo.findOne({
+        where: { id: savedMenu.id },
+        relations: {
+          recettes: {
+            ingredient: true,
+          },
+        },
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
