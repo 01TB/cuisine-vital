@@ -1,3 +1,8 @@
+npm install react-chartjs-2 chart.js
+
+
+
+
 
 TRUNCATE TABLE clients RESTART IDENTITY CASCADE;
 
