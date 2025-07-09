@@ -55,7 +55,12 @@ const Sidebar = () => {
       to: '/admin/dashboard/ingredients',
       label: 'Ingrédients',
       icon: Package,
-      roles: ['admin']
+      roles: ['admin', 'chef cuisinier'],
+      subLinks: [
+        { to: '/admin/dashboard/stock', label: 'État du stock', roles: ['admin', 'chef cuisinier'] },
+        { to: '/admin/dashboard/stock/entry', label: 'Entrée de stock', roles: ['admin', 'chef cuisinier'] },
+        { to: '/admin/dashboard/stock/history', label: 'Historique', roles: ['admin', 'chef cuisinier'] },
+      ]
     },
     {
       to: '/admin/dashboard/statistiques',
