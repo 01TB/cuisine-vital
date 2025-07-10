@@ -1,18 +1,22 @@
 import '../styles/custom.css';
 import Sidebar from '../components/Sidebar';
-import {Outlet} from 'react-router-dom'
+import { Outlet } from 'react-router-dom';
+import { useUserAuth } from '../hooks/useUserAuth';
 
-const App = () => {
+const Dashboard = () => {
+  const { user } = useUserAuth();
+  const showSidebar = user?.roleId !== 3;
+
   return (
     <div className="app">
       <div className="app-content">
-        <Sidebar/>
-        <main className="main-content">
-          <Outlet/>
+        {showSidebar && <Sidebar />}
+        <main className="main-content" style={{ marginLeft: showSidebar ? '60px' : '0' }}>
+          <Outlet />
         </main>
       </div>
     </div>
   );
 };
 
-export default App;
+export default Dashboard;

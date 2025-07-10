@@ -27,7 +27,7 @@ export class Menus {
   description: string | null;
 
   @Column("numeric", { name: "prix_carte", precision: 8, scale: 2 })
-  prixCarte: string;
+  prixCarte: number;
 
   @Column("integer", { name: "temps_preparation" })
   tempsPreparation: number;

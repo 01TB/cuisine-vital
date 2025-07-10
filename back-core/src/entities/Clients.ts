@@ -70,11 +70,12 @@ export class Clients {
   @OneToMany(() => Abonnements, (abonnements) => abonnements.client)
   abonnements: Abonnements[];
 
-  @ManyToOne(() => ZonesLivraison, (zonesLivraison) => zonesLivraison.clients, {
-    lazy: true,
-  })
+  @ManyToOne(() => ZonesLivraison, (zonesLivraison) => zonesLivraison.clients)
   @JoinColumn([{ name: "zone_livraison_id", referencedColumnName: "id" }])
-  zoneLivraison: Promise<ZonesLivraison>;
+  zoneLivraison: ZonesLivraison;
+
+  @Column("character varying", { name: "mot_de_passe", length: 255 })
+  motDePasse: string;
 
   @OneToMany(
     () => ClientsIndividuelsFideles,

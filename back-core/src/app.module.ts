@@ -47,6 +47,8 @@ import { StatutsCommande } from './entities/StatutsCommande';
 import { TypesAbonnement } from './entities/TypesAbonnement';
 import { Utilisateurs } from './entities/Utilisateurs';
 import { ZonesLivraison } from './entities/ZonesLivraison';
+import { AuthModule } from './auth/auth.module';
+import { UserAuthModule } from './user-auth/user-auth.module';
 
 @Module({
   imports: [
@@ -107,6 +109,8 @@ import { ZonesLivraison } from './entities/ZonesLivraison';
     ChefCuisinierModule,
     CuisinierModule,
     LivreurModule,
+    AuthModule,
+    UserAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
