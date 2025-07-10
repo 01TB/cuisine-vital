@@ -4,12 +4,12 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Menus } from 'src/entities/Menus';
-import { Recettes } from 'src/entities/Recettes';
-import { Ingredients } from 'src/entities/Ingredients';
+import { Menus } from '../entities/Menus';
+import { Recettes } from '../entities/Recettes';
+import { Ingredients } from '../entities/Ingredients';
 import { DataSource, In, Repository } from 'typeorm';
 import { CreateMenuDto } from './dto/create-menu.dto';
-import { CommandesIndividuelles } from 'src/entities/CommandesIndividuelles';
+import { CommandesIndividuelles } from '../entities/CommandesIndividuelles';
 
 @Injectable()
 export class ChefCuisinierService {

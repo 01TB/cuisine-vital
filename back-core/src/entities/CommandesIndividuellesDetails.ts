@@ -21,7 +21,7 @@ export class CommandesIndividuellesDetails {
   quantite: number;
 
   @Column("numeric", { name: "prix_unitaire", precision: 8, scale: 2 })
-  prixUnitaire: string;
+  prixUnitaire: number;
 
   @Column("text", { name: "notes", nullable: true })
   notes: string | null;
@@ -54,7 +54,7 @@ export class CommandesIndividuellesDetails {
   @ManyToOne(() => Menus, (menus) => menus.commandesIndividuellesDetails, {
     lazy: true,
   })
-  @JoinColumn([{ name: "menu_id", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "menu_id", referencedColumnName: "id"  }])
   menu: Promise<Menus>;
 
   constructor(init?: Partial<CommandesIndividuellesDetails>) {

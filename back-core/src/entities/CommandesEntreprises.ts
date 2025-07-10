@@ -60,7 +60,7 @@ export class CommandesEntreprises {
   adresseLivraison: string;
 
   @Column("numeric", { name: "montant_total", precision: 10, scale: 2 })
-  montantTotal: string;
+  montantTotal: number;
 
   @Column("timestamp without time zone", {
     name: "created_at",
@@ -97,10 +97,10 @@ export class CommandesEntreprises {
   @ManyToOne(
     () => StatutsCommande,
     (statutsCommande) => statutsCommande.commandesEntreprises,
-    { lazy: true }
+    { eager: true }
   )
   @JoinColumn([{ name: "statut_id", referencedColumnName: "id" }])
-  statut: Promise<StatutsCommande>;
+  statut: StatutsCommande;
 
   @OneToMany(
     () => CommandesEntreprisesDetails,

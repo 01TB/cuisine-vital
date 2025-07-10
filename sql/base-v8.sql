@@ -66,7 +66,7 @@ CREATE TABLE utilisateurs (
     prenom VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     telephone VARCHAR(20),
-    mot_de_passe VARCHAR(255) NOT NULL,
+    mot_de_passe TEXT NOT NULL,
     role_id INTEGER NOT NULL REFERENCES roles(id),
     zone_livraison_id INTEGER REFERENCES zones_livraison(id),
     actif BOOLEAN DEFAULT TRUE,
@@ -94,9 +94,9 @@ CREATE TABLE clients (
     nom VARCHAR(100) NOT NULL,
     prenom VARCHAR(100), -- NULL pour entreprises
     email VARCHAR(255) UNIQUE NOT NULL,
+    mot_de_passe TEXT,
     telephone VARCHAR(20),
     adresse TEXT NOT NULL,
-    zone_livraison_id INTEGER NOT NULL REFERENCES zones_livraison(id),
     type_client VARCHAR(15) NOT NULL CHECK (type_client IN ('PARTICULIER', 'ENTREPRISE')),
     actif BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -150,11 +150,17 @@ CREATE TABLE menus (
     prix_carte DECIMAL(8,2) NOT NULL,
     temps_preparation INTEGER NOT NULL, -- en minutes
     disponible BOOLEAN DEFAULT TRUE,
+    valide BOOLEAN DEFAULT FALSE,
     photo_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
+
+CREATE TABLE menu_valide (
+    id SERIAL PRIMARY KEY,
+    id_menu NOT NLL REFERENCES menu(id) ON DELETE
+)
 -- Recettes simplifiées (ingrédients principaux par menu)
 CREATE TABLE recettes (
     id SERIAL PRIMARY KEY,
@@ -252,6 +258,18 @@ CREATE TABLE commandes_individuelles (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
+-- Détails des commandes individuelles
+CREATE TABLE commandes_individuelles_details (
+    id SERIAL PRIMARY KEY,
+    commande_id UUID NOT NULL REFERENCES commandes_individuelles(id) ON DELETE CASCADE,
+    menu_id INTEGER REFERENCES menus(id),
+    accompagnement_id INTEGER DEFAULT NULL REFERENCES accompagnements(id),
+    zone_de_livraison GEOMETRY(Point, 4326) DEFAULT NULL,
+    quantite INTEGER NOT NULL,
+    prix_unitaire DECIMAL(8,2) NOT NULL,
+    boisson_id INTEGER REFERENCES boissons(id),
+    notes TEXT
+);
 -- Commandes entreprises (abonnements)
 CREATE TABLE commandes_entreprises (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -268,17 +286,6 @@ CREATE TABLE commandes_entreprises (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
--- Détails des commandes individuelles
-CREATE TABLE commandes_individuelles_details (
-    id SERIAL PRIMARY KEY,
-    commande_id UUID NOT NULL REFERENCES commandes_individuelles(id) ON DELETE CASCADE,
-    menu_id INTEGER NOT NULL REFERENCES menus(id),
-    accompagnement_id INTEGER DEFAULT NULL REFERENCES accompagnements(id),
-    quantite INTEGER NOT NULL,
-    prix_unitaire DECIMAL(8,2) NOT NULL,
-    boisson_id INTEGER REFERENCES boissons(id),
-    notes TEXT
-);
 
 -- Détails des commandes entreprises
 CREATE TABLE commandes_entreprises_details (
@@ -496,6 +503,7 @@ CREATE TABLE alertes (
     deleted_at TIMESTAMP DEFAULT NULL
 );
 
+
 -- =============================================
 -- SYSTÈME DE GESTION DE LIVRAISON DE REPAS
 -- INDEX ESSENTIELS, FONCTIONS, TRIGGERS ET VUES
@@ -514,7 +522,6 @@ CREATE INDEX idx_sessions_expire ON sessions(expire_at);
 -- Index pour la gestion des clients
 CREATE INDEX idx_clients_email ON clients(email) WHERE deleted_at IS NULL;
 CREATE INDEX idx_clients_type ON clients(type_client) WHERE deleted_at IS NULL;
-CREATE INDEX idx_clients_zone ON clients(zone_livraison_id) WHERE deleted_at IS NULL;
 
 -- Index pour les abonnements
 CREATE INDEX idx_abonnements_client ON abonnements(client_id) WHERE deleted_at IS NULL;
@@ -1053,7 +1060,6 @@ ORDER BY pp.date_production DESC, pp.created_at;
 -- Insertion des rôles utilisateur
 INSERT INTO roles (nom, description) VALUES 
 ('ADMIN', 'Administrateur - Accès complet au système'),
-('CHEF_CUISINIER', 'Chef cuisinier - Gestion menus et stocks'),
 ('CUISINIER', 'Cuisinier - Production et préparation'),
 ('LIVREUR', 'Livreur - Livraisons et logistique'),
 ('CLIENT', 'Client - Commandes et suivi');
@@ -1094,3 +1100,13 @@ INSERT INTO reduction (pourcentage) VALUES (5.00), (10.00), (15.00);
 -- - Ajuster les index selon l'usage réel
 -- - Nettoyer régulièrement les sessions expirées
 -- - Archiver les anciennes données si nécessaire
+
+
+
+ALTER TABLE clients
+ADD COLUMN zone_livraison_id INTEGER;
+
+-- Ensuite, on ajoute la contrainte pour lier cette colonne à la table zones_livraison
+ALTER TABLE clients
+ADD CONSTRAINT fk_clients_zones_livraison
+FOREIGN KEY (zone_livraison_id) REFERENCES zones_livraison(id);

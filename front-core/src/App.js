@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-
 import { UserAuthProvider } from './providers/UserAuthProvider'; // à ajouter si tu as ce provider
 import { useUserAuth } from './hooks/useUserAuth';               // idem
 import AdminNavbar from './components/AdminNavbar';
+import LivreurNavbar from './components/LivreurNavbar';
 import Dashboard from './pages/Dashboard';
 import Abonnements from './pages/Abonnements';
 import Commandes from './pages/Commandes';
@@ -22,6 +23,9 @@ import BonsCommandePage from './pages/BonsCommande';
 import Login from './pages/Login';
 import Unauthorized from './pages/Unauthorized';
 import LivreurDashboard from './pages/LivreurDashboard';
+import ItinerairePage from './pages/ItinerairePage';
+import GestionTrajets from './pages/GestionTrajets';
+import ItineraireAdminPage from './pages/ItineraireAdminPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const roleMap = {
@@ -30,7 +34,8 @@ const roleMap = {
   3: 'livreur',
 };
 
-// Composant de protection des routes selon rôles et connexion
+
+// Component to protect routes based on authentication and roles
 const RoleProtectedRoute = ({ children, allowedRoles }) => {
   const { isLoggedIn, user } = useUserAuth();
   const userRole = user ? roleMap[user.roleId] : null;
@@ -150,6 +155,16 @@ function App() {
               </RoleProtectedRoute>
             }
           />
+          <Route
+            path="/admin/livreur/itineraire"
+            element={
+              <RoleProtectedRoute allowedRoles={['livreur']}>
+                <MainLayout>
+                  <ItinerairePage />
+                </MainLayout>
+              </RoleProtectedRoute>
+            }
+          />
           {/* Routes exclusivement pour chef cuisinier */}
           <Route 
             path="/admin/chef"
@@ -164,7 +179,25 @@ function App() {
             <Route path="commandes" element={<Commandes />} />
             <Route path="menus" element={<MenusPage />} />
           </Route>
+          <Route 
+              path="gestion-trajets" 
+              element={
+                <RoleProtectedRoute allowedRoles={['admin']}>
+                  <GestionTrajets />
+                </RoleProtectedRoute>
+              } 
+            />
 
+            {/* ▼▼▼ AJOUTER LA NOUVELLE ROUTE ICI ▼▼▼ */}
+            <Route 
+              path="calcul-itineraire" 
+              element={
+                <RoleProtectedRoute allowedRoles={['admin']}>
+                  <ItineraireAdminPage />
+                </RoleProtectedRoute>
+              } 
+            />
+          </Route>
         </Routes>
       </UserAuthProvider>
     </Router>

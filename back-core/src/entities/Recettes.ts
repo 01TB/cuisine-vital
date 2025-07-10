@@ -34,7 +34,7 @@ export class Recettes {
   })
   @JoinColumn([{ name: "menu_id", referencedColumnName: "id" }])
   menu: Promise<Menus>;
-
+  
   constructor(init?: Partial<Recettes>) {
     Object.assign(this, init);
   }

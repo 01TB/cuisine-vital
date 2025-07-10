@@ -110,10 +110,6 @@ const Sidebar = ({ currentPage, onNavigate }) => {
             <span className="sidebar-user-role">Admin User</span>
           </div>
         </div>
-        <div className="sidebar-branding">
-          <span className="made-with">Made with</span>
-          <span className="brand-name">Ysily</span>
-        </div>
       </div>
     </aside>
   );

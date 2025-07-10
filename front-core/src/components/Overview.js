@@ -16,7 +16,7 @@ const Overview = () => {
   // Nouveaux états pour commandes en cours
   const [nbCommandesEnCours, setNbCommandesEnCours] = useState(0);
   const [loadingCmd, setLoadingCmd] = useState(true);
-  const [errorCmd, setErrorCmd] = useState(null);
+  const [errorCmd, setErrorCmd] = useState(null);;
 
   // Utilisation de useCallback pour que la fonction puisse être passée en dépendance ou à un événement onClick
   const fetchChiffresAffaire = useCallback(async () => {

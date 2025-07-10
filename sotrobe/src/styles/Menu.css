@@ -1,0 +1,138 @@
+.menu-grid-page {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: var(--mayo-yellow);
+}
+
+.menu-grid-card-square {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #ccc;
+  box-shadow: var(--soft-shadow);
+  transition: all 0.2s;
+}
+
+.menu-grid-card-square:hover {
+  transform: scale(1.1);
+}
+
+.menu-grid-image-square {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu-grid-overlay-always {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+  color: white;
+  z-index: 2;
+}
+
+.menu-grid-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  color: #555;
+}
+
+/* Filtres */
+.menu-grid-filter-btn {
+  background-color: white;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 600;
+  box-shadow: var(--soft-shadow);
+  transition: all 0.3s ease;
+}
+
+.menu-grid-filter-btn:hover,
+.menu-grid-filter-btn.active {
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.menu-grid-search {
+  max-width: 400px;
+  border-radius: 60px;
+  padding: 0.6rem 1.2rem;
+  box-shadow: var(--soft-shadow);
+  border: 1px solid #ccc;
+  transition: border-color 0.2s ease;
+}
+
+.menu-grid-search:focus {
+  border-color: #f0ad4e;
+  box-shadow: 0 0 0 0.2rem rgba(240, 173, 78, 0.25);
+}
+
+.menu-grid-checkbox {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 0.4rem;
+  border-radius: 8px;
+}
+
+.menu-grid-checkbox-wrapper {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.menu-grid-checkbox-icon {
+  font-size: 1.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.menu-grid-checkbox-icon.selected {
+  color: #6f42c1;
+}
+
+.menu-grid-checkbox {
+  display: none;
+}
+
+
+.menu-grid-order-button-wrapper {
+  position: fixed;
+  bottom: 20px;
+  left: 30px;
+  z-index: 10;
+  transition: all 0.5s;
+}
+
+.menu-grid-order-button-wrapper:hover {
+    transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+  .menu-grid-order-button-wrapper {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .menu-grid-order-button-wrapper:hover {
+    left: 50%;
+    transform: translateX(-50%);
+    
+    }
+}
+
+

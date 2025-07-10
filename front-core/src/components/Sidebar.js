@@ -93,6 +93,18 @@ const allNavLinks = [
     icon: <ShoppingCart />,
     roles: ['CHEF_CUISINIER'],
   },
+    {
+      to: '/admin/dashboard/gestion-trajets',
+      label: 'Gestion des trajets',
+      icon: Route,
+      roles: ['ADMIN']
+    },
+    {
+      to: '/admin/dashboard/calcul-itineraire', 
+      label: "Calcul d'itinéraire",
+      icon: Calculator,
+      roles: ['ADMIN']
+    },
 ];
 
 
