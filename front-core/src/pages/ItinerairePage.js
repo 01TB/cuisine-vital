@@ -14,9 +14,9 @@ const createIcon = (color, innerHtml = '') => new L.divIcon({
   popupAnchor: [0, -38],
 });
 
-const startIcon = createIcon("#16a34a", 'D');
-const endIcon = createIcon("#dc2626", 'A');
-const waypointIcon = (index) => createIcon("#2563eb", index);
+const startIcon = createIcon("#22c55e", 'D');
+const endIcon = createIcon("#ef4444", 'A');
+const waypointIcon = (index) => createIcon("#3b82f6", index);
 
 const ItinerairePage = () => {
   const { user } = useUserAuth();
@@ -34,18 +34,17 @@ const ItinerairePage = () => {
         try {
           const response = await api.get(`/livreurs/${user.id}/itineraire`);
           const { route: routeData, livraisons: livraisonsData } = response.data;
-          
+
           setLivraisons(livraisonsData || []);
 
-          // La route peut être `null` (cas avec 0 ou 1 point), ce qui est maintenant attendu.
-          if (routeData && routeData.features?.[0]?.geometry?.coordinates) {
+          if (routeData?.features?.[0]?.geometry?.coordinates) {
             const routeCoordinates = routeData.features[0].geometry.coordinates;
             const latlngs = routeCoordinates.map(c => [c[1], c[0]]);
             setRoute(latlngs);
           } else {
-            setRoute(null); // On s'assure que la route est bien nulle si non trouvée.
+            setRoute(null);
           }
-          
+
         } catch (err) {
           setError(err.response?.data?.message || "Erreur lors de la récupération de l'itinéraire.");
           console.error("Erreur Itinéraire:", err);
@@ -62,41 +61,67 @@ const ItinerairePage = () => {
   }
 
   return (
-    <div style={{ display: 'flex', height: 'calc(100vh - 56px)', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{
+      display: 'flex',
+      height: 'calc(100vh - 56px)',
+      fontFamily: 'Inter, sans-serif',
+      backgroundColor: '#f5f7fa'
+    }}>
       <style>{`
         @import url('https://unpkg.com/leaflet@1.7.1/dist/leaflet.css');
         .custom-div-icon { background: transparent; border: none; }
       `}</style>
 
-      <aside style={{ width: '400px', padding: '20px', overflowY: 'auto', backgroundColor: '#f8f9fa' }}>
-        <h4 className="mb-3">Ordre de l'Itinéraire</h4>
-        
-        {/* --- AJOUT : Message informatif si pas de route mais des points existent --- */}
+      {/* Liste */}
+      <aside style={{
+        width: '400px',
+        padding: '24px',
+        backgroundColor: '#ffffff',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+        borderRight: '1px solid #e5e7eb',
+        overflowY: 'auto',
+        borderRadius: '0 12px 12px 0'
+      }}>
+        <h4 style={{ fontWeight: '600', color: '#111827', marginBottom: '16px' }}>🧭 Itinéraire du jour</h4>
+
         {!route && livraisons.length > 0 && (
           <Alert variant="info" className="mb-3">
-            Un seul point de livraison. Aucun itinéraire à calculer.
+            Un seul point de livraison. Aucun itinéraire à afficher.
           </Alert>
         )}
-        
+
         {error ? (
           <Alert variant="danger">{error}</Alert>
         ) : livraisons.length > 0 ? (
-          <ListGroup>
+          <ListGroup variant="flush">
             {livraisons.map((livraison, index) => (
-              <ListGroup.Item key={livraison.id}>
-                <div className="fw-bold">{index === 0 && livraisons.length > 1 ? 'Départ' : `Livraison ${index + 1}`}</div>
-                <p className="mb-1">{livraison.adresse}</p>
-                <Badge bg={livraison.statut === 'EN_ROUTE' ? 'primary' : 'warning'} pill>
+              <ListGroup.Item key={livraison.id} style={{
+                borderRadius: '8px',
+                backgroundColor: '#f9fafb',
+                marginBottom: '8px',
+                padding: '12px 16px',
+                border: '1px solid #e5e7eb'
+              }}>
+                <div className="fw-semibold" style={{ color: '#374151' }}>
+                  {index === 0 && livraisons.length > 1 ? '📍 Départ' : `📦 Livraison ${index + 1}`}
+                </div>
+                <p style={{ fontSize: '14px', color: '#6b7280' }}>{livraison.adresse}</p>
+                <Badge
+                  bg={livraison.statut === 'EN_ROUTE' ? 'primary' : 'secondary'}
+                  pill
+                  style={{ fontSize: '12px' }}
+                >
                   {livraison.statut}
                 </Badge>
               </ListGroup.Item>
             ))}
           </ListGroup>
         ) : (
-          <p>Aucune livraison active pour le moment.</p>
+          <div className="text-muted small">Aucune livraison active.</div>
         )}
       </aside>
 
+      {/* Carte */}
       <main style={{ flex: 1, position: 'relative' }}>
         <MapContainer
           center={[-18.9066, 47.5186]}
@@ -108,15 +133,15 @@ const ItinerairePage = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-          
+
           {livraisons.map((livraison, index) => {
+            const coords = livraison.localisation.coordinates;
+            const position = [coords[1], coords[0]];
+
             const isEnd = index === livraisons.length - 1;
             let icon = waypointIcon(index + 1);
             if (index === 0) icon = startIcon;
             if (isEnd && index > 0) icon = endIcon;
-
-            const coords = livraison.localisation.coordinates;
-            const position = [coords[1], coords[0]];
 
             return (
               <Marker key={livraison.id} position={position} icon={icon}>
@@ -124,8 +149,16 @@ const ItinerairePage = () => {
               </Marker>
             );
           })}
-          
-          {route && <Polyline positions={route} color="#0284c7" weight={5} opacity={0.8} />}
+
+          {route && (
+            <Polyline
+              positions={route}
+              color="#3b82f6"
+              weight={4}
+              opacity={0.8}
+              lineCap="round"
+            />
+          )}
         </MapContainer>
       </main>
     </div>

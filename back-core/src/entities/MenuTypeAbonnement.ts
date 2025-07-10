@@ -39,9 +39,9 @@ export class MenuTypeAbonnement {
   @Column("timestamp without time zone", { name: "deleted_at", nullable: true })
   deletedAt: Date | null;
 
-  @ManyToOne(() => Menus, (menus) => menus.menuTypeAbonnements, { lazy: true })
+  @ManyToOne(() => Menus, (menus) => menus.menuTypeAbonnements)
   @JoinColumn([{ name: "menu_id", referencedColumnName: "id" }])
-  menu: Promise<Menus>;
+  menu: Menus;
 
   @ManyToOne(
     () => TypesAbonnement,
@@ -49,7 +49,7 @@ export class MenuTypeAbonnement {
     { lazy: true }
   )
   @JoinColumn([{ name: "type_abonnement_id", referencedColumnName: "id" }])
-  typeAbonnement: Promise<TypesAbonnement>;
+  typeAbonnement: TypesAbonnement;
 
   constructor(init?: Partial<MenuTypeAbonnement>) {
     Object.assign(this, init);

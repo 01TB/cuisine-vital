@@ -125,3 +125,173 @@ INSERT INTO livraisons_individuelles (id, commande_id, livreur_id, adresse, stat
     'ASSIGNEE',                                    -- Statut INACTIF pour le calcul
     ST_SetSRID(ST_MakePoint(47.5074, -18.9160), 4326) -- Point C (ex: Ampefiloha)
 ) ON CONFLICT (id) DO NOTHING;
+
+
+-- Script pour assigner les livreurs aux commandes existantes
+-- Assignation basée sur les zones de livraison et la disponibilité des livreurs
+
+-- Assigner Vola Rakotomalala (zone 1) aux commandes d'Analakely
+UPDATE commandes_individuelles 
+SET livreur_id = '02120aeb-b57e-4d2e-bde9-3bf436d83c03'
+WHERE id = '5bace2e6-fa5a-4141-9aad-b649668147c6';
+
+-- Assigner Tojo Raharison (zone 2) aux commandes d'Ankazotokana
+UPDATE commandes_individuelles 
+SET livreur_id = '229b84ad-dd4a-4244-b97b-1b2f0f1ffdb6'
+WHERE id = '616f686b-5c30-481f-91ff-3e905436f716';
+
+-- Assigner Mamy Rajaonarivelo (zone 3) aux commandes d'Andoharanofotsy
+UPDATE commandes_individuelles 
+SET livreur_id = 'b2ce0bc7-6951-4a18-964f-40bec99d8ad5'
+WHERE id IN ('2af9e462-3e17-4684-b3dd-9e2399d26a23', '0da7a504-7c15-4d96-9a26-f9c975c9cd50');
+
+-- Données de test pour la table livraisons_individuelles
+INSERT INTO livraisons_individuelles (
+    id,
+    commande_id,
+    livreur_id,
+    adresse,
+    localisation,
+    heure_depart,
+    heure_livraison,
+    statut,
+    commentaire,
+    created_at,
+    deleted_at
+) VALUES 
+-- Livraison 1: Commande à Analakely - LIVREE
+(
+    uuid_generate_v4(),
+    '5bace2e6-fa5a-4141-9aad-b649668147c6',
+    '02120aeb-b57e-4d2e-bde9-3bf436d83c03',
+    'Analakely, Antananarivo, Analamanga, Province d''Antananarivo, 101, Madagascar',
+    ST_GeomFromText('POINT(47.520832 -18.912578)', 4326),
+    '10:30:00',
+    '11:15:00',
+    'LIVREE',
+    'Livraison effectuée avec succès. Client satisfait.',
+    '2025-07-07 10:30:00',
+    NULL
+),
+
+-- Livraison 2: Commande à Ankazotokana - EN_ROUTE
+(
+    uuid_generate_v4(),
+    '616f686b-5c30-481f-91ff-3e905436f716',
+    '229b84ad-dd4a-4244-b97b-1b2f0f1ffdb6',
+    'Ankazotokana, Antananarivo, Analamanga, Province d''Antananarivo, 101, Madagascar',
+    ST_GeomFromText('POINT(47.518045 -18.915234)', 4326),
+    '14:00:00',
+    NULL,
+    'EN_ROUTE',
+    'En cours de livraison. Arrivée prévue dans 15 minutes.',
+    '2025-07-10 14:00:00',
+    NULL
+),
+
+-- Livraison 3: Commande à IT University - LIVREE
+(
+    uuid_generate_v4(),
+    '2af9e462-3e17-4684-b3dd-9e2399d26a23',
+    'b2ce0bc7-6951-4a18-964f-40bec99d8ad5',
+    'IT University, N 7, Andoharanofotsy, District d''Antananarivo Atsimondrano, Analamanga, Province d''Antananarivo, 102, Madagascar',
+    ST_GeomFromText('POINT(47.518176 -18.924789)', 4326),
+    '12:45:00',
+    '13:20:00',
+    'LIVREE',
+    'Livraison à l''université. Remise au service de sécurité.',
+    '2025-07-07 12:45:00',
+    NULL
+),
+
+-- Livraison 4: Commande récente à IT University - ASSIGNEE
+(
+    uuid_generate_v4(),
+    '0da7a504-7c15-4d96-9a26-f9c975c9cd50',
+    'b2ce0bc7-6951-4a18-964f-40bec99d8ad5',
+    'IT University, N 7, Andoharanofotsy, District d''Antananarivo Atsimondrano, Analamanga, Province d''Antananarivo, 102, Madagascar',
+    ST_GeomFromText('POINT(47.518176 -18.924789)', 4326),
+    '16:00:00',
+    NULL,
+    'ASSIGNEE',
+    'Livraison programmée pour cet après-midi.',
+    '2025-07-09 15:30:00',
+    NULL
+),
+
+-- Livraison 5: Données additionnelles - Zone Analakely
+(
+    uuid_generate_v4(),
+    '5bace2e6-fa5a-4141-9aad-b649668147c6',
+    '02120aeb-b57e-4d2e-bde9-3bf436d83c03',
+    'Tsaralalana, Antananarivo, Analamanga, Province d''Antananarivo, 101, Madagascar',
+    ST_GeomFromText('POINT(47.521456 -18.914123)', 4326),
+    '09:15:00',
+    '09:45:00',
+    'LIVREE',
+    'Livraison matinale. Pas de problème particulier.',
+    '2025-07-08 09:15:00',
+    NULL
+),
+
+-- Livraison 6: Données additionnelles - Zone Ankazotokana
+(
+    uuid_generate_v4(),
+    '616f686b-5c30-481f-91ff-3e905436f716',
+    '229b84ad-dd4a-4244-b97b-1b2f0f1ffdb6',
+    'Faravohitra, Antananarivo, Analamanga, Province d''Antananarivo, 101, Madagascar',
+    ST_GeomFromText('POINT(47.516789 -18.913456)', 4326),
+    '15:30:00',
+    '16:10:00',
+    'LIVREE',
+    'Quartier résidentiel. Livraison sans difficulté.',
+    '2025-07-09 15:30:00',
+    NULL
+),
+
+-- Livraison 7: Données additionnelles - Zone Andoharanofotsy
+(
+    uuid_generate_v4(),
+    '2af9e462-3e17-4684-b3dd-9e2399d26a23',
+    'b2ce0bc7-6951-4a18-964f-40bec99d8ad5',
+    'Tanjombato, District d''Antananarivo Atsimondrano, Analamanga, Province d''Antananarivo, 102, Madagascar',
+    ST_GeomFromText('POINT(47.515234 -18.928901)', 4326),
+    '11:00:00',
+    '11:35:00',
+    'LIVREE',
+    'Zone périphérique. Livraison effectuée rapidement.',
+    '2025-07-08 11:00:00',
+    NULL
+),
+
+-- Livraison 8: Livraison annulée/supprimée
+(
+    uuid_generate_v4(),
+    '0da7a504-7c15-4d96-9a26-f9c975c9cd50',
+    'b2ce0bc7-6951-4a18-964f-40bec99d8ad5',
+    'Ampefiloha, Antananarivo, Analamanga, Province d''Antananarivo, 101, Madagascar',
+    ST_GeomFromText('POINT(47.523789 -18.916234)', 4326),
+    '13:00:00',
+    NULL,
+    'ASSIGNEE',
+    'Livraison annulée par le client.',
+    '2025-07-09 13:00:00',
+    '2025-07-09 13:30:00'
+);
+
+-- Requête pour vérifier les données insérées
+SELECT 
+    li.id,
+    ci.numero_commande,
+    CONCAT(u.prenom, ' ', u.nom) as livreur,
+    li.adresse,
+    li.heure_depart,
+    li.heure_livraison,
+    li.statut,
+    li.commentaire,
+    li.created_at,
+    li.deleted_at
+FROM livraisons_individuelles li
+JOIN commandes_individuelles ci ON li.commande_id = ci.id
+JOIN utilisateurs u ON li.livreur_id = u.id
+ORDER BY li.created_at DESC;

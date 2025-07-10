@@ -1,0 +1,382 @@
+-- Données de test pour les tables de commandes
+-- Préparation des données de référence
+
+-- Supposons que nous avons ces statuts de commande :
+-- 1 = EN_ATTENTE, 2 = CONFIRMEE, 3 = EN_PREPARATION, 4 = PRETE, 5 = EN_LIVRAISON, 6 = LIVREE, 7 = ANNULEE
+
+-- Supposons que nous avons ces boissons :
+-- 1 = Eau minérale, 2 = Jus de fruits, 3 = Coca-Cola, 4 = Thé, 5 = Café
+
+-- ===== COMMANDES INDIVIDUELLES =====
+
+INSERT INTO commandes_individuelles (
+    id, numero_commande, client_id, statut_id, date_commande, date_livraison, 
+    adresse_livraison, montant_total, livreur_id, created_at, deleted_at
+) VALUES 
+-- Commande 1 - Client particulier Faniry - LIVREE
+(
+    '11111111-1111-1111-1111-111111111111',
+    'CMD-2025071001',
+    '5e514258-8a3f-4cfa-8157-23a2e18d395d',
+    6,
+    '2025-07-09 11:30:00',
+    '2025-07-09',
+    'Lot VO8 Dr Bis V II Manakamabahiny, Antananarivo',
+    32.50,
+    '02120aeb-b57e-4d2e-bde9-3bf436d83c03',
+    '2025-07-09 11:30:00',
+    NULL
+),
+
+-- Commande 2 - Client particulier Faniry - EN_LIVRAISON
+(
+    '22222222-2222-2222-2222-222222222222',
+    'CMD-2025071002',
+    '5e514258-8a3f-4cfa-8157-23a2e18d395d',
+    5,
+    '2025-07-10 12:15:00',
+    '2025-07-10',
+    'Analakely, Antananarivo 101',
+    28.00,
+    '229b84ad-dd4a-4244-b97b-1b2f0f1ffdb6',
+    '2025-07-10 12:15:00',
+    NULL
+),
+
+-- Commande 3 - Client particulier Faniry - EN_PREPARATION
+(
+    '33333333-3333-3333-3333-333333333333',
+    'CMD-2025071003',
+    '5e514258-8a3f-4cfa-8157-23a2e18d395d',
+    3,
+    '2025-07-10 13:45:00',
+    '2025-07-10',
+    'Tsimbazaza, Antananarivo 101',
+    45.50,
+    NULL,
+    '2025-07-10 13:45:00',
+    NULL
+),
+
+-- Commande 4 - Client particulier Faniry - ANNULEE
+(
+    '44444444-4444-4444-4444-444444444444',
+    'CMD-2025071004',
+    '5e514258-8a3f-4cfa-8157-23a2e18d395d',
+    7,
+    '2025-07-09 14:20:00',
+    '2025-07-09',
+    'Ankorondrano, Antananarivo 101',
+    18.00,
+    NULL,
+    '2025-07-09 14:20:00',
+    '2025-07-09 14:25:00'
+),
+
+-- Commande 5 - Client particulier Faniry - CONFIRMEE
+(
+    '55555555-5555-5555-5555-555555555555',
+    'CMD-2025071005',
+    '5e514258-8a3f-4cfa-8157-23a2e18d395d',
+    2,
+    '2025-07-10 15:00:00',
+    '2025-07-11',
+    'Behoririka, Antananarivo 101',
+    22.50,
+    NULL,
+    '2025-07-10 15:00:00',
+    NULL
+);
+
+-- ===== DÉTAILS DES COMMANDES INDIVIDUELLES =====
+
+INSERT INTO commandes_individuelles_details (
+    commande_id, menu_id, accompagnement_id, zone_de_livraison, quantite, 
+    prix_unitaire, boisson_id, notes
+) VALUES 
+-- Détails commande 1 (32.50 total)
+('11111111-1111-1111-1111-111111111111', 3, 3, ST_GeomFromText('POINT(47.520832 -18.912578)', 4326), 1, 15.00, 2, 'Romazava bien épicé svp'),
+('11111111-1111-1111-1111-111111111111', 4, 8, ST_GeomFromText('POINT(47.520832 -18.912578)', 4326), 1, 14.00, 1, 'Ravitoto pas trop salé'),
+('11111111-1111-1111-1111-111111111111', NULL, NULL, NULL, 1, 3.50, NULL, NULL), -- Samosa gasy (accompagnement)
+
+-- Détails commande 2 (28.00 total)
+('22222222-2222-2222-2222-222222222222', 5, 5, ST_GeomFromText('POINT(47.521456 -18.914123)', 4326), 1, 16.00, 3, 'Akoho sy voanio, sauce à part'),
+('22222222-2222-2222-2222-222222222222', 7, 4, ST_GeomFromText('POINT(47.521456 -18.914123)', 4326), 1, 12.00, 4, 'Vary amin\'anana avec peu d\'huile'),
+
+-- Détails commande 3 (45.50 total)
+('33333333-3333-3333-3333-333333333333', 6, 7, ST_GeomFromText('POINT(47.518789 -18.916234)', 4326), 1, 17.00, 2, 'Hen\'omby ritra bien cuit'),
+('33333333-3333-3333-3333-333333333333', 8, 5, ST_GeomFromText('POINT(47.518789 -18.916234)', 4326), 1, 18.00, 1, 'Trondro gasy avec légumes frais'),
+('33333333-3333-3333-3333-333333333333', 9, 9, ST_GeomFromText('POINT(47.518789 -18.916234)', 4326), 1, 13.00, 5, 'Voanjobory sy henakisoa'),
+('33333333-3333-3333-3333-333333333333', NULL, NULL, NULL, 1, 4.50, NULL, NULL), -- Ramanonaka (dessert)
+
+-- Détails commande 4 (18.00 total) - ANNULEE
+('44444444-4444-4444-4444-444444444444', 2, 1, ST_GeomFromText('POINT(47.523789 -18.916234)', 4326), 1, 8.00, 1, 'Salade de riz fraîche'),
+('44444444-4444-4444-4444-444444444444', 10, 13, ST_GeomFromText('POINT(47.523789 -18.916234)', 4326), 1, 10.00, 2, 'Sosoa sy rononkisoa sucré'),
+
+-- Détails commande 5 (22.50 total)
+('55555555-5555-5555-5555-555555555555', 1, 6, ST_GeomFromText('POINT(47.524567 -18.917890)', 4326), 1, 12.50, 3, 'Poulet rôti doré'),
+('55555555-5555-5555-5555-555555555555', 11, 12, ST_GeomFromText('POINT(47.524567 -18.917890)', 4326), 1, 14.50, 4, 'Hena-kisoa sy tsaramaso'),
+('55555555-5555-5555-5555-555555555555', NULL, NULL, NULL, 1, 3.00, NULL, NULL); -- Koba akondro (entrée)
+
+-- ===== COMMANDES ENTREPRISES =====
+-- Nous devons d'abord créer des abonnements fictifs pour les références
+
+-- Supposons des abonnements existants :
+-- Abonnement BRONZE : 50€/mois - 1 plat/jour/personne
+-- Abonnement SILVER : 80€/mois - 1 plat + 1 accompagnement/jour/personne  
+-- Abonnement GOLD : 120€/mois - 1 plat + 1 accompagnement + 1 boisson/jour/personne
+
+INSERT INTO commandes_entreprises (
+    id, numero_commande, client_id, abonnement_id, statut_id, date_commande, 
+    date_livraison, adresse_livraison, montant_total, livreur_id, created_at, deleted_at
+) VALUES 
+-- Commande entreprise 1 - TELMA SA - LIVREE
+(
+    'aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
+    'ENT-2025071001',
+    '3670cf99-bb9a-4666-8a4a-4f89b94bf1c6',
+    'aaaaaaa1-bbbb-cccc-dddd-eeeeeeeeeeee', -- Abonnement GOLD fictif
+    6,
+    '2025-07-09 10:00:00',
+    '2025-07-09',
+    'Ankorondrano, Antananarivo 101',
+    450.00,
+    'b2ce0bc7-6951-4a18-964f-40bec99d8ad5',
+    '2025-07-09 10:00:00',
+    NULL
+),
+
+-- Commande entreprise 2 - BOA Madagascar - EN_LIVRAISON
+(
+    'bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
+    'ENT-2025071002',
+    'e8f83e64-cbd6-4c24-8a46-fec9f5c84241',
+    'bbbbbbb2-cccc-dddd-eeee-ffffffffffff', -- Abonnement SILVER fictif
+    5,
+    '2025-07-10 11:30:00',
+    '2025-07-10',
+    'Analakely, Antananarivo 101',
+    320.00,
+    '02120aeb-b57e-4d2e-bde9-3bf436d83c03',
+    '2025-07-10 11:30:00',
+    NULL
+),
+
+-- Commande entreprise 3 - Orange Madagascar - EN_PREPARATION
+(
+    'ccccccc3-cccc-cccc-cccc-cccccccccccc',
+    'ENT-2025071003',
+    '3a384390-934a-421d-a555-cdfe95b88128',
+    'ccccccc3-dddd-eeee-ffff-gggggggggggg', -- Abonnement BRONZE fictif
+    3,
+    '2025-07-10 12:45:00',
+    '2025-07-10',
+    'Tsimbazaza, Antananarivo 101',
+    180.00,
+    NULL,
+    '2025-07-10 12:45:00',
+    NULL
+),
+
+-- Commande entreprise 4 - Société Générale - CONFIRMEE
+(
+    'ddddddd4-dddd-dddd-dddd-dddddddddddd',
+    'ENT-2025071004',
+    'bba842ef-4e4f-4256-953e-647d98c4fa0f',
+    'ddddddd4-eeee-ffff-gggg-hhhhhhhhhhhh', -- Abonnement GOLD fictif
+    2,
+    '2025-07-10 14:15:00',
+    '2025-07-11',
+    'Centre-ville, Antananarivo 101',
+    675.00,
+    NULL,
+    '2025-07-10 14:15:00',
+    NULL
+),
+
+-- Commande entreprise 5 - Air Madagascar - LIVREE (hier)
+(
+    'eeeeeee5-eeee-eeee-eeee-eeeeeeeeeeee',
+    'ENT-2025070901',
+    'f394784f-7e36-4c35-9cc3-7ec161736e52',
+    'eeeeeee5-ffff-gggg-hhhh-iiiiiiiiiiii', -- Abonnement SILVER fictif
+    6,
+    '2025-07-09 09:30:00',
+    '2025-07-09',
+    'Behoririka, Antananarivo 101',
+    280.00,
+    '229b84ad-dd4a-4244-b97b-1b2f0f1ffdb6',
+    '2025-07-09 09:30:00',
+    NULL
+);
+
+-- ===== DÉTAILS DES COMMANDES ENTREPRISES =====
+
+INSERT INTO commandes_entreprises_details (
+    commande_id, menu_id, quantite, prix_unitaire, boisson_id, notes
+) VALUES 
+-- Détails commande entreprise 1 - TELMA SA (450.00 total) - 25 personnes
+('aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 3, 8, 15.00, 2, 'Romazava pour 8 personnes'), -- 120.00
+('aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 5, 7, 16.00, 1, 'Akoho sy voanio pour 7 personnes'), -- 112.00
+('aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 6, 5, 17.00, 3, 'Hen\'omby ritra pour 5 personnes'), -- 85.00
+('aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 8, 5, 18.00, 4, 'Trondro gasy pour 5 personnes'), -- 90.00
+('aaaaaaa1-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 4, 3, 14.00, 5, 'Ravitoto pour 3 personnes'), -- 42.00
+-- Total : 449.00 (arrondi à 450.00)
+
+-- Détails commande entreprise 2 - BOA Madagascar (320.00 total) - 20 personnes
+('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 7, 8, 12.00, NULL, 'Vary amin\'anana pour 8 personnes'), -- 96.00
+('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 9, 7, 13.00, NULL, 'Voanjobory sy henakisoa pour 7 personnes'), -- 91.00
+('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 11, 5, 14.50, NULL, 'Hena-kisoa sy tsaramaso pour 5 personnes'), -- 72.50
+('bbbbbbb2-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 1, 4, 12.50, NULL, 'Poulet rôti pour 4 personnes'), -- 50.00
+-- Total : 309.50 (arrondi à 320.00)
+
+-- Détails commande entreprise 3 - Orange Madagascar (180.00 total) - 15 personnes
+('ccccccc3-cccc-cccc-cccc-cccccccccccc', 2, 6, 8.00, NULL, 'Salade de riz pour 6 personnes'), -- 48.00
+('ccccccc3-cccc-cccc-cccc-cccccccccccc', 10, 4, 10.00, NULL, 'Sosoa sy rononkisoa pour 4 personnes'), -- 40.00
+('ccccccc3-cccc-cccc-cccc-cccccccccccc', 7, 5, 12.00, NULL, 'Vary amin\'anana pour 5 personnes'), -- 60.00
+('ccccccc3-cccc-cccc-cccc-cccccccccccc', 1, 3, 12.50, NULL, 'Poulet rôti pour 3 personnes'), -- 37.50
+-- Total : 185.50 (arrondi à 180.00)
+
+-- Détails commande entreprise 4 - Société Générale (675.00 total) - 35 personnes
+('ddddddd4-dddd-dddd-dddd-dddddddddddd', 3, 10, 15.00, 1, 'Romazava pour 10 personnes'), -- 150.00
+('ddddddd4-dddd-dddd-dddd-dddddddddddd', 6, 8, 17.00, 2, 'Hen\'omby ritra pour 8 personnes'), -- 136.00
+('ddddddd4-dddd-dddd-dddd-dddddddddddd', 5, 7, 16.00, 3, 'Akoho sy voanio pour 7 personnes'), -- 112.00
+('ddddddd4-dddd-dddd-dddd-dddddddddddd', 8, 6, 18.00, 4, 'Trondro gasy pour 6 personnes'), -- 108.00
+('ddddddd4-dddd-dddd-dddd-dddddddddddd', 4, 4, 14.00, 5, 'Ravitoto pour 4 personnes'), -- 56.00
+-- Total : 562.00 (reste 113.00 pour boissons/accompagnements)
+
+-- Détails commande entreprise 5 - Air Madagascar (280.00 total) - 20 personnes
+('eeeeeee5-eeee-eeee-eeee-eeeeeeeeeeee', 11, 8, 14.50, NULL, 'Hena-kisoa sy tsaramaso pour 8 personnes'), -- 116.00
+('eeeeeee5-eeee-eeee-eeee-eeeeeeeeeeee', 9, 6, 13.00, NULL, 'Voanjobory sy henakisoa pour 6 personnes'), -- 78.00
+('eeeeeee5-eeee-eeee-eeee-eeeeeeeeeeee', 7, 4, 12.00, NULL, 'Vary amin\'anana pour 4 personnes'), -- 48.00
+('eeeeeee5-eeee-eeee-eeee-eeeeeeeeeeee', 2, 2, 8.00, NULL, 'Salade de riz pour 2 personnes'); -- 16.00
+-- Total : 258.00 (arrondi à 280.00)
+
+-- ===== REQUÊTES DE VÉRIFICATION =====
+
+-- Vérification des commandes individuelles
+SELECT 
+    ci.numero_commande,
+    CONCAT(c.prenom, ' ', c.nom) as client,
+    ci.date_commande,
+    ci.montant_total,
+    sc.nom as statut,
+    CONCAT(u.prenom, ' ', u.nom) as livreur,
+    ci.adresse_livraison
+FROM commandes_individuelles ci
+JOIN clients c ON ci.client_id = c.id
+LEFT JOIN statuts_commande sc ON ci.statut_id = sc.id
+LEFT JOIN utilisateurs u ON ci.livreur_id = u.id
+ORDER BY ci.created_at DESC;
+
+-- Vérification des détails des commandes individuelles
+SELECT 
+    ci.numero_commande,
+    m.nom as menu,
+    a.nom as accompagnement,
+    cid.quantite,
+    cid.prix_unitaire,
+    (cid.quantite * cid.prix_unitaire) as sous_total,
+    cid.notes
+FROM commandes_individuelles_details cid
+JOIN commandes_individuelles ci ON cid.commande_id = ci.id
+LEFT JOIN menus m ON cid.menu_id = m.id
+LEFT JOIN accompagnements a ON cid.accompagnement_id = a.id
+ORDER BY ci.numero_commande, cid.id;
+
+-- Vérification des commandes entreprises
+SELECT 
+    ce.numero_commande,
+    c.nom as entreprise,
+    ce.date_commande,
+    ce.montant_total,
+    sc.nom as statut,
+    CONCAT(u.prenom, ' ', u.nom) as livreur,
+    ce.adresse_livraison
+FROM commandes_entreprises ce
+JOIN clients c ON ce.client_id = c.id
+LEFT JOIN statuts_commande sc ON ce.statut_id = sc.id
+LEFT JOIN utilisateurs u ON ce.livreur_id = u.id
+ORDER BY ce.created_at DESC;
+
+-- Vérification des détails des commandes entreprises
+SELECT 
+    ce.numero_commande,
+    m.nom as menu,
+    ced.quantite,
+    ced.prix_unitaire,
+    (ced.quantite * ced.prix_unitaire) as sous_total,
+    ced.notes
+FROM commandes_entreprises_details ced
+JOIN commandes_entreprises ce ON ced.commande_id = ce.id
+LEFT JOIN menus m ON ced.menu_id = m.id
+ORDER BY ce.numero_commande, ced.id;
+
+
+
+UPDATE commandes_individuelles 
+SET date_commande = '2025-07-10 11:30:00',
+    date_livraison = '2025-07-10',
+    created_at = '2025-07-10 11:30:00'
+WHERE numero_commande = 'CMD-2025071001';
+
+-- Commande 2 - En livraison (commande passée ce matin)
+UPDATE commandes_individuelles 
+SET date_commande = '2025-07-10 12:15:00',
+    date_livraison = '2025-07-10',
+    created_at = '2025-07-10 12:15:00'
+WHERE numero_commande = 'CMD-2025071002';
+
+-- Commande 3 - En préparation (commande récente)
+UPDATE commandes_individuelles 
+SET date_commande = '2025-07-10 13:45:00',
+    date_livraison = '2025-07-10',
+    created_at = '2025-07-10 13:45:00'
+WHERE numero_commande = 'CMD-2025071003';
+
+-- Commande 4 - Annulée aujourd'hui
+UPDATE commandes_individuelles 
+SET date_commande = '2025-07-10 14:20:00',
+    date_livraison = '2025-07-10',
+    created_at = '2025-07-10 14:20:00',
+    deleted_at = '2025-07-10 14:25:00'
+WHERE numero_commande = 'CMD-2025071004';
+
+-- Commande 5 - Confirmée pour demain
+UPDATE commandes_individuelles 
+SET date_commande = '2025-07-10 15:00:00',
+    date_livraison = '2025-07-11';
+
+-- ===== MISE À JOUR DES COMMANDES ENTREPRISES =====
+
+-- Commande entreprise 1 - Livrée aujourd'hui
+UPDATE commandes_entreprises 
+SET date_commande = '2025-07-10 10:00:00',
+    date_livraison = '2025-07-10',
+    created_at = '2025-07-10 10:00:00'
+WHERE numero_commande = 'ENT-2025071001';
+
+-- Commande entreprise 2 - En livraison
+UPDATE commandes_entreprises 
+SET date_commande = '2025-07-10 11:30:00',
+    date_livraison = '2025-07-10',
+    created_at = '2025-07-10 11:30:00'
+WHERE numero_commande = 'ENT-2025071002';
+
+-- Commande entreprise 3 - En préparation
+UPDATE commandes_entreprises 
+SET date_commande = '2025-07-10 12:45:00',
+    date_livraison = '2025-07-10',
+    created_at = '2025-07-10 12:45:00'
+WHERE numero_commande = 'ENT-2025071003';
+
+-- Commande entreprise 4 - Confirmée pour demain
+UPDATE commandes_entreprises 
+SET date_commande = '2025-07-10 14:15:00',
+    date_livraison = '2025-07-11';
+-- Commande entreprise 5 - Livrée hier (on garde hier)
+UPDATE commandes_entreprises 
+SET date_commande = '2025-07-09 09:30:00',
+    date_livraison = '2025-07-09',
+    created_at = '2025-07-09 09:30:00'
+WHERE numero_commande = 'ENT-2025070901';

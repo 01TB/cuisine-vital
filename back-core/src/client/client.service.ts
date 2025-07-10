@@ -249,7 +249,7 @@ export class ClientService {
             ...restOfDto,
             actif: restOfDto.actif ?? true, 
 
-            client: Promise.resolve(clientEntity),
+            client: clientEntity,
             typeAbonnement: Promise.resolve(typeAbonnementEntity),
         };
 
@@ -297,7 +297,7 @@ export class ClientService {
 
         const nouveauBon = this.bonsCommandeRepo.create({
             ...dto,
-            abonnement: Promise.resolve(abonnement), 
+            abonnement: abonnement, 
             statut: 'EN_ATTENTE', 
         });
 
@@ -350,7 +350,7 @@ export class ClientService {
                 bonCommandeId: bonCommande.id,
                 jourSemaine: sel.jourSemaine,
                 quantite: sel.quantite,
-                menu: Promise.resolve(menu),
+                menu: menu,
             });
             nouvellesSelections.push(nouvelleSelection);
         }

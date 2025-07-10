@@ -25,12 +25,12 @@ const GestionTrajets = () => {
     fetchToutesLesLivraisons();
   }, []);
 
-  // --- LOGIQUE DE STYLE RÉUTILISÉE DEPUIS LIVREURMAP ---
+  // --- LOGIQUE DE STYLE AVEC ICÔNES Bootstrap ---
   const getStatusStyle = (statut) => {
     const styles = {
-      EN_ROUTE: { backgroundColor: '#fff3cd', color: '#856404', icon: '🚚' },
-      ASSIGNEE: { backgroundColor: '#d1ecf1', color: '#0c5460', icon: '📋' },
-      LIVREE: { backgroundColor: '#d4edda', color: '#155724', icon: '✅' }
+      EN_ROUTE: { backgroundColor: '#fff3cd', color: '#856404', iconClass: 'bi bi-truck' }, // Icône de camion
+      ASSIGNEE: { backgroundColor: '#d1ecf1', color: '#0c5460', iconClass: 'bi bi-clipboard-check' }, // Icône de clipboard/liste
+      LIVREE: { backgroundColor: '#d4edda', color: '#155724', iconClass: 'bi bi-check-circle' } // Icône de coche
     };
     return styles[statut] || styles.ASSIGNEE;
   };
@@ -57,7 +57,7 @@ const GestionTrajets = () => {
   }
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
+    <div style={{ padding: '5px', backgroundColor: '#f8f9fa', minHeight: '100vh', fontFamily: 'Arial, sans-serif' }}>
       <style>{`@import url('https://unpkg.com/leaflet@1.7.1/dist/leaflet.css');`}</style>
       
       <h2 style={{ marginBottom: '20px', color: '#333' }}>Gestion des Trajets en Temps Réel</h2>
@@ -73,7 +73,8 @@ const GestionTrajets = () => {
           flexDirection: 'column' 
         }}>
           <div style={{ padding: '15px 20px', borderBottom: '1px solid #dee2e6' }}>
-            <h5 style={{ margin: 0, color: '#666' }}>🗺️ Carte de toutes les livraisons</h5>
+            {/* Remplacement emoji 🗺️ par icône Bootstrap */}
+            <h5 style={{ margin: 0, color: '#666' }}><i className="bi bi-map me-2"></i> Carte de toutes les livraisons</h5>
           </div>
           
           <div style={{ flex: 1, position: 'relative' }}>
@@ -91,8 +92,9 @@ const GestionTrajets = () => {
           flexDirection: 'column' 
         }}>
           <div style={{ padding: '15px 20px', borderBottom: '1px solid #dee2e6' }}>
+            {/* Remplacement emoji 📋 par icône Bootstrap */}
             <h5 style={{ margin: 0, color: '#666' }}>
-              📋 Liste des Livraisons ({toutesLesLivraisons.length})
+              <i className="bi bi-clipboard-list me-2"></i> Liste des Livraisons ({toutesLesLivraisons.length})
             </h5>
           </div>
           
@@ -118,7 +120,8 @@ const GestionTrajets = () => {
                       marginBottom: '10px' 
                     }}>
                       <strong style={{ color: '#333' }}>
-                        📦 {livraison.id.substring(0, 8)}...
+                        {/* Remplacement emoji 📦 par icône Bootstrap */}
+                        <i className="bi bi-box me-2"></i> {livraison.id.substring(0, 8)}...
                       </strong>
                       <span 
                         style={{
@@ -131,28 +134,33 @@ const GestionTrajets = () => {
                           border: `1px solid ${statusStyle.color}20`
                         }}
                       >
-                        {statusStyle.icon} {getStatusText(livraison.statut)}
+                        {/* Utilisation de l'iconClass définie dans getStatusStyle */}
+                        <i className={`${statusStyle.iconClass} me-1`}></i> {getStatusText(livraison.statut)}
                       </span>
                     </div>
                     
                     <div style={{ fontSize: '14px', color: '#666' }}>
                       <div style={{ marginBottom: '5px' }}>
-                        <strong>📍 Adresse:</strong> 
+                        {/* Remplacement emoji 📍 par icône Bootstrap */}
+                        <strong><i className="bi bi-geo-alt-fill me-2"></i> Adresse:</strong> 
                         <span style={{ marginLeft: '5px' }}>{livraison.adresse}</span>
                       </div>
                       <div style={{ marginBottom: '5px' }}>
-                        <strong>👤 Livreur:</strong> 
+                        {/* Remplacement emoji 👤 par icône Bootstrap */}
+                        <strong><i className="bi bi-person-fill me-2"></i> Livreur:</strong> 
                         <span style={{ marginLeft: '5px' }}>
                           {livraison.__livreur__?.prenom} {livraison.__livreur__?.nom || 'Non assigné'}
                         </span>
                       </div>
                       <div style={{ marginBottom: '5px' }}>
-                        <strong>📋 Type:</strong> 
+                        {/* Remplacement emoji 📋 par icône Bootstrap */}
+                        <strong><i className="bi bi-tag-fill me-2"></i> Type:</strong> 
                         <span style={{ marginLeft: '5px' }}>{livraison.type || 'N/A'}</span>
                       </div>
                       {livraison.__livreur__?.telephone && (
                         <div style={{ marginBottom: '0' }}>
-                          <strong>📞 Tél:</strong> 
+                          {/* Remplacement emoji 📞 par icône Bootstrap */}
+                          <strong><i className="bi bi-telephone-fill me-2"></i> Tél:</strong> 
                           <span style={{ marginLeft: '5px' }}>{livraison.__livreur__.telephone}</span>
                         </div>
                       )}
@@ -162,7 +170,8 @@ const GestionTrajets = () => {
               })
             ) : (
               <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>
-                <div style={{ marginBottom: '10px' }}>📦</div>
+                {/* Remplacement emoji 📦 par icône Bootstrap */}
+                <div style={{ marginBottom: '10px' }}><i className="bi bi-box-seam" style={{ fontSize: '2rem' }}></i></div>
                 <div>Aucune livraison à afficher.</div>
               </div>
             )}

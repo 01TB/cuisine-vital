@@ -69,10 +69,6 @@ export class Clients {
   @OneToMany(() => Abonnements, (abonnements) => abonnements.client)
   abonnements: Abonnements[];
 
-  @ManyToOne(() => ZonesLivraison, (zonesLivraison) => zonesLivraison.clients)
-  @JoinColumn([{ name: "zone_livraison_id", referencedColumnName: "id" }])
-  zoneLivraison: ZonesLivraison;
-
   @OneToMany(
     () => ClientsIndividuelsFideles,
     (clientsIndividuelsFideles) => clientsIndividuelsFideles.client,

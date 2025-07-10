@@ -11,7 +11,10 @@ import {
   UserCircle2,
   ChevronDown,
   ChevronUp,
-  ClipboardList
+  ClipboardList,
+  Route,
+  Calculator,
+  LogOut
 } from 'lucide-react';
 import { useUserAuth } from '../hooks/useUserAuth';
 import '../styles/sidebar.css';
@@ -80,7 +83,6 @@ const allNavLinks = [
     icon: <ShoppingCart />,
     roles: ['ADMIN'],
   },
-
   {
     to: '/admin/chef/menus',
     label: 'Inventaire de menu',
@@ -93,33 +95,30 @@ const allNavLinks = [
     icon: <ShoppingCart />,
     roles: ['CHEF_CUISINIER'],
   },
-    {
-      to: '/admin/dashboard/gestion-trajets',
-      label: 'Gestion des trajets',
-      icon: Route,
-      roles: ['ADMIN']
-    },
-    {
-      to: '/admin/dashboard/calcul-itineraire', 
-      label: "Calcul d'itinéraire",
-      icon: Calculator,
-      roles: ['ADMIN']
-    },
+  {
+    to: '/admin/dashboard/gestion-trajets',
+    label: 'Gestion des trajets',
+    icon: <Route />,
+    roles: ['ADMIN'],
+  },
+  {
+    to: '/admin/dashboard/calcul-itineraire',
+    label: "Calcul d'itinéraire",
+    icon: <Calculator />,
+    roles: ['ADMIN'],
+  },
 ];
-
 
 const Sidebar = () => {
   const { user, logout } = useUserAuth();
   const currentUserRole = roleMap[user?.roleId];
-  console.log('Current user role in Sidebar:', currentUserRole);
   const [menuOpen, setMenuOpen] = useState(false);
-  // Filtrer les liens accessibles selon rôle
-  const filteredNavLinks = allNavLinks.filter(link => {
-    // Le lien doit avoir roles et inclure le rôle utilisateur
-    return link.roles.includes(currentUserRole);
-  });
+  const [showLogout, setShowLogout] = useState(false);
 
-  // Toggle pour dropdown "Gestion du menu"
+  const filteredNavLinks = allNavLinks.filter(link =>
+    link.roles.includes(currentUserRole)
+  );
+
   const toggleMenuDropdown = () => {
     setMenuOpen(!menuOpen);
   };
@@ -139,8 +138,6 @@ const Sidebar = () => {
       <nav className="nav flex-column gap-1">
         {filteredNavLinks.map((link, idx) => {
           if (link.subLinks) {
-            // Dropdown "Gestion du menu"
-            // Afficher le bouton dropdown si on a des sublinks
             return (
               <div key={idx}>
                 <button
@@ -178,7 +175,6 @@ const Sidebar = () => {
               </div>
             );
           }
-          // Lien normal
           return (
             <NavLink
               key={idx}
@@ -199,22 +195,51 @@ const Sidebar = () => {
       </nav>
 
       {/* Footer utilisateur */}
-      <div className="mt-auto pt-4 border-top">
-        <div className="d-flex align-items-center gap-2 px-2">
+      <div className="mt-auto pt-4 border-top px-2 position-relative">
+        <div
+          className="d-flex align-items-center gap-2 px-2 py-2 rounded-2 hover-bg"
+          style={{ cursor: 'pointer' }}
+          onClick={() => setShowLogout(prev => !prev)}
+        >
           <UserCircle2 className="text-primary" size={40} />
           <div>
             <div className="fw-semibold small">{user?.nom} {user?.prenom}</div>
             <div className="text-muted small">{currentUserRole}</div>
           </div>
         </div>
-        <div className="px-2 mt-2">
-          <button
-            className="btn btn-outline-danger btn-sm w-100"
-            onClick={logout}
+
+        {showLogout && (
+          <div
+            className="position-absolute"
+            style={{
+              bottom: '70px',
+              left: '20px',
+              backgroundColor: '#fefefe',
+              boxShadow: '0 8px 16px rgba(0, 0, 0, 0.05)',
+              borderRadius: '10px',
+              padding: '12px',
+              zIndex: 1000,
+              width: '220px',
+              transition: 'all 0.2s ease-in-out',
+            }}
           >
-            Se déconnecter
-          </button>
-        </div>
+            <div className="d-flex align-items-center gap-2 mb-2 px-2 text-muted small">
+              <LogOut size={16} />
+              Déconnexion
+            </div>
+            <button
+              className="btn btn-light w-100 border rounded-3"
+              onClick={logout}
+              style={{
+                fontSize: '14px',
+                fontWeight: 500,
+                backgroundColor: '#f8f9fa',
+              }}
+            >
+              Se déconnecter
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );

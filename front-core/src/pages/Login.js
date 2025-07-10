@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useUserAuth } from '../hooks/useUserAuth';
-import { X, Eye, EyeOff } from 'lucide-react';
+import { Box, Eye, EyeOff } from 'lucide-react'; // Importez 'Box' au lieu de 'X'
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -36,9 +36,11 @@ const Login = () => {
           <div className="card-body">
             <div className="text-center mb-4">
               <div className="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center p-3 mb-3">
-                <X className="text-white" size={32} />
+                {/* Remplacement de l'icône X par Box (cube) */}
+                <Box className="text-white" size={32} /> 
               </div>
-              <h2 className="card-title">Cuisine Vital' - Admin</h2>
+              {/* Remplacement du texte "Cuisine Vital' - Admin" par "Sotrobe Manager" */}
+              <h2 className="card-title">Sotrobe Manager</h2>
               <p className="text-muted">Connectez-vous à votre compte</p>
             </div>
 
@@ -90,7 +92,7 @@ const Login = () => {
                 </div>
               </div>
 
-              <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="d-flex justify-content-start align-items-center mb-3"> {/* Changé justify-content-between à justify-content-start */}
                 <div className="form-check">
                   <input
                     id="remember-me"
@@ -98,13 +100,8 @@ const Login = () => {
                     type="checkbox"
                     className="form-check-input"
                   />
-                  <label className="form-check-label" htmlFor="remember-me">
-                    Se souvenir de moi
-                  </label>
                 </div>
-                <a href="#" className="text-decoration-none text-primary">
-                  Mot de passe oublié ?
-                </a>
+                {/* Le lien "Mot de passe oublié ?" a été supprimé ici */}
               </div>
 
               <button

@@ -439,10 +439,10 @@ async updateMenusForTypeAbonnement(typeAbonnementId: number, menuIds: number[]) 
   const insertData = await Promise.all(
     menuIds.map(async (menuId) => {
       const item = new MenuTypeAbonnement();
-      item.typeAbonnement = Promise.resolve(typeAbonnement);
+      item.typeAbonnement = typeAbonnement;
       item.typeAbonnementId = typeAbonnement.id;
       const menu = await this.menuRepository.findOneBy({ id: menuId }); 
-      item.menu = Promise.resolve(menu);
+      item.menu = menu;
       item.menuId = menu.id;
       return item;
     })

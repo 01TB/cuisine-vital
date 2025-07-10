@@ -132,7 +132,7 @@ const MenusPage = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label>Prix à la carte (€)</Form.Label>
+                  <Form.Label>Prix à la carte (Ar)</Form.Label>
                   <Form.Control
                     type="number"
                     value={menuForm.prix_carte}
@@ -168,7 +168,7 @@ const MenusPage = () => {
                     <Form.Check
                       key={ing.id}
                       type="checkbox"
-                      label={`${ing.nom} (${ing.unite_mesure})`}
+                      label={`${ing.nom}`}
                       checked={selectedIngredients.some(i => i.id === ing.id)}
                       onChange={() => handleToggleIngredient(ing)}
                     />

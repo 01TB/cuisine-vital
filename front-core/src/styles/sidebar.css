@@ -6,3 +6,8 @@
   transform: scale(1.1) rotate(3deg);
   color: #4f46e5 !important; /* Indigo pastel */
 }
+
+.hover-bg:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}

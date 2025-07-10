@@ -58,7 +58,7 @@ export class Abonnements {
     (typesAbonnement) => typesAbonnement.abonnements
   )
   @JoinColumn([{ name: "type_abonnement_id", referencedColumnName: "id" }])
-  typeAbonnement: TypesAbonnement;
+  typeAbonnement: Promise<TypesAbonnement>;
 
   @OneToMany(() => BonsCommande, (bonsCommande) => bonsCommande.abonnement)
   bonsCommandes: BonsCommande[];

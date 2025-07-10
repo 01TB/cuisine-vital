@@ -31,7 +31,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const roleMap = {
   1: 'ADMIN',
   2: 'CHEF_CUISINIER',
-  3: 'livreur',
+  3: 'CUISINIER',
+  4: 'LIVREUR',
 };
 
 
@@ -100,6 +101,20 @@ function App() {
             <Route path="parametres" element={<Settings />} />
             <Route path="abonnements" element={<AbonnementsPage />} />
             <Route path="bonscommande" element={<BonsCommandePage />} />
+                      <Route 
+              path="gestion-trajets" 
+              element={
+                  <GestionTrajets />
+              } 
+            />
+
+            {/* ▼▼▼ AJOUTER LA NOUVELLE ROUTE ICI ▼▼▼ */}
+            <Route 
+              path="calcul-itineraire" 
+              element={
+                  <ItineraireAdminPage />
+              } 
+            />
           </Route>
 
           {/* Routes Admin uniquement */}
@@ -148,9 +163,9 @@ function App() {
           <Route 
             path="/admin/livreur/dashboard" 
             element={
-              <RoleProtectedRoute allowedRoles={['livreur']}>
+              <RoleProtectedRoute allowedRoles={['LIVREUR']}>
                 <MainLayout>
-                  <LivreurDashboard />
+                    <ItinerairePage />
                 </MainLayout>
               </RoleProtectedRoute>
             }
@@ -158,7 +173,7 @@ function App() {
           <Route
             path="/admin/livreur/itineraire"
             element={
-              <RoleProtectedRoute allowedRoles={['livreur']}>
+              <RoleProtectedRoute allowedRoles={['LIVREUR']}>
                 <MainLayout>
                   <ItinerairePage />
                 </MainLayout>
@@ -179,25 +194,7 @@ function App() {
             <Route path="commandes" element={<Commandes />} />
             <Route path="menus" element={<MenusPage />} />
           </Route>
-          <Route 
-              path="gestion-trajets" 
-              element={
-                <RoleProtectedRoute allowedRoles={['admin']}>
-                  <GestionTrajets />
-                </RoleProtectedRoute>
-              } 
-            />
 
-            {/* ▼▼▼ AJOUTER LA NOUVELLE ROUTE ICI ▼▼▼ */}
-            <Route 
-              path="calcul-itineraire" 
-              element={
-                <RoleProtectedRoute allowedRoles={['admin']}>
-                  <ItineraireAdminPage />
-                </RoleProtectedRoute>
-              } 
-            />
-          </Route>
         </Routes>
       </UserAuthProvider>
     </Router>
@@ -212,7 +209,7 @@ const RootRedirect = () => {
       case 'ADMIN':
       case 'CHEF_CUISINIER':
         return <Navigate to="/admin/dashboard/overview" replace />;
-      case 'livreur':
+      case 'LIVREUR':
         return <Navigate to="/admin/livreur/dashboard" replace />;
       default:
         return <Navigate to="/admin/login" replace />;
